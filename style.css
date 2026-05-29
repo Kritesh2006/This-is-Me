@@ -1567,3 +1567,19 @@ footer {
   transition: color 0.2s;
 }
 .loader-skip:hover { color: var(--text-dim); }
+
+/* Force visibility overrides */
+#mainSite {
+  display: none;
+}
+#mainSite.visible, #mainSite[style*="block"] {
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+#hero canvas {
+  pointer-events: none;
+}
+section {
+  position: relative;
+}
