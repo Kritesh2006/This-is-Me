@@ -508,14 +508,54 @@ function launchMainSite() {
 
 function initMainSite() {
   initHeroCanvas();
-  // Add reactive particles to hero section
-  try { createParticleCanvas('heroCanvas', { density: 85, reactive: true, grid: true }); } catch(e) {}
+  initSectionParticles();
   initScrollReveal();
   initSkillBars();
   initNavHighlight();
   initNavBurger();
   initCursor();
   initGlitch();
+}
+
+function initSectionParticles() {
+  // Add particle canvas background to every section that doesn't already have one
+  var sections = ['about', 'story', 'projects', 'skills', 'resume', 'contact'];
+  sections.forEach(function(id) {
+    var section = document.getElementById(id);
+    if (!section) return;
+    // Skip if already has canvas
+    if (section.querySelector('canvas')) return;
+    var c = document.createElement('canvas');
+    c.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;';
+    section.insertBefore(c, section.firstChild);
+    // Use a unique ID
+    c.id = 'canvas_' + id;
+    createParticleCanvas('canvas_' + id, {
+      density: 55,
+      reactive: true,
+      grid: true,
+      color1: '#e83030',
+      color2: '#c8882a'
+    });
+  });
+  
+  // Hero canvas - reactive particles on top of wave
+  var heroC = document.getElementById('heroCanvas');
+  if (heroC) {
+    // heroCanvas is used for wave - create separate particle canvas for hero
+    var heroSection = document.getElementById('hero');
+    var hp = document.createElement('canvas');
+    hp.id = 'heroParticles';
+    hp.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1;';
+    heroSection.insertBefore(hp, heroSection.firstChild);
+    createParticleCanvas('heroParticles', {
+      density: 90,
+      reactive: true,
+      grid: true,
+      color1: '#e83030',
+      color2: '#c8882a'
+    });
+  }
 }
 
 // ============================
@@ -556,13 +596,31 @@ function initCursor() {
 function initScrollReveal() {
   var els = document.querySelectorAll('.reveal-up, .reveal-left, .reveal-right, .reveal-tl');
   if (!('IntersectionObserver' in window)) {
+    // No IO support - just show everything
     els.forEach(function(el) { el.classList.add('visible'); });
     return;
   }
+  // Mark elements as animation-ready (sets opacity:0 temporarily)
+  els.forEach(function(el) { el.classList.add('anim-ready'); });
+  
   var obs = new IntersectionObserver(function(entries) {
-    entries.forEach(function(e) { if (e.isIntersecting) e.target.classList.add('visible'); });
-  }, { threshold: 0.08, rootMargin: '0px 0px -20px 0px' });
-  els.forEach(function(el) { obs.observe(el); });
+    entries.forEach(function(e) {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.05, rootMargin: '0px 0px -10px 0px' });
+  
+  els.forEach(function(el) {
+    // If element is already in viewport, show immediately
+    var rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight && rect.bottom > 0) {
+      el.classList.add('visible');
+    } else {
+      obs.observe(el);
+    }
+  });
 }
 
 // ============================
