@@ -466,26 +466,8 @@ function launchSite() {
   initSite();
 }
 
-
-/* ---------- INJECT PHOTOS FROM BASE64 ---------- */
-function injectPhotos() {
-  if (typeof PHOTOS === 'undefined') return;
-  var map = {
-    'hero-img':     PHOTOS['photo2'],
-    'aph1':         PHOTOS['photo4'],
-    'aph2':         PHOTOS['photo1'],
-  };
-  Object.keys(map).forEach(function(cls) {
-    var els = document.querySelectorAll('.' + cls);
-    els.forEach(function(el) {
-      if (map[cls]) el.src = map[cls];
-    });
-  });
-}
-
 /* ---------- MAIN SITE INIT ---------- */
 function initSite() {
-  injectPhotos();
   makeHeroWave();
   // Particles on EVERY section including hero
   var sections = ['hero','about','story','projects','skills','resume','contact'];
@@ -511,6 +493,7 @@ function initSite() {
   initNavBurger();
   initCursor();
   initGlitch();
+  initGameSection();
   initSoundToggle();
   // Enable sound after first user interaction
   document.addEventListener('click', function enableSound(){
@@ -621,6 +604,360 @@ function initSoundToggle() {
 var st=document.createElement('style');
 st.textContent='@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}';
 document.head.appendChild(st);
+
+
+/* ============================================================
+   PARTICLE CONNECT GAME
+   ============================================================ */
+var gameRunning = false;
+var gameState = null;
+
+function initGameSection() {
+  var openBtn = document.getElementById('openGame');
+  if (openBtn) openBtn.addEventListener('click', function() {
+    sfx('click');
+    openGame();
+  });
+}
+
+function openGame() {
+  var overlay = document.getElementById('gameOverlay');
+  showEl(overlay);
+  document.body.style.overflow = 'hidden';
+  gameRunning = true;
+  startGame();
+
+  document.getElementById('gameClose').onclick = function() {
+    sfx('whoosh');
+    closeGame();
+  };
+  document.getElementById('gameReset').onclick = function() {
+    sfx('click');
+    resetGame();
+  };
+}
+
+function closeGame() {
+  gameRunning = false;
+  hideEl('gameOverlay');
+  document.body.style.overflow = 'auto';
+  if (gameState && gameState.animId) cancelAnimationFrame(gameState.animId);
+  gameState = null;
+}
+
+function startGame() {
+  var canvas = document.getElementById('gameCanvas');
+  var ctx = canvas.getContext('2d');
+  var W, H;
+
+  function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+    if (gameState) respawnParticles();
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  var score = 0;
+  var combo = 0;
+  var comboTimer = null;
+  var particles = [];
+  var connections = [];
+  var dragging = null;
+  var dragOffX = 0, dragOffY = 0;
+  var selected = null;
+  var hovering = null;
+  var mx = 0, my = 0;
+  var pulses = [];
+
+  function spawnParticles() {
+    particles = [];
+    var count = Math.min(22, Math.floor(W * H / 28000) + 14);
+    for (var i = 0; i < count; i++) {
+      particles.push(mkGameParticle(i));
+    }
+    connections = [];
+  }
+
+  function mkGameParticle(id) {
+    var margin = 80;
+    return {
+      id: id,
+      x: margin + Math.random() * (W - margin * 2),
+      y: margin + Math.random() * (H - margin * 2),
+      vx: (Math.random() - 0.5) * 0.3,
+      vy: (Math.random() - 0.5) * 0.3,
+      r: Math.random() * 5 + 6,
+      col: Math.random() > 0.35 ? '#e83030' : '#ffffff',
+      pulse: 0,
+      connected: false
+    };
+  }
+
+  function respawnParticles() { spawnParticles(); }
+  spawnParticles();
+
+  function getParticleAt(x, y, radius) {
+    radius = radius || 28;
+    for (var i = particles.length - 1; i >= 0; i--) {
+      var p = particles[i];
+      var dx = p.x - x, dy = p.y - y;
+      if (Math.sqrt(dx*dx + dy*dy) < p.r + radius) return p;
+    }
+    return null;
+  }
+
+  function isConnected(a, b) {
+    return connections.some(function(c) {
+      return (c.a === a.id && c.b === b.id) || (c.a === b.id && c.b === a.id);
+    });
+  }
+
+  function addConnection(a, b) {
+    if (isConnected(a, b)) return;
+    connections.push({ a: a.id, b: b.id, age: 0, strength: 1 });
+    a.connected = true; b.connected = true;
+    a.pulse = 1; b.pulse = 1;
+    // Score
+    score += 10;
+    combo++;
+    if (comboTimer) clearTimeout(comboTimer);
+    comboTimer = setTimeout(function() { combo = 0; updateComboUI(); }, 1800);
+    updateScoreUI();
+    updateComboUI();
+    // Add pulse effect at midpoint
+    pulses.push({ x: (a.x + b.x)/2, y: (a.y + b.y)/2, r: 0, max: 60, alpha: 1 });
+    sfx('pulse');
+  }
+
+  function updateScoreUI() {
+    var el = document.getElementById('gameScore');
+    if (!el) return;
+    el.textContent = score;
+    el.classList.add('pop');
+    setTimeout(function() { el.classList.remove('pop'); }, 200);
+  }
+
+  function updateComboUI() {
+    var el = document.getElementById('gameCombo');
+    if (!el) return;
+    el.textContent = combo > 1 ? 'x' + combo + ' COMBO' : '';
+  }
+
+  // Input handling
+  function getPos(e) {
+    if (e.touches) return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    return { x: e.clientX, y: e.clientY };
+  }
+
+  function onDown(e) {
+    if (!gameRunning) return;
+    var pos = getPos(e);
+    var p = getParticleAt(pos.x, pos.y, 30);
+    if (p) {
+      dragging = p;
+      dragOffX = p.x - pos.x;
+      dragOffY = p.y - pos.y;
+      p.vx = 0; p.vy = 0;
+      sfx('hover');
+      e.preventDefault();
+    }
+  }
+
+  function onMove(e) {
+    if (!gameRunning) return;
+    var pos = getPos(e);
+    mx = pos.x; my = pos.y;
+    if (dragging) {
+      dragging.x = pos.x + dragOffX;
+      dragging.y = pos.y + dragOffY;
+      // Keep in bounds
+      dragging.x = Math.max(dragging.r, Math.min(W - dragging.r, dragging.x));
+      dragging.y = Math.max(dragging.r, Math.min(H - dragging.r, dragging.y));
+      e.preventDefault();
+    } else {
+      hovering = getParticleAt(pos.x, pos.y, 20);
+    }
+  }
+
+  function onUp(e) {
+    if (!gameRunning) return;
+    var pos = getPos(e);
+    var p = getParticleAt(pos.x, pos.y, 35);
+    if (!dragging && p) {
+      // Click to connect/select
+      if (selected && selected !== p) {
+        addConnection(selected, p);
+        selected = null;
+      } else if (selected === p) {
+        selected = null;
+      } else {
+        selected = p;
+        sfx('click');
+      }
+    } else if (dragging) {
+      // Drop near another particle to connect
+      var near = getParticleAt(pos.x + dragOffX, pos.y + dragOffY, 40);
+      if (near && near !== dragging) {
+        addConnection(dragging, near);
+      }
+      dragging.vx = (Math.random()-0.5)*0.5;
+      dragging.vy = (Math.random()-0.5)*0.5;
+    }
+    dragging = null;
+  }
+
+  canvas.addEventListener('mousedown', onDown);
+  canvas.addEventListener('mousemove', onMove);
+  canvas.addEventListener('mouseup', onUp);
+  canvas.addEventListener('touchstart', onDown, {passive:false});
+  canvas.addEventListener('touchmove', onMove, {passive:false});
+  canvas.addEventListener('touchend', onUp);
+
+  // Hide hint after first interaction
+  var hintShown = true;
+  canvas.addEventListener('mousedown', function() {
+    if (hintShown) { hintShown = false; var h = document.getElementById('gameHint'); if(h) h.style.opacity='0'; }
+  }, {once:true});
+
+  var t = 0;
+
+  function draw() {
+    if (!gameRunning) return;
+    ctx.clearRect(0, 0, W, H);
+
+    // Background grid
+    ctx.strokeStyle = 'rgba(232,48,48,0.018)';
+    ctx.lineWidth = 1;
+    for (var gx = 0; gx < W; gx += 60) { ctx.beginPath(); ctx.moveTo(gx,0); ctx.lineTo(gx,H); ctx.stroke(); }
+    for (var gy = 0; gy < H; gy += 60) { ctx.beginPath(); ctx.moveTo(0,gy); ctx.lineTo(W,gy); ctx.stroke(); }
+
+    // Cursor glow
+    var cg = ctx.createRadialGradient(mx, my, 0, mx, my, 80);
+    cg.addColorStop(0, 'rgba(232,48,48,0.06)');
+    cg.addColorStop(1, 'transparent');
+    ctx.fillStyle = cg; ctx.fillRect(0,0,W,H);
+
+    // Draw connections
+    connections.forEach(function(c) {
+      var pa = particles[c.a], pb = particles[c.b];
+      if (!pa || !pb) return;
+      c.age++;
+      var alpha = Math.min(1, c.age / 20) * 0.85;
+      ctx.beginPath();
+      ctx.moveTo(pa.x, pa.y);
+      ctx.lineTo(pb.x, pb.y);
+      var grad = ctx.createLinearGradient(pa.x, pa.y, pb.x, pb.y);
+      grad.addColorStop(0, 'rgba(232,48,48,' + alpha + ')');
+      grad.addColorStop(0.5, 'rgba(255,120,120,' + (alpha*0.9) + ')');
+      grad.addColorStop(1, 'rgba(232,48,48,' + alpha + ')');
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = 1.5 + Math.sin(t * 0.05 + c.age * 0.1) * 0.5;
+      ctx.shadowBlur = 8; ctx.shadowColor = 'rgba(232,48,48,0.6)';
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+    });
+
+    // Preview line from selected to cursor
+    if (selected) {
+      ctx.beginPath();
+      ctx.moveTo(selected.x, selected.y);
+      ctx.lineTo(mx, my);
+      ctx.strokeStyle = 'rgba(232,48,48,0.3)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([4, 6]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
+    // Draw pulses
+    pulses = pulses.filter(function(p) { return p.r < p.max; });
+    pulses.forEach(function(p) {
+      p.r += 2.5; p.alpha = (1 - p.r/p.max) * 0.6;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+      ctx.strokeStyle = 'rgba(232,48,48,' + p.alpha + ')';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    });
+
+    // Draw particles
+    particles.forEach(function(p) {
+      if (p !== dragging) {
+        // Gentle drift
+        p.vx += (Math.random()-0.5)*0.01;
+        p.vy += (Math.random()-0.5)*0.01;
+        p.vx *= 0.98; p.vy *= 0.98;
+        p.x += p.vx; p.y += p.vy;
+        // Cursor repel
+        var rdx = p.x - mx, rdy = p.y - my;
+        var rd = Math.sqrt(rdx*rdx + rdy*rdy);
+        if (rd < 70 && rd > 0) { var f = (1-rd/70)*0.8; p.vx += (rdx/rd)*f; p.vy += (rdy/rd)*f; }
+        // Bounce walls
+        if (p.x < p.r) { p.x = p.r; p.vx = Math.abs(p.vx)*0.7; }
+        if (p.x > W-p.r) { p.x = W-p.r; p.vx = -Math.abs(p.vx)*0.7; }
+        if (p.y < p.r) { p.y = p.r; p.vy = Math.abs(p.vy)*0.7; }
+        if (p.y > H-p.r) { p.y = H-p.r; p.vy = -Math.abs(p.vy)*0.7; }
+      }
+
+      // Pulse decay
+      if (p.pulse > 0) p.pulse = Math.max(0, p.pulse - 0.04);
+
+      var isSelected = selected === p;
+      var isDragging = dragging === p;
+      var isHover = hovering === p;
+      var glowSize = 6 + p.pulse * 20 + (isSelected || isDragging ? 16 : 0) + (isHover ? 10 : 0);
+      var baseCol = isSelected ? '#ff6060' : (isDragging ? '#ffaaaa' : p.col);
+
+      // Outer glow
+      var rg = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, glowSize * 3);
+      rg.addColorStop(0, baseCol + '44');
+      rg.addColorStop(1, 'transparent');
+      ctx.fillStyle = rg;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, glowSize * 3, 0, Math.PI*2);
+      ctx.fill();
+
+      // Core
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r + (isSelected||isDragging ? 3 : 0), 0, Math.PI*2);
+      ctx.fillStyle = baseCol;
+      ctx.shadowBlur = glowSize; ctx.shadowColor = baseCol;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      // Ring for selected
+      if (isSelected) {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r + 8 + Math.sin(t*0.1)*2, 0, Math.PI*2);
+        ctx.strokeStyle = 'rgba(232,48,48,0.5)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+    });
+
+    t++;
+    gameState.animId = requestAnimationFrame(draw);
+  }
+
+  gameState = {
+    animId: null,
+    reset: function() {
+      score = 0; combo = 0; connections = []; pulses = [];
+      selected = null; dragging = null;
+      spawnParticles();
+      updateScoreUI(); updateComboUI();
+      var h = document.getElementById('gameHint');
+      if(h){ h.style.opacity='1'; hintShown=true; }
+    }
+  };
+
+  draw();
+}
+
+function resetGame() {
+  if (gameState) gameState.reset();
+}
 
 /* ---------- BOOT ---------- */
 window.addEventListener('DOMContentLoaded', function(){
