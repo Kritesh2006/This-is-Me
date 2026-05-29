@@ -466,8 +466,26 @@ function launchSite() {
   initSite();
 }
 
+
+/* ---------- INJECT PHOTOS FROM BASE64 ---------- */
+function injectPhotos() {
+  if (typeof PHOTOS === 'undefined') return;
+  var map = {
+    'hero-img':     PHOTOS['photo2'],
+    'aph1':         PHOTOS['photo4'],
+    'aph2':         PHOTOS['photo1'],
+  };
+  Object.keys(map).forEach(function(cls) {
+    var els = document.querySelectorAll('.' + cls);
+    els.forEach(function(el) {
+      if (map[cls]) el.src = map[cls];
+    });
+  });
+}
+
 /* ---------- MAIN SITE INIT ---------- */
 function initSite() {
+  injectPhotos();
   makeHeroWave();
   // Particles on EVERY section including hero
   var sections = ['hero','about','story','projects','skills','resume','contact'];
