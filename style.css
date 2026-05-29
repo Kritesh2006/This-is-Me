@@ -1354,3 +1354,216 @@ footer {
   .footer-inner { flex-direction: column; text-align: center; }
   .gate-buttons { flex-direction: column; }
 }
+
+/* ============================================================
+   PHOTO FALLBACK
+   ============================================================ */
+.hero-img {
+  background: var(--surface2);
+  min-height: 360px;
+}
+.photo-fallback .hero-img {
+  opacity: 0.2;
+  background: var(--surface2);
+}
+.aph {
+  background: var(--surface2);
+}
+
+/* ============================================================
+   ARIA SUBTITLE
+   ============================================================ */
+.project-desc-subtitle {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.15em;
+  color: var(--gold);
+  margin-bottom: 8px;
+  margin-top: -8px;
+}
+
+/* ============================================================
+   CUSTOM KEYPAD
+   ============================================================ */
+.keypad {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 4px;
+}
+.keypad-row {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+.kp-btn {
+  width: 64px;
+  height: 52px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--white);
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  position: relative;
+  overflow: hidden;
+}
+.kp-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, var(--red-subtle) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.kp-btn:hover {
+  border-color: var(--red);
+  box-shadow: 0 0 16px var(--red-glow);
+  transform: scale(1.05);
+}
+.kp-btn:hover::before { opacity: 1; }
+.kp-btn:active {
+  transform: scale(0.96);
+  box-shadow: 0 0 24px var(--red-glow);
+  background: var(--red-subtle);
+}
+.kp-del {
+  color: var(--text-dim);
+  font-size: 1rem;
+}
+.kp-del:hover { color: var(--white); }
+.kp-enter {
+  color: var(--red);
+  border-color: var(--border-red);
+  background: var(--red-subtle);
+}
+.kp-enter:hover {
+  background: var(--red);
+  color: var(--white);
+}
+
+/* ============================================================
+   OWNER MESSAGE SCREEN
+   ============================================================ */
+#ownerMessage {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  z-index: 9997;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.om-content {
+  position: relative;
+  z-index: 2;
+  max-width: 640px;
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  padding: 20px;
+}
+.om-tag {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.35em;
+  color: var(--red);
+  padding: 6px 14px;
+  border: 1px solid var(--border-red);
+  border-radius: 2px;
+  background: var(--red-subtle);
+  width: fit-content;
+  opacity: 0;
+  animation: omFadeIn 0.8s ease 0.3s forwards;
+}
+.om-text {
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+  line-height: 1.9;
+  color: var(--text);
+  min-height: 300px;
+  opacity: 0;
+  animation: omFadeIn 0.6s ease 0.8s forwards;
+}
+.om-text .om-name {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--white);
+  display: block;
+  margin-bottom: 8px;
+}
+.om-text .om-highlight {
+  color: var(--red);
+}
+.om-text .om-dim {
+  color: var(--text-dim);
+  font-size: 0.95rem;
+}
+.om-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1.1em;
+  background: var(--red);
+  vertical-align: middle;
+  margin-left: 2px;
+  animation: cursorBlink 0.8s ease-in-out infinite;
+}
+@keyframes cursorBlink {
+  0%,100%{opacity:1} 50%{opacity:0}
+}
+.om-continue {
+  align-self: flex-start;
+  padding: 14px 36px;
+  background: transparent;
+  border: 1px solid var(--border-red);
+  color: var(--red);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.15em;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.3s;
+  opacity: 0;
+  position: relative;
+  overflow: hidden;
+}
+.om-continue.visible { opacity: 1; animation: omFadeIn 0.5s ease forwards; }
+.om-continue::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--red-subtle);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.om-continue:hover {
+  border-color: var(--red);
+  box-shadow: 0 0 20px var(--red-glow);
+  color: var(--white);
+}
+.om-continue:hover::before { opacity: 1; }
+@keyframes omFadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ============================================================
+   LOADER SKIP
+   ============================================================ */
+.loader-skip {
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.2em;
+  color: var(--text-dimmer);
+  margin-top: 8px;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.loader-skip:hover { color: var(--text-dim); }
