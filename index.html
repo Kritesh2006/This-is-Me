@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Kritesh Dhungel — Frontend Developer</title>
+<title>Kritesh Dhungel — Full-Stack Developer & AI Systems Builder</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="style.css"/>
+<link rel="stylesheet" href="./style.css"/>
 </head>
 <body>
 
-<!-- ========== LOADER ========== -->
+<!-- LOADER -->
 <div id="loader">
   <canvas id="loaderCanvas"></canvas>
   <div class="loader-content">
@@ -22,7 +22,7 @@
   </div>
 </div>
 
-<!-- ========== ENTRY GATE ========== -->
+<!-- ENTRY GATE -->
 <div id="entryGate" class="hidden">
   <canvas id="gateCanvas"></canvas>
   <div class="gate-content">
@@ -42,33 +42,65 @@
       </button>
     </div>
   </div>
+
   <!-- Owner Code Modal -->
   <div id="ownerModal" class="modal hidden">
     <div class="modal-box">
       <div class="modal-title">ENTER ACCESS CODE</div>
       <div class="code-inputs">
-        <input class="code-digit" maxlength="1" type="password"/>
-        <input class="code-digit" maxlength="1" type="password"/>
-        <input class="code-digit" maxlength="1" type="password"/>
-        <input class="code-digit" maxlength="1" type="password"/>
+        <input class="code-digit" maxlength="1" type="password" inputmode="numeric" pattern="[0-9]*" autocomplete="off"/>
+        <input class="code-digit" maxlength="1" type="password" inputmode="numeric" pattern="[0-9]*" autocomplete="off"/>
+        <input class="code-digit" maxlength="1" type="password" inputmode="numeric" pattern="[0-9]*" autocomplete="off"/>
+        <input class="code-digit" maxlength="1" type="password" inputmode="numeric" pattern="[0-9]*" autocomplete="off"/>
       </div>
       <div id="codeError" class="code-error hidden">Invalid code. Try again.</div>
-      <button id="submitCode" class="btn-submit">VERIFY</button>
+      <!-- Custom futuristic keypad -->
+      <div class="keypad">
+        <div class="keypad-row">
+          <button class="kp-btn" data-val="1">1</button>
+          <button class="kp-btn" data-val="2">2</button>
+          <button class="kp-btn" data-val="3">3</button>
+        </div>
+        <div class="keypad-row">
+          <button class="kp-btn" data-val="4">4</button>
+          <button class="kp-btn" data-val="5">5</button>
+          <button class="kp-btn" data-val="6">6</button>
+        </div>
+        <div class="keypad-row">
+          <button class="kp-btn" data-val="7">7</button>
+          <button class="kp-btn" data-val="8">8</button>
+          <button class="kp-btn" data-val="9">9</button>
+        </div>
+        <div class="keypad-row">
+          <button class="kp-btn kp-del" data-val="del">⌫</button>
+          <button class="kp-btn" data-val="0">0</button>
+          <button class="kp-btn kp-enter" data-val="enter">↵</button>
+        </div>
+      </div>
       <button id="cancelCode" class="btn-cancel">← BACK</button>
     </div>
   </div>
 </div>
 
-<!-- ========== TRANSITION ========== -->
+<!-- OWNER MESSAGE SCREEN -->
+<div id="ownerMessage" class="hidden">
+  <canvas id="ownerMsgCanvas"></canvas>
+  <div class="om-content">
+    <div class="om-tag">PRIVATE · OWNER ONLY</div>
+    <div class="om-text" id="ownerTypewriter"></div>
+    <button id="ownerContinue" class="om-continue hidden">Continue →</button>
+  </div>
+</div>
+
+<!-- TRANSITION -->
 <div id="transitionScreen" class="hidden">
   <canvas id="transCanvas"></canvas>
   <div class="trans-text">LOADING PROFILE</div>
 </div>
 
-<!-- ========== MAIN SITE ========== -->
+<!-- MAIN SITE -->
 <div id="mainSite" class="hidden">
 
-  <!-- NAV -->
   <nav id="navbar">
     <div class="nav-logo">KD<span class="dot">.</span></div>
     <div class="nav-links">
@@ -91,12 +123,12 @@
     <a href="#contact" class="mob-link">Contact</a>
   </div>
 
-  <!-- ====== HERO ====== -->
+  <!-- HERO -->
   <section id="hero">
     <canvas id="heroCanvas"></canvas>
     <div class="hero-grid-overlay"></div>
     <div class="hero-content">
-      <div class="hero-tag reveal-up">◈ FRONTEND DEVELOPER · AI BUILDER · CS STUDENT</div>
+      <div class="hero-tag reveal-up">◈ FULL-STACK DEVELOPER · AI SYSTEMS BUILDER · CS STUDENT</div>
       <div class="hero-name reveal-up delay-1">
         <span class="name-first">Kritesh</span>
         <span class="name-last">Dhungel</span>
@@ -115,7 +147,7 @@
     </div>
     <div class="hero-photo reveal-right">
       <div class="photo-ring"></div>
-      <img src="photo1.jpeg" alt="Kritesh Dhungel" class="hero-img"/>
+      <img src="./photo1.jpeg" alt="Kritesh Dhungel" class="hero-img" onerror="this.parentElement.classList.add('photo-fallback')"/>
       <div class="photo-accent"></div>
     </div>
     <div class="scroll-hint">
@@ -124,14 +156,14 @@
     </div>
   </section>
 
-  <!-- ====== ABOUT ====== -->
+  <!-- ABOUT -->
   <section id="about">
     <div class="section-label reveal-up">01 — ABOUT</div>
     <div class="about-grid">
       <div class="about-photos reveal-left">
         <div class="photo-stack">
-          <img src="photo2.jpeg" alt="Kritesh" class="aph aph1"/>
-          <img src="photo1.jpeg" alt="Kritesh" class="aph aph2"/>
+          <img src="./photo2.jpeg" alt="Kritesh" class="aph aph1" onerror="this.style.display='none'"/>
+          <img src="./photo1.jpeg" alt="Kritesh" class="aph aph2" onerror="this.style.display='none'"/>
           <div class="photo-glow"></div>
         </div>
         <div class="about-loc">GREENSBORO, NC — 2025</div>
@@ -158,13 +190,12 @@
     </div>
   </section>
 
-  <!-- ====== STORY / TIMELINE ====== -->
+  <!-- STORY -->
   <section id="story">
     <div class="section-label reveal-up">02 — STORY</div>
     <h2 class="section-title centered reveal-up">The Journey</h2>
     <p class="section-sub reveal-up">From a small city in Nepal to building AI systems in America — every move was intentional.</p>
     <div class="timeline">
-
       <div class="tl-item reveal-tl" data-side="left">
         <div class="tl-dot"></div>
         <div class="tl-card">
@@ -173,7 +204,6 @@
           <p>Born on June 7th in Nepal. Grew up curious — always taking things apart to understand how they work. Music, language, and technology became the three pillars early on.</p>
         </div>
       </div>
-
       <div class="tl-item reveal-tl" data-side="right">
         <div class="tl-dot"></div>
         <div class="tl-card">
@@ -182,7 +212,6 @@
           <p>Landed in Dayton, Ohio — alone, 18 years old. Started at Wright State University. First real exposure to American systems: banking, credit, independent living. Figured it out fast.</p>
         </div>
       </div>
-
       <div class="tl-item reveal-tl" data-side="left">
         <div class="tl-dot"></div>
         <div class="tl-card">
@@ -191,7 +220,6 @@
           <p>Three-month cross-state move through California — Bakersfield, Visalia, Fresno, Clovis, Porterville, Delano, Wasco. Lived in downtown Bakersfield on Truxtun Ave. Explored, adapted, kept building.</p>
         </div>
       </div>
-
       <div class="tl-item reveal-tl" data-side="right">
         <div class="tl-dot"></div>
         <div class="tl-card">
@@ -200,7 +228,6 @@
           <p>Relocated to Greensboro, NC. Chose Forsyth Technical Community College in Winston-Salem for its focused Computer Science program — a strategic move toward a UNC-system transfer.</p>
         </div>
       </div>
-
       <div class="tl-item reveal-tl" data-side="left">
         <div class="tl-dot active"></div>
         <div class="tl-card active">
@@ -209,11 +236,10 @@
           <p>Studying CS at Forsyth Tech, building AI systems, shipping real projects, and planning the next chapter. The goal: land at a major tech company. The timeline: sooner than expected.</p>
         </div>
       </div>
-
     </div>
   </section>
 
-  <!-- ====== PROJECTS ====== -->
+  <!-- PROJECTS -->
   <section id="projects">
     <div class="section-label reveal-up">03 — PROJECTS</div>
     <h2 class="section-title centered reveal-up">What I've Built</h2>
@@ -222,11 +248,12 @@
 
       <div class="project-card reveal-up featured">
         <div class="project-glow"></div>
-        <div class="project-tag">FEATURED · AI SYSTEM</div>
+        <div class="project-tag">FEATURED · AUTONOMOUS AI SYSTEM</div>
         <h3 class="project-name">ARIA</h3>
-        <p class="project-desc">Personal AI Assistant powered by a multi-agent debate system — four specialized agents (Strategist, Critic, Realist, Judge) run in parallel via Promise.all, cross-reference live data, debate results, and synthesize the best answer. Built for investment analysis, expense tracking, and intelligent automation. Goal: connect to your bank accounts and actively suggest where to cut spending.</p>
+        <p class="project-desc-subtitle">Autonomous Reasoning &amp; Intelligent AI Assistant</p>
+        <p class="project-desc">ARIA is not a chatbot. It is a multi-agent reasoning system where four specialized AI agents — Strategist, Critic, Realist, and Judge — operate in parallel, actively debate each other's outputs, and converge on the most defensible answer. Built for high-stakes analytical use: investment research, financial decision support, and expense intelligence. The long-term vision is a personal operating system that connects to your financial accounts, understands your spending patterns, and proactively tells you where to cut — before you have to ask. Currently live with real-time web search, weather API integration, and voice interaction via Web Speech API.</p>
         <div class="project-stack">
-          <span>Node.js</span><span>Express</span><span>OpenAI API</span><span>JavaScript</span><span>HTML/CSS</span><span>Web Speech API</span>
+          <span>Node.js</span><span>Express</span><span>OpenAI API</span><span>JavaScript</span><span>HTML/CSS</span><span>Web Speech API</span><span>REST APIs</span>
         </div>
         <div class="project-links">
           <a href="https://kritesh2006.github.io/Personal-Ai/" target="_blank" class="proj-link live">↗ Live Demo</a>
@@ -235,9 +262,9 @@
       </div>
 
       <div class="project-card reveal-up delay-1">
-        <div class="project-tag">WEB APP · TOOL</div>
+        <div class="project-tag">WEB APP · DEPLOYED TOOL</div>
         <h3 class="project-name">Pay Report</h3>
-        <p class="project-desc">A real-world payroll calculation system actively used by employees at iFixandRepair in Greensboro to calculate hours for monthly and bi-monthly pay. Eliminates manual wage calculation errors — shipped as a functional, deployed tool solving a real workplace problem.</p>
+        <p class="project-desc">A real-world payroll calculation system actively used by employees at a phone repair store in Greensboro to calculate hours for monthly and bi-monthly pay cycles. Eliminates manual wage errors — shipped as a functional, production-deployed tool solving a genuine workplace problem.</p>
         <div class="project-stack">
           <span>Python</span><span>JavaScript</span><span>HTML/CSS</span><span>GitHub</span>
         </div>
@@ -247,9 +274,9 @@
       </div>
 
       <div class="project-card reveal-up delay-2">
-        <div class="project-tag">WEB · DEMO</div>
+        <div class="project-tag">WEB · UI DEMO</div>
         <h3 class="project-name">iFixandRepair Booking</h3>
-        <p class="project-desc">A fully designed online booking system demo for a phone repair store. Built to demonstrate end-to-end frontend ownership — concept, UI design, build, and deployment. Shows what a real booking experience could look like for a local repair business.</p>
+        <p class="project-desc">A fully designed online booking system demo for a phone repair business. End-to-end frontend ownership — concept, UI design, build, and deployment. Demonstrates what a professional service booking experience looks like when built from scratch rather than off a template.</p>
         <div class="project-stack">
           <span>HTML5</span><span>CSS3</span><span>JavaScript</span><span>GitHub Pages</span>
         </div>
@@ -262,7 +289,7 @@
     </div>
   </section>
 
-  <!-- ====== SKILLS ====== -->
+  <!-- SKILLS -->
   <section id="skills">
     <div class="section-label reveal-up">04 — SKILLS</div>
     <h2 class="section-title centered reveal-up">Tech Stack</h2>
@@ -277,12 +304,12 @@
         </div>
       </div>
       <div class="skill-group reveal-up delay-1">
-        <div class="skill-group-title">Frontend</div>
+        <div class="skill-group-title">Frontend & Backend</div>
         <div class="skill-items">
-          <div class="skill-item"><span class="skill-bar" data-w="85"></span><span>Responsive Design</span></div>
-          <div class="skill-item"><span class="skill-bar" data-w="80"></span><span>UI/UX</span></div>
-          <div class="skill-item"><span class="skill-bar" data-w="75"></span><span>DOM APIs</span></div>
-          <div class="skill-item"><span class="skill-bar" data-w="82"></span><span>Web Speech API</span></div>
+          <div class="skill-item"><span class="skill-bar" data-w="85"></span><span>Responsive Design / UI·UX</span></div>
+          <div class="skill-item"><span class="skill-bar" data-w="80"></span><span>DOM APIs</span></div>
+          <div class="skill-item"><span class="skill-bar" data-w="75"></span><span>Node.js / Express</span></div>
+          <div class="skill-item"><span class="skill-bar" data-w="78"></span><span>Web Speech API</span></div>
         </div>
       </div>
       <div class="skill-group reveal-up delay-2">
@@ -290,17 +317,17 @@
         <div class="skill-items">
           <div class="skill-item"><span class="skill-bar" data-w="88"></span><span>OpenAI API</span></div>
           <div class="skill-item"><span class="skill-bar" data-w="85"></span><span>Prompt Engineering</span></div>
-          <div class="skill-item"><span class="skill-bar" data-w="80"></span><span>Multi-Agent Systems</span></div>
-          <div class="skill-item"><span class="skill-bar" data-w="78"></span><span>REST APIs</span></div>
+          <div class="skill-item"><span class="skill-bar" data-w="82"></span><span>Multi-Agent Systems</span></div>
+          <div class="skill-item"><span class="skill-bar" data-w="78"></span><span>REST APIs / JSON</span></div>
         </div>
       </div>
       <div class="skill-group reveal-up delay-3">
         <div class="skill-group-title">Dev Tools</div>
         <div class="skill-items">
           <div class="skill-item"><span class="skill-bar" data-w="85"></span><span>Git / GitHub</span></div>
-          <div class="skill-item"><span class="skill-bar" data-w="75"></span><span>Node.js / Express</span></div>
-          <div class="skill-item"><span class="skill-bar" data-w="90"></span><span>VS Code</span></div>
           <div class="skill-item"><span class="skill-bar" data-w="82"></span><span>GitHub Pages</span></div>
+          <div class="skill-item"><span class="skill-bar" data-w="90"></span><span>VS Code</span></div>
+          <div class="skill-item"><span class="skill-bar" data-w="72"></span><span>Command Line</span></div>
         </div>
       </div>
     </div>
@@ -308,12 +335,12 @@
       <div class="cert-icon">✦</div>
       <div class="cert-text">
         <div class="cert-title">Python Programming Fundamentals</div>
-        <div class="cert-meta">Microsoft · Coursera · May 2026 · <a href="https://coursera.org/verify/4YJG8SI4K01K" target="_blank">Verify</a></div>
+        <div class="cert-meta">Microsoft · Coursera · May 2026 · <a href="https://coursera.org/verify/4YJG8SI4K01K" target="_blank">Verify ↗</a></div>
       </div>
     </div>
   </section>
 
-  <!-- ====== RESUME ====== -->
+  <!-- RESUME -->
   <section id="resume">
     <div class="section-label reveal-up">05 — RESUME</div>
     <h2 class="section-title centered reveal-up">Credentials</h2>
@@ -323,11 +350,11 @@
         <div class="resume-icon">⬡</div>
         <div class="resume-info">
           <div class="resume-name">Kritesh_Dhungel_Resume.pdf</div>
-          <div class="resume-meta">Frontend Developer · AI Trainer · CS Student</div>
+          <div class="resume-meta">Full-Stack Developer · AI Systems Builder · CS Student</div>
         </div>
         <div class="resume-actions">
-          <a href="kritesh_dhungel_resume.pdf" target="_blank" class="btn-resume view">View Resume</a>
-          <a href="kritesh_dhungel_resume.pdf" download class="btn-resume download">↓ Download</a>
+          <a href="./resume.pdf" target="_blank" class="btn-resume view">View Resume</a>
+          <a href="./resume.pdf" download="Kritesh_Dhungel_Resume.pdf" class="btn-resume download">↓ Download</a>
         </div>
       </div>
     </div>
@@ -356,7 +383,7 @@
     </div>
   </section>
 
-  <!-- ====== CONTACT ====== -->
+  <!-- CONTACT -->
   <section id="contact">
     <div class="section-label reveal-up">06 — CONTACT</div>
     <h2 class="section-title centered reveal-up">Let's Connect</h2>
@@ -391,7 +418,7 @@
       <div class="contact-card reveal-right">
         <div class="cc-inner">
           <div class="cc-name">Kritesh Dhungel</div>
-          <div class="cc-role">Frontend Developer · AI Builder</div>
+          <div class="cc-role">Full-Stack Developer · AI Systems Builder</div>
           <div class="cc-loc">📍 Winston-Salem, NC</div>
           <div class="cc-available"><span class="status-dot"></span> Available for opportunities</div>
           <div class="cc-quote">"Self-taught. Financially independent.<br/>Building real things from scratch."</div>
@@ -400,7 +427,6 @@
     </div>
   </section>
 
-  <!-- FOOTER -->
   <footer>
     <div class="footer-inner">
       <div class="footer-logo">KD<span class="dot">.</span></div>
@@ -412,8 +438,8 @@
     </div>
   </footer>
 
-</div><!-- /mainSite -->
+</div>
 
-<script src="main.js"></script>
+<script src="./main.js"></script>
 </body>
 </html>
