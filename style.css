@@ -452,6 +452,7 @@ section {
   overflow: hidden;
 }
 .section-label {
+  position: relative; z-index: 2;
   font-family: var(--font-mono);
   font-size: 0.65rem;
   letter-spacing: 0.3em;
@@ -497,7 +498,7 @@ section {
   mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black 0%, transparent 100%);
 }
 .hero-content {
-  position: relative; z-index: 2;
+  position: relative; z-index: 10;
   max-width: 700px;
   display: flex;
   flex-direction: column;
@@ -593,7 +594,7 @@ section {
   right: 8%;
   top: 50%;
   transform: translateY(-50%);
-  z-index: 2;
+  z-index: 10;
 }
 .hero-img {
   width: 280px;
@@ -1305,25 +1306,28 @@ footer {
 /* ============================================================
    SCROLL REVEAL ANIMATIONS
    ============================================================ */
+/* Reveal: visible always, animate in when .visible added OR use keyframe fallback */
 .reveal-up, .reveal-left, .reveal-right, .reveal-tl {
-  opacity: 0;
-  transition: opacity 0.8s ease, transform 0.8s ease;
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.7s ease, transform 0.7s ease;
 }
-.reveal-up { transform: translateY(40px); }
-.reveal-left { transform: translateX(-40px); }
-.reveal-right { transform: translateX(40px); }
-.reveal-tl { transform: translateY(30px); }
-.reveal-up.visible,
-.reveal-left.visible,
-.reveal-right.visible,
-.reveal-tl.visible {
+/* JS adds .visible class - also works without JS */
+.reveal-up.anim-ready { opacity: 0; transform: translateY(32px); }
+.reveal-left.anim-ready { opacity: 0; transform: translateX(-32px); }
+.reveal-right.anim-ready { opacity: 0; transform: translateX(32px); }
+.reveal-tl.anim-ready { opacity: 0; transform: translateY(24px); }
+.reveal-up.anim-ready.visible,
+.reveal-left.anim-ready.visible,
+.reveal-right.anim-ready.visible,
+.reveal-tl.anim-ready.visible {
   opacity: 1;
   transform: none;
 }
-.delay-1 { transition-delay: 0.1s; }
-.delay-2 { transition-delay: 0.2s; }
-.delay-3 { transition-delay: 0.3s; }
-.delay-4 { transition-delay: 0.4s; }
+.delay-1 { transition-delay: 0.08s; }
+.delay-2 { transition-delay: 0.16s; }
+.delay-3 { transition-delay: 0.24s; }
+.delay-4 { transition-delay: 0.32s; }
 
 /* ============================================================
    UTILITY
@@ -1582,4 +1586,52 @@ footer {
 }
 section {
   position: relative;
+}
+
+/* ============================================================
+   GLOBAL CONTENT Z-INDEX — above all canvases
+   ============================================================ */
+section > *:not(canvas) {
+  position: relative;
+  z-index: 2;
+}
+#hero > *:not(canvas) {
+  position: relative;
+  z-index: 10;
+}
+.hero-content, .hero-photo, .scroll-hint, .hero-grid-overlay {
+  z-index: 10;
+}
+.about-grid, .about-text, .about-photos,
+.timeline, .projects-grid, .skills-grid,
+.cert-box, .resume-preview, .resume-highlights,
+.contact-grid, .footer-inner {
+  position: relative;
+  z-index: 2;
+}
+.section-title, .section-sub, .section-label,
+h1, h2, h3, p, a, button, .tag, .stat,
+.project-card, .contact-item, .tl-card,
+.skill-group, .rh-item, .resume-card {
+  position: relative;
+  z-index: 3;
+}
+/* Particle canvases ALWAYS behind content */
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+/* Name text must be fully visible */
+.name-first, .name-last {
+  opacity: 1 !important;
+  visibility: visible !important;
+  color: inherit;
+}
+.hero-tagline, .hero-tag, .hero-cta, .hero-meta {
+  opacity: 1 !important;
+  visibility: visible !important;
 }
