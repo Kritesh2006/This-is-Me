@@ -148,18 +148,6 @@
           <span>🎵 Musician</span>
         </div>
       </div>
-      <div class="hero-photo-wrap ri d2">
-        <div class="photo-frame">
-          <div class="photo-ring-outer"></div>
-          <div class="photo-ring-inner"></div>
-          <img src="./images/photo2.jpg" alt="Kritesh Dhungel" class="hero-img"
-               onerror="this.onerror=null;this.src='./images/photo1.jpg';this.onerror=function(){this.parentElement.classList.add('img-fallback');this.style.opacity='0';}"/>
-          <div class="photo-corner tl"></div>
-          <div class="photo-corner tr"></div>
-          <div class="photo-corner bl"></div>
-          <div class="photo-corner br"></div>
-        </div>
-      </div>
     </div>
     <div class="scroll-hint">
       <div class="scroll-line"></div>
@@ -172,16 +160,7 @@
     <div class="section-inner">
       <div class="section-label ri">01 — ABOUT</div>
       <div class="about-grid">
-        <div class="about-photos ri">
-          <div class="photo-stack">
-            <img src="./images/photo4.jpg" alt="Kritesh" class="aph aph1"
-                 onerror="this.style.display='none'"/>
-            <img src="./images/photo1.jpg" alt="Kritesh" class="aph aph2"
-                 onerror="this.style.display='none'"/>
-            <div class="photo-glow"></div>
-          </div>
-          <div class="about-loc">GREENSBORO, NC — 2025</div>
-        </div>
+
         <div class="about-text ri d1">
           <h2 class="section-title">Who I Am</h2>
           <p>I'm <strong>Kritesh Dhungel</strong> — a <strong id="dynamicAge">19</strong>-year-old Computer Science student from Nepal, living and studying in Winston-Salem, North Carolina on an F-1 student visa. I arrived in the US in January 2025, and in just over a year I've gone from not knowing my dorm roommate's name to managing my own finances, building AI systems, and shipping real software.</p>
@@ -391,6 +370,42 @@
     </div>
   </section>
 
+
+  <!-- GAME SECTION -->
+  <section id="game-section">
+    <div class="section-inner">
+      <div class="game-invite ri">
+        <div class="section-label">07 — PLAYGROUND</div>
+        <h2 class="section-title centered">Bored? Wanna try the built-in game?</h2>
+        <p class="section-sub">A particle playground built into this portfolio. Drag, connect, and form patterns.</p>
+        <button id="openGame" class="btn-open-game">
+          <span class="game-btn-icon">⬡</span>
+          Open Game
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- FULL SCREEN GAME -->
+  <div id="gameOverlay" class="game-overlay screen-hidden">
+    <canvas id="gameCanvas"></canvas>
+    <div class="game-ui">
+      <div class="game-header">
+        <div class="game-title-ui">PARTICLE CONNECT</div>
+        <div class="game-score-wrap">
+          <span class="game-score-label">SCORE</span>
+          <span class="game-score" id="gameScore">0</span>
+          <span class="game-combo" id="gameCombo"></span>
+        </div>
+        <div class="game-controls">
+          <button id="gameReset" class="game-btn">↺ Reset</button>
+          <button id="gameClose" class="game-btn close">✕ Exit</button>
+        </div>
+      </div>
+      <div class="game-hint" id="gameHint">Drag particles to move · Click two particles to connect them</div>
+    </div>
+  </div>
+
   <!-- CONTACT -->
   <section id="contact">
     <div class="section-inner">
@@ -444,7 +459,6 @@
 
 </div><!-- /mainSite -->
 
-<script src="./photos.js"></script>
 <script src="./script.js"></script>
 </body>
 </html>
