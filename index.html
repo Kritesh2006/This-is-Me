@@ -1,211 +1,418 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Kritesh Dhungel | Portfolio</title>
-  <meta name="description" content="Kritesh Dhungel — cinematic portfolio, projects, timeline, and resume." />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css" />
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Kritesh Dhungel — Frontend Developer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="style.css"/>
 </head>
 <body>
-  <canvas id="starfield" aria-hidden="true"></canvas>
 
-  <div id="loader" class="loader-screen">
-    <div class="loader-orb" aria-hidden="true"></div>
-    <div class="loader-copy">
-      <span class="mono red">KD.SYSTEM</span>
-      <h1>Initializing story archive</h1>
-      <p id="loaderText">Loading memory sequence...</p>
-      <div class="loader-bar"><span></span></div>
+<!-- ========== LOADER ========== -->
+<div id="loader">
+  <canvas id="loaderCanvas"></canvas>
+  <div class="loader-content">
+    <div class="loader-logo">KD<span class="dot">.</span></div>
+    <div class="loader-bar-wrap"><div class="loader-bar"></div></div>
+    <div class="loader-text">INITIALIZING SYSTEM</div>
+  </div>
+</div>
+
+<!-- ========== ENTRY GATE ========== -->
+<div id="entryGate" class="hidden">
+  <canvas id="gateCanvas"></canvas>
+  <div class="gate-content">
+    <div class="gate-label">ACCESS TERMINAL</div>
+    <h2 class="gate-title">Who are you?</h2>
+    <p class="gate-sub">Choose your entry path to continue.</p>
+    <div class="gate-buttons">
+      <button class="btn-gate viewer" id="btnViewer">
+        <span class="btn-icon">◈</span>
+        <span>VIEWER</span>
+        <span class="btn-hint">Explore the portfolio</span>
+      </button>
+      <button class="btn-gate owner" id="btnOwner">
+        <span class="btn-icon">⬡</span>
+        <span>OWNER</span>
+        <span class="btn-hint">Restricted access</span>
+      </button>
     </div>
   </div>
-
-  <main id="entry" class="entry-screen hidden" aria-labelledby="entryTitle">
-    <div class="entry-grid"></div>
-    <section class="entry-card reveal-pop">
-      <span class="mono red">ACCESS GATE</span>
-      <h1 id="entryTitle">Are you the owner or viewer?</h1>
-      <p>This portfolio opens like a cinematic data archive: the same public story, with an owner gate for atmosphere.</p>
-      <div class="entry-actions">
-        <button class="btn primary" data-role="viewer">Viewer</button>
-        <button class="btn ghost" data-role="owner">Owner</button>
+  <!-- Owner Code Modal -->
+  <div id="ownerModal" class="modal hidden">
+    <div class="modal-box">
+      <div class="modal-title">ENTER ACCESS CODE</div>
+      <div class="code-inputs">
+        <input class="code-digit" maxlength="1" type="password"/>
+        <input class="code-digit" maxlength="1" type="password"/>
+        <input class="code-digit" maxlength="1" type="password"/>
+        <input class="code-digit" maxlength="1" type="password"/>
       </div>
-      <form id="ownerForm" class="owner-form hidden">
-        <label for="ownerCode">Owner access code</label>
-        <div class="code-row">
-          <input id="ownerCode" type="password" inputmode="numeric" placeholder="Enter code" autocomplete="off" />
-          <button class="btn small" type="submit">Unlock</button>
-        </div>
-        <p id="codeError" class="error" aria-live="polite"></p>
-      </form>
-    </section>
-  </main>
+      <div id="codeError" class="code-error hidden">Invalid code. Try again.</div>
+      <button id="submitCode" class="btn-submit">VERIFY</button>
+      <button id="cancelCode" class="btn-cancel">← BACK</button>
+    </div>
+  </div>
+</div>
 
-  <div id="transition" class="transition-screen hidden">
-    <div class="portal-ring"></div>
-    <p class="mono">Opening Kritesh Dhungel timeline...</p>
+<!-- ========== TRANSITION ========== -->
+<div id="transitionScreen" class="hidden">
+  <canvas id="transCanvas"></canvas>
+  <div class="trans-text">LOADING PROFILE</div>
+</div>
+
+<!-- ========== MAIN SITE ========== -->
+<div id="mainSite" class="hidden">
+
+  <!-- NAV -->
+  <nav id="navbar">
+    <div class="nav-logo">KD<span class="dot">.</span></div>
+    <div class="nav-links">
+      <a href="#about" class="nav-link">About</a>
+      <a href="#story" class="nav-link">Story</a>
+      <a href="#projects" class="nav-link">Projects</a>
+      <a href="#skills" class="nav-link">Skills</a>
+      <a href="#resume" class="nav-link">Resume</a>
+      <a href="#contact" class="nav-link">Contact</a>
+    </div>
+    <div class="nav-status"><span class="status-dot"></span>Available</div>
+    <button class="nav-burger" id="navBurger">☰</button>
+  </nav>
+  <div id="mobileMenu" class="mobile-menu hidden">
+    <a href="#about" class="mob-link">About</a>
+    <a href="#story" class="mob-link">Story</a>
+    <a href="#projects" class="mob-link">Projects</a>
+    <a href="#skills" class="mob-link">Skills</a>
+    <a href="#resume" class="mob-link">Resume</a>
+    <a href="#contact" class="mob-link">Contact</a>
   </div>
 
-  <div id="site" class="site hidden">
-    <header class="topbar">
-      <a href="#home" class="logo">KD<span>.</span></a>
-      <nav aria-label="Primary navigation">
-        <a href="#about">About</a>
-        <a href="#journey">Journey</a>
-        <a href="#projects">Projects</a>
-        <a href="#resume">Resume</a>
-        <a href="#contact">Contact</a>
-      </nav>
-      <button class="menu-btn" id="menuBtn" aria-label="Open menu">☰</button>
-    </header>
+  <!-- ====== HERO ====== -->
+  <section id="hero">
+    <canvas id="heroCanvas"></canvas>
+    <div class="hero-grid-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-tag reveal-up">◈ FRONTEND DEVELOPER · AI BUILDER · CS STUDENT</div>
+      <div class="hero-name reveal-up delay-1">
+        <span class="name-first">Kritesh</span>
+        <span class="name-last">Dhungel</span>
+      </div>
+      <p class="hero-tagline reveal-up delay-2">Self-taught. Financially independent.<br/>Building real things from scratch — in a country I moved to alone at 18.</p>
+      <div class="hero-cta reveal-up delay-3">
+        <a href="#projects" class="btn-primary">VIEW MY WORK</a>
+        <a href="#contact" class="btn-secondary">GET IN TOUCH</a>
+      </div>
+      <div class="hero-meta reveal-up delay-4">
+        <span>📍 Winston-Salem, NC</span>
+        <span>🎓 Forsyth Tech</span>
+        <span>🇳🇵 From Nepal</span>
+        <span>🎵 Musician</span>
+      </div>
+    </div>
+    <div class="hero-photo reveal-right">
+      <div class="photo-ring"></div>
+      <img src="photo1.jpeg" alt="Kritesh Dhungel" class="hero-img"/>
+      <div class="photo-accent"></div>
+    </div>
+    <div class="scroll-hint">
+      <div class="scroll-line"></div>
+      <span>SCROLL</span>
+    </div>
+  </section>
 
-    <section id="home" class="hero panel page-section active-section">
-      <div class="hero-content" data-reveal>
-        <span class="status-pill"><span></span> Available for opportunities</span>
-        <h1>Kritesh <em>Dhungel</em></h1>
-        <p class="hero-sub">A Computer Science student from Nepal building software, financial discipline, and a future in the U.S. — one real project at a time.</p>
-        <div class="hero-actions">
-          <a class="btn primary" href="#journey">View the journey</a>
-          <a class="btn ghost" href="#projects">Explore projects</a>
+  <!-- ====== ABOUT ====== -->
+  <section id="about">
+    <div class="section-label reveal-up">01 — ABOUT</div>
+    <div class="about-grid">
+      <div class="about-photos reveal-left">
+        <div class="photo-stack">
+          <img src="photo2.jpeg" alt="Kritesh" class="aph aph1"/>
+          <img src="photo1.jpeg" alt="Kritesh" class="aph aph2"/>
+          <div class="photo-glow"></div>
         </div>
-        <div class="signal-row">
-          <span>📍 Greensboro, NC</span>
-          <span>🎓 Forsyth Tech</span>
-          <span>🇳🇵 Nepal → USA</span>
-          <span>🎙 Musician</span>
+        <div class="about-loc">GREENSBORO, NC — 2025</div>
+      </div>
+      <div class="about-text reveal-right">
+        <h2 class="section-title">Who I Am</h2>
+        <p>I'm <strong>Kritesh Dhungel</strong> — a <strong id="dynamicAge">19</strong>-year-old Computer Science student from Nepal, living and studying in Winston-Salem, North Carolina on an F-1 student visa. I arrived in the US in January 2025, and in just over a year, I've gone from not knowing my dorm roommate's name to managing my own finances, building AI systems, and shipping real software products.</p>
+        <p>I'm a practical learner — I don't wait for a class to tell me what to do. I taught myself web development through AI tools, coding apps, and sheer persistence. No formal CS classes required.</p>
+        <p>I'm semi-introverted but socially sharp. I can walk into a room of strangers and leave with friends. I adapt fast — whether it's a new country, a new financial system, or a new tech stack.</p>
+        <div class="about-tags">
+          <span class="tag">🧠 Self-Taught Developer</span>
+          <span class="tag">⚡ Fast Adapter</span>
+          <span class="tag">🌐 4 Languages</span>
+          <span class="tag">💳 Credit Builder</span>
+          <span class="tag">🎵 Musician</span>
         </div>
-      </div>
-
-      <div class="hero-visual" data-reveal>
-        <div class="holo-card">
-          <canvas id="heroWave"></canvas>
-          <div class="identity-card">
-            <span class="mono red">PROFILE</span>
-            <h2>Kritesh / Ron</h2>
-            <p>Ron is the U.S. version of Kritesh — a simple name used because many native speakers found “Kritesh” hard to pronounce.</p>
-          </div>
-        </div>
-      </div>
-      <a class="scroll-cue mono" href="#about">Scroll</a>
-    </section>
-
-    <section id="about" class="panel split page-section">
-      <div class="visual-stack" data-reveal>
-        <div class="glass-img big">
-          <img src="assets/data-wave.png" alt="Futuristic blue data wave visual" />
-        </div>
-        <div class="glass-img small">
-          <img src="assets/energy-portal.png" alt="Orange holographic energy portal visual" />
-        </div>
-      </div>
-      <div class="section-copy" data-reveal>
-        <span class="section-kicker">01 — About</span>
-        <h2>Not just a student profile. A migration story.</h2>
-        <p>I arrived in the United States on January 15, 2025, beginning in Dayton, Ohio for Wright State University. Since then, the story has moved through Ohio, California, and North Carolina — learning systems, adapting fast, and building real tools without waiting for perfect conditions.</p>
-        <p>The name Ron became the easy U.S. version of Kritesh. Not a legal name change — just a practical identity bridge in a new country.</p>
-        <div class="stats-grid">
-          <div><strong id="ageValue">19</strong><span>Age</span></div>
-          <div><strong>4</strong><span>Languages</span></div>
-          <div><strong>3</strong><span>Live Projects</span></div>
-          <div><strong>2025</strong><span>USA Start</span></div>
-        </div>
-      </div>
-    </section>
-
-    <section id="journey" class="panel journey page-section">
-      <div class="section-head" data-reveal>
-        <span class="section-kicker">02 — Journey</span>
-        <h2>Nepal → Ohio → California → North Carolina</h2>
-        <p>A timeline of movement, adaptation, and self-built momentum.</p>
-      </div>
-      <div class="timeline">
-        <article class="timeline-item" data-reveal><span>Before 2025</span><h3>Nepal foundation</h3><p>Grew up in Nepal, learned responsibility early, and built the mindset to figure things out hands-on.</p></article>
-        <article class="timeline-item" data-reveal><span>Jan 15, 2025</span><h3>Dayton, Ohio</h3><p>Arrived in the U.S. and started the first chapter at Wright State University.</p></article>
-        <article class="timeline-item" data-reveal><span>May 3, 2025</span><h3>California chapter</h3><p>Flew to California and spent three months across Visalia, Delano, Porterville, Bakersfield, Wasco, Fresno, and Clovis — mostly around Truxtun Ave in downtown Bakersfield.</p></article>
-        <article class="timeline-item" data-reveal><span>After Summer 2025</span><h3>Greensboro, North Carolina</h3><p>Moved to Greensboro and chose Forsyth Tech in Winston-Salem because of its Computer Science focus.</p></article>
-        <article class="timeline-item" data-reveal><span>Now</span><h3>Building the next version</h3><p>Learning Python, shipping practical tools, building ARIA, and growing toward internship and future founder-level opportunities.</p></article>
-      </div>
-    </section>
-
-    <section id="projects" class="panel page-section">
-      <div class="section-head" data-reveal>
-        <span class="section-kicker">03 — Projects</span>
-        <h2>Built from real problems, not fake portfolio filler.</h2>
-      </div>
-      <div class="project-grid">
-        <article class="project-card" data-reveal>
-          <span class="project-index">01</span>
-          <h3>Pay Report</h3>
-          <p>A pay calculation tool built for an iFixAndRepair friend’s store system. Employees use it to calculate hours for monthly or half-month pay periods.</p>
-          <div class="tags"><span>HTML</span><span>CSS</span><span>JavaScript</span><span>Payroll Logic</span></div>
-          <a href="http://ifixtimesheet.online/" target="_blank" rel="noopener">Live ↗</a>
-        </article>
-        <article class="project-card" data-reveal>
-          <span class="project-index">02</span>
-          <h3>iFixAndRepair Booking Demo</h3>
-          <p>A demo booking website for a phone repair business concept, designed to show service flow and online scheduling direction.</p>
-          <div class="tags"><span>Responsive</span><span>Booking UI</span><span>JavaScript</span></div>
-          <a href="https://kritesh2006.github.io/iFixandrepair/" target="_blank" rel="noopener">Live ↗</a>
-        </article>
-        <article class="project-card featured" data-reveal>
-          <span class="project-index">03</span>
-          <h3>ARIA — Autonomous Reasoning & Intelligent AI</h3>
-          <p>A multi-agent AI concept where different models debate, analyze, and produce stronger decisions for stocks, investments, expenses, automation, and personal analytics.</p>
-          <div class="tags"><span>AI Agents</span><span>Debate Engine</span><span>Automation</span><span>Analysis</span></div>
-          <a href="https://kritesh2006.github.io/Personal-Ai/" target="_blank" rel="noopener">Live ↗</a>
-        </article>
-      </div>
-    </section>
-
-    <section id="resume" class="panel resume page-section">
-      <div class="resume-card" data-reveal>
-        <span class="section-kicker">04 — Resume</span>
-        <h2>Resume archive</h2>
-        <p>Add your actual resume as <code>resume.pdf</code> in this same folder. The buttons below will then open and download it.</p>
-        <div class="hero-actions">
-          <a class="btn primary" href="resume.pdf" target="_blank">View Resume</a>
-          <a class="btn ghost" href="resume.pdf" download>Download Resume</a>
+        <div class="about-stats">
+          <div class="stat"><span class="stat-num">4</span><span class="stat-label">Languages<br/>Spoken</span></div>
+          <div class="stat"><span class="stat-num">3</span><span class="stat-label">Live<br/>Projects</span></div>
+          <div class="stat"><span class="stat-num">1+</span><span class="stat-label">Year<br/>in USA</span></div>
+          <div class="stat"><span class="stat-num" id="ageStatNum">19</span><span class="stat-label">Age When<br/>Moved Alone</span></div>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section id="skills" class="panel page-section">
-      <div class="section-head" data-reveal>
-        <span class="section-kicker">05 — Skills</span>
-        <h2>Practical stack. Real adaptation.</h2>
-      </div>
-      <div class="skills-grid">
-        <article data-reveal><h3>Python</h3><p>Learning through projects, functions, logic, automation, and practical scripts.</p></article>
-        <article data-reveal><h3>HTML / CSS</h3><p>Responsive layouts, visual systems, animation polish, and clean structure.</p></article>
-        <article data-reveal><h3>JavaScript</h3><p>DOM logic, interactive UI, calculations, local storage, and app behavior.</p></article>
-        <article data-reveal><h3>AI Workflow</h3><p>Multi-model thinking, prompt design, debate systems, and automation concepts.</p></article>
-      </div>
-    </section>
+  <!-- ====== STORY / TIMELINE ====== -->
+  <section id="story">
+    <div class="section-label reveal-up">02 — STORY</div>
+    <h2 class="section-title centered reveal-up">The Journey</h2>
+    <p class="section-sub reveal-up">From a small city in Nepal to building AI systems in America — every move was intentional.</p>
+    <div class="timeline">
 
-    <section id="contact" class="panel contact page-section">
-      <div data-reveal>
-        <span class="section-kicker">06 — Contact</span>
-        <h2>Let’s connect.</h2>
-        <p>Open to internships, freelance projects, collaborations, and conversations around AI, software, and practical tools.</p>
+      <div class="tl-item reveal-tl" data-side="left">
+        <div class="tl-dot"></div>
+        <div class="tl-card">
+          <div class="tl-date">2006 · NEPAL</div>
+          <h3 class="tl-title">Origin</h3>
+          <p>Born on June 7th in Nepal. Grew up curious — always taking things apart to understand how they work. Music, language, and technology became the three pillars early on.</p>
+        </div>
       </div>
-      <div class="contact-grid" data-reveal>
-        <a href="mailto:kriteshdhungel07@gmail.com">Email <span>kriteshdhungel07@gmail.com</span></a>
-        <a href="https://github.com/Kritesh2006" target="_blank" rel="noopener">GitHub <span>Kritesh2006</span></a>
-        <a href="https://www.linkedin.com/in/kritesh-dhungel-0aa2ab31a/" target="_blank" rel="noopener">LinkedIn <span>Kritesh Dhungel</span></a>
-        <a href="https://www.instagram.com/4.kiorr_/" target="_blank" rel="noopener">Instagram <span>@4.kiorr_</span></a>
-        <a href="https://x.com/KriteshDhungel" target="_blank" rel="noopener">X / Twitter <span>@KriteshDhungel</span></a>
-        <a href="https://www.facebook.com/kritesh.R123" target="_blank" rel="noopener">Facebook <span>kritesh.R123</span></a>
+
+      <div class="tl-item reveal-tl" data-side="right">
+        <div class="tl-dot"></div>
+        <div class="tl-card">
+          <div class="tl-date">JAN 15, 2025 · DAYTON, OHIO</div>
+          <h3 class="tl-title">First Landing</h3>
+          <p>Landed in Dayton, Ohio — alone, 18 years old. Started at Wright State University. First real exposure to American systems: banking, credit, independent living. Figured it out fast.</p>
+        </div>
       </div>
-    </section>
 
-    <footer>
-      <span>KD.</span> © <span id="year"></span> Kritesh Dhungel — built as a cinematic personal archive.
-    </footer>
-  </div>
+      <div class="tl-item reveal-tl" data-side="left">
+        <div class="tl-dot"></div>
+        <div class="tl-card">
+          <div class="tl-date">MAY 2025 · CALIFORNIA</div>
+          <h3 class="tl-title">California Chapter</h3>
+          <p>Three-month cross-state move through California — Bakersfield, Visalia, Fresno, Clovis, Porterville, Delano, Wasco. Lived in downtown Bakersfield on Truxtun Ave. Explored, adapted, kept building.</p>
+        </div>
+      </div>
 
-  <script src="script.js"></script>
+      <div class="tl-item reveal-tl" data-side="right">
+        <div class="tl-dot"></div>
+        <div class="tl-card">
+          <div class="tl-date">2025 · GREENSBORO, NC</div>
+          <h3 class="tl-title">North Carolina</h3>
+          <p>Relocated to Greensboro, NC. Chose Forsyth Technical Community College in Winston-Salem for its focused Computer Science program — a strategic move toward a UNC-system transfer.</p>
+        </div>
+      </div>
+
+      <div class="tl-item reveal-tl" data-side="left">
+        <div class="tl-dot active"></div>
+        <div class="tl-card active">
+          <div class="tl-date">NOW · BUILDING</div>
+          <h3 class="tl-title">Present</h3>
+          <p>Studying CS at Forsyth Tech, building AI systems, shipping real projects, and planning the next chapter. The goal: land at a major tech company. The timeline: sooner than expected.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ====== PROJECTS ====== -->
+  <section id="projects">
+    <div class="section-label reveal-up">03 — PROJECTS</div>
+    <h2 class="section-title centered reveal-up">What I've Built</h2>
+    <p class="section-sub reveal-up">Real tools. Real deployments. No filler.</p>
+    <div class="projects-grid">
+
+      <div class="project-card reveal-up featured">
+        <div class="project-glow"></div>
+        <div class="project-tag">FEATURED · AI SYSTEM</div>
+        <h3 class="project-name">ARIA</h3>
+        <p class="project-desc">Personal AI Assistant powered by a multi-agent debate system — four specialized agents (Strategist, Critic, Realist, Judge) run in parallel via Promise.all, cross-reference live data, debate results, and synthesize the best answer. Built for investment analysis, expense tracking, and intelligent automation. Goal: connect to your bank accounts and actively suggest where to cut spending.</p>
+        <div class="project-stack">
+          <span>Node.js</span><span>Express</span><span>OpenAI API</span><span>JavaScript</span><span>HTML/CSS</span><span>Web Speech API</span>
+        </div>
+        <div class="project-links">
+          <a href="https://kritesh2006.github.io/Personal-Ai/" target="_blank" class="proj-link live">↗ Live Demo</a>
+          <a href="https://github.com/Kritesh2006" target="_blank" class="proj-link gh">⌥ GitHub</a>
+        </div>
+      </div>
+
+      <div class="project-card reveal-up delay-1">
+        <div class="project-tag">WEB APP · TOOL</div>
+        <h3 class="project-name">Pay Report</h3>
+        <p class="project-desc">A real-world payroll calculation system actively used by employees at iFixandRepair in Greensboro to calculate hours for monthly and bi-monthly pay. Eliminates manual wage calculation errors — shipped as a functional, deployed tool solving a real workplace problem.</p>
+        <div class="project-stack">
+          <span>Python</span><span>JavaScript</span><span>HTML/CSS</span><span>GitHub</span>
+        </div>
+        <div class="project-links">
+          <a href="http://ifixtimesheet.online/" target="_blank" class="proj-link live">↗ Live Tool</a>
+        </div>
+      </div>
+
+      <div class="project-card reveal-up delay-2">
+        <div class="project-tag">WEB · DEMO</div>
+        <h3 class="project-name">iFixandRepair Booking</h3>
+        <p class="project-desc">A fully designed online booking system demo for a phone repair store. Built to demonstrate end-to-end frontend ownership — concept, UI design, build, and deployment. Shows what a real booking experience could look like for a local repair business.</p>
+        <div class="project-stack">
+          <span>HTML5</span><span>CSS3</span><span>JavaScript</span><span>GitHub Pages</span>
+        </div>
+        <div class="project-links">
+          <a href="https://kritesh2006.github.io/iFixandrepair/" target="_blank" class="proj-link live">↗ Live Demo</a>
+          <a href="https://github.com/Kritesh2006" target="_blank" class="proj-link gh">⌥ GitHub</a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ====== SKILLS ====== -->
+  <section id="skills">
+    <div class="section-label reveal-up">04 — SKILLS</div>
+    <h2 class="section-title centered reveal-up">Tech Stack</h2>
+    <div class="skills-grid">
+      <div class="skill-group reveal-up">
+        <div class="skill-group-title">Languages</div>
+        <div class="skill-items">
+          <div class="skill-item"><span class="skill-bar" data-w="88"></span><span>Python</span></div>
+          <div class="skill-item"><span class="skill-bar" data-w="85"></span><span>JavaScript</span></div>
+          <div class="skill-item"><span class="skill-bar" data-w="90"></span><span>HTML5</span></div>
+          <div class="skill-item"><span class="skill-bar" data-w="87"></span><span>CSS3</span></div>
+        </div>
+      </div>
+      <div class="skill-group reveal-up delay-1">
+        <div class="skill-group-title">Frontend</div>
+        <div class="skill-items">
+          <div class="skill-item"><span class="skill-bar" data-w="85"></span><span>Responsive Design</span></div>
+          <div class="skill-item"><span class="skill-bar" data-w="80"></span><span>UI/UX</span></div>
+          <div class="skill-item"><span class="skill-bar" data-w="75"></span><span>DOM APIs</span></div>
+          <div class="skill-item"><span class="skill-bar" data-w="82"></span><span>Web Speech API</span></div>
+        </div>
+      </div>
+      <div class="skill-group reveal-up delay-2">
+        <div class="skill-group-title">AI & APIs</div>
+        <div class="skill-items">
+          <div class="skill-item"><span class="skill-bar" data-w="88"></span><span>OpenAI API</span></div>
+          <div class="skill-item"><span class="skill-bar" data-w="85"></span><span>Prompt Engineering</span></div>
+          <div class="skill-item"><span class="skill-bar" data-w="80"></span><span>Multi-Agent Systems</span></div>
+          <div class="skill-item"><span class="skill-bar" data-w="78"></span><span>REST APIs</span></div>
+        </div>
+      </div>
+      <div class="skill-group reveal-up delay-3">
+        <div class="skill-group-title">Dev Tools</div>
+        <div class="skill-items">
+          <div class="skill-item"><span class="skill-bar" data-w="85"></span><span>Git / GitHub</span></div>
+          <div class="skill-item"><span class="skill-bar" data-w="75"></span><span>Node.js / Express</span></div>
+          <div class="skill-item"><span class="skill-bar" data-w="90"></span><span>VS Code</span></div>
+          <div class="skill-item"><span class="skill-bar" data-w="82"></span><span>GitHub Pages</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="cert-box reveal-up">
+      <div class="cert-icon">✦</div>
+      <div class="cert-text">
+        <div class="cert-title">Python Programming Fundamentals</div>
+        <div class="cert-meta">Microsoft · Coursera · May 2026 · <a href="https://coursera.org/verify/4YJG8SI4K01K" target="_blank">Verify</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== RESUME ====== -->
+  <section id="resume">
+    <div class="section-label reveal-up">05 — RESUME</div>
+    <h2 class="section-title centered reveal-up">Credentials</h2>
+    <p class="section-sub reveal-up">The full picture — education, projects, and experience.</p>
+    <div class="resume-preview reveal-up">
+      <div class="resume-card">
+        <div class="resume-icon">⬡</div>
+        <div class="resume-info">
+          <div class="resume-name">Kritesh_Dhungel_Resume.pdf</div>
+          <div class="resume-meta">Frontend Developer · AI Trainer · CS Student</div>
+        </div>
+        <div class="resume-actions">
+          <a href="kritesh_dhungel_resume.pdf" target="_blank" class="btn-resume view">View Resume</a>
+          <a href="kritesh_dhungel_resume.pdf" download class="btn-resume download">↓ Download</a>
+        </div>
+      </div>
+    </div>
+    <div class="resume-highlights reveal-up">
+      <div class="rh-item">
+        <div class="rh-icon">🎓</div>
+        <div class="rh-text">
+          <strong>Forsyth Technical Community College</strong><br/>
+          A.S. Computer Science Track · Expected 2029 · GPA 3.00
+        </div>
+      </div>
+      <div class="rh-item">
+        <div class="rh-icon">✦</div>
+        <div class="rh-text">
+          <strong>Python Programming Fundamentals</strong><br/>
+          Microsoft · Coursera · May 2026
+        </div>
+      </div>
+      <div class="rh-item">
+        <div class="rh-icon">🌐</div>
+        <div class="rh-text">
+          <strong>Languages</strong><br/>
+          English (Fluent) · Nepali (Native) · 4 languages total
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== CONTACT ====== -->
+  <section id="contact">
+    <div class="section-label reveal-up">06 — CONTACT</div>
+    <h2 class="section-title centered reveal-up">Let's Connect</h2>
+    <p class="section-sub reveal-up">Whether it's a project, an opportunity, or just a conversation — I'm open.</p>
+    <div class="contact-grid">
+      <div class="contact-links reveal-left">
+        <a href="mailto:kriteshdhungel07@gmail.com" class="contact-item" target="_blank">
+          <span class="ci-icon">✉</span>
+          <span class="ci-text"><strong>Email</strong><br/>kriteshdhungel07@gmail.com</span>
+        </a>
+        <a href="https://github.com/Kritesh2006" class="contact-item" target="_blank">
+          <span class="ci-icon">⌥</span>
+          <span class="ci-text"><strong>GitHub</strong><br/>github.com/Kritesh2006</span>
+        </a>
+        <a href="https://www.linkedin.com/in/kritesh-dhungel-0aa2ab31a/" class="contact-item" target="_blank">
+          <span class="ci-icon">◈</span>
+          <span class="ci-text"><strong>LinkedIn</strong><br/>kritesh-dhungel</span>
+        </a>
+        <a href="https://www.instagram.com/4.kiorr_/" class="contact-item" target="_blank">
+          <span class="ci-icon">◉</span>
+          <span class="ci-text"><strong>Instagram</strong><br/>@4.kiorr_</span>
+        </a>
+        <a href="https://x.com/KriteshDhungel" class="contact-item" target="_blank">
+          <span class="ci-icon">✕</span>
+          <span class="ci-text"><strong>X / Twitter</strong><br/>@KriteshDhungel</span>
+        </a>
+        <a href="https://www.facebook.com/kritesh.R123" class="contact-item" target="_blank">
+          <span class="ci-icon">⬡</span>
+          <span class="ci-text"><strong>Facebook</strong><br/>kritesh.R123</span>
+        </a>
+      </div>
+      <div class="contact-card reveal-right">
+        <div class="cc-inner">
+          <div class="cc-name">Kritesh Dhungel</div>
+          <div class="cc-role">Frontend Developer · AI Builder</div>
+          <div class="cc-loc">📍 Winston-Salem, NC</div>
+          <div class="cc-available"><span class="status-dot"></span> Available for opportunities</div>
+          <div class="cc-quote">"Self-taught. Financially independent.<br/>Building real things from scratch."</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-logo">KD<span class="dot">.</span></div>
+      <div class="footer-text">© 2025 Kritesh Dhungel — Built from scratch.</div>
+      <div class="footer-links">
+        <a href="https://github.com/Kritesh2006" target="_blank">GitHub</a>
+        <a href="https://www.linkedin.com/in/kritesh-dhungel-0aa2ab31a/" target="_blank">LinkedIn</a>
+      </div>
+    </div>
+  </footer>
+
+</div><!-- /mainSite -->
+
+<script src="main.js"></script>
 </body>
 </html>
