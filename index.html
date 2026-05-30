@@ -111,6 +111,7 @@
       <a href="#projects" class="nav-link">Projects</a>
       <a href="#skills" class="nav-link">Skills</a>
       <a href="#resume" class="nav-link">Resume</a>
+      <a href="#neural" class="nav-link">Neural</a>
       <a href="#contact" class="nav-link">Contact</a>
     </div>
     <div class="nav-status"><span class="status-dot"></span>Available</div>
@@ -122,31 +123,33 @@
     <a href="#projects" class="mob-link">Projects</a>
     <a href="#skills" class="mob-link">Skills</a>
     <a href="#resume" class="mob-link">Resume</a>
+    <a href="#neural" class="mob-link">Neural</a>
     <a href="#contact" class="mob-link">Contact</a>
   </div>
 
-  <!-- HERO — proper grid layout -->
+  <!-- HERO -->
   <section id="hero">
     <canvas id="heroCanvas"></canvas>
     <div class="hero-grid-overlay"></div>
     <div class="hero-inner">
-      <div class="hero-content">
-        <div class="hero-tag ri">◈ FULL-STACK DEVELOPER · AI SYSTEMS BUILDER · CS STUDENT</div>
-        <div class="hero-name ri d1">
-          <span class="name-first">Kritesh</span>
-          <span class="name-last">Dhungel</span>
-        </div>
-        <p class="hero-tagline ri d2">Self-taught. Financially independent.<br/>Building real things from scratch — in a country I moved to alone at 18.</p>
-        <div class="hero-cta ri d3">
-          <a href="#projects" class="btn-primary">VIEW MY WORK</a>
-          <a href="#contact" class="btn-secondary">GET IN TOUCH</a>
-        </div>
-        <div class="hero-meta ri d4">
-          <span>📍 Winston-Salem, NC</span>
-          <span>🎓 Forsyth Tech</span>
-          <span>🇳🇵 From Nepal</span>
-          <span>🎵 Musician</span>
-        </div>
+      <div class="hero-eyebrow ri">
+        <span class="hero-tag-dot"></span>
+        FULL-STACK DEVELOPER · AI SYSTEMS BUILDER · CS STUDENT
+      </div>
+      <h1 class="hero-name ri d1">
+        <span class="name-first">Kritesh</span>
+        <span class="name-last">Dhungel</span>
+      </h1>
+      <p class="hero-tagline ri d2">Self-taught. Financially independent.<br/>Building real things from scratch — in a country I moved to alone at 18.</p>
+      <div class="hero-cta ri d3">
+        <a href="#projects" class="btn-primary">VIEW MY WORK</a>
+        <a href="#contact" class="btn-secondary">GET IN TOUCH</a>
+      </div>
+      <div class="hero-meta ri d4">
+        <span>📍 Winston-Salem, NC</span>
+        <span>🎓 Forsyth Tech</span>
+        <span>🇳🇵 From Nepal</span>
+        <span>🎵 Musician</span>
       </div>
     </div>
     <div class="scroll-hint">
@@ -157,27 +160,41 @@
 
   <!-- ABOUT -->
   <section id="about">
+    <canvas class="sec-canvas"></canvas>
     <div class="section-inner">
       <div class="section-label ri">01 — ABOUT</div>
-      <div class="about-grid">
-
-        <div class="about-text ri d1">
+      <div class="about-layout">
+        <div class="about-left ri">
           <h2 class="section-title">Who I Am</h2>
-          <p>I'm <strong>Kritesh Dhungel</strong> — a <strong id="dynamicAge">19</strong>-year-old Computer Science student from Nepal, living and studying in Winston-Salem, North Carolina on an F-1 student visa. I arrived in the US in January 2025, and in just over a year I've gone from not knowing my dorm roommate's name to managing my own finances, building AI systems, and shipping real software.</p>
-          <p>I'm a practical learner — I don't wait for a class to tell me what to do. I taught myself web development through AI tools, coding apps, and sheer persistence.</p>
-          <p>Semi-introverted but socially sharp. I adapt fast — whether it's a new country, a new financial system, or a new tech stack.</p>
+          <p>I'm <strong>Kritesh Dhungel</strong> — a <strong id="dynamicAge">19</strong>-year-old Computer Science student from Nepal, living in Winston-Salem, North Carolina on an F-1 student visa. I arrived in the US in January 2025, and in just over a year I've gone from not knowing my dorm roommate's name to managing my own finances, building AI systems, and shipping real software products.</p>
+          <p>I'm a practical learner. I don't wait for a class to tell me what to do. I taught myself web development through AI tools, coding apps, and sheer persistence.</p>
+          <p>Semi-introverted but socially sharp. I adapt fast — new country, new financial system, new tech stack.</p>
           <div class="about-tags">
-            <span class="tag">🧠 Self-Taught Developer</span>
+            <span class="tag">🧠 Self-Taught</span>
             <span class="tag">⚡ Fast Adapter</span>
             <span class="tag">🌐 4 Languages</span>
             <span class="tag">💳 Credit Builder</span>
             <span class="tag">🎵 Musician</span>
           </div>
+        </div>
+        <div class="about-right ri d1">
           <div class="about-stats">
-            <div class="stat"><span class="stat-num">4</span><span class="stat-label">Languages<br/>Spoken</span></div>
-            <div class="stat"><span class="stat-num">3</span><span class="stat-label">Live<br/>Projects</span></div>
-            <div class="stat"><span class="stat-num">1+</span><span class="stat-label">Year<br/>in USA</span></div>
-            <div class="stat"><span class="stat-num" id="ageStatNum">19</span><span class="stat-label">Age When<br/>Moved Alone</span></div>
+            <div class="stat-card">
+              <span class="stat-num">4</span>
+              <span class="stat-label">Languages<br/>Spoken</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-num">3</span>
+              <span class="stat-label">Live<br/>Projects</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-num">1+</span>
+              <span class="stat-label">Year<br/>in USA</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-num" id="ageStatNum">19</span>
+              <span class="stat-label">Age When<br/>Moved Alone</span>
+            </div>
           </div>
         </div>
       </div>
@@ -186,6 +203,7 @@
 
   <!-- STORY -->
   <section id="story">
+    <canvas class="sec-canvas"></canvas>
     <div class="section-inner">
       <div class="section-label ri">02 — STORY</div>
       <h2 class="section-title centered ri">The Journey</h2>
@@ -204,7 +222,7 @@
           <div class="tl-card">
             <div class="tl-date">JAN 15, 2025 · DAYTON, OHIO</div>
             <h3 class="tl-title">First Landing</h3>
-            <p>Landed in Dayton, Ohio — alone, 18 years old. Started at Wright State University. First real exposure to American systems: banking, credit, independent living. Figured it out fast.</p>
+            <p>Landed in Dayton, Ohio — alone, 18 years old. Wright State University. First real exposure to American systems: banking, credit, independent living. Figured it out fast.</p>
           </div>
         </div>
         <div class="tl-item ri d2" data-side="left">
@@ -212,7 +230,7 @@
           <div class="tl-card">
             <div class="tl-date">MAY 2025 · CALIFORNIA</div>
             <h3 class="tl-title">California Chapter</h3>
-            <p>Three-month cross-state move — Bakersfield, Visalia, Fresno, Clovis, Porterville, Delano, Wasco. Lived downtown Bakersfield on Truxtun Ave. Explored, adapted, kept building.</p>
+            <p>Three-month cross-state move — Bakersfield, Visalia, Fresno, Clovis, Porterville. Lived downtown Bakersfield on Truxtun Ave. Explored, adapted, kept building.</p>
           </div>
         </div>
         <div class="tl-item ri d3" data-side="right">
@@ -220,7 +238,7 @@
           <div class="tl-card">
             <div class="tl-date">2025 · GREENSBORO, NC</div>
             <h3 class="tl-title">North Carolina</h3>
-            <p>Relocated to Greensboro, NC. Chose Forsyth Technical Community College in Winston-Salem for its focused Computer Science track — strategic move toward UNC-system transfer.</p>
+            <p>Relocated to Greensboro. Chose Forsyth Technical Community College in Winston-Salem for its focused CS track — strategic move toward UNC-system transfer.</p>
           </div>
         </div>
         <div class="tl-item ri d4" data-side="left">
@@ -228,7 +246,7 @@
           <div class="tl-card active">
             <div class="tl-date">NOW · BUILDING</div>
             <h3 class="tl-title">Present</h3>
-            <p>Studying CS at Forsyth Tech, building AI systems, shipping real projects, planning the next chapter. Goal: major tech company. Timeline: sooner than expected.</p>
+            <p>Studying CS at Forsyth Tech, building AI systems, shipping real projects. Goal: major tech company. Timeline: sooner than expected.</p>
           </div>
         </div>
       </div>
@@ -237,19 +255,20 @@
 
   <!-- PROJECTS -->
   <section id="projects">
+    <canvas class="sec-canvas"></canvas>
     <div class="section-inner">
       <div class="section-label ri">03 — PROJECTS</div>
       <h2 class="section-title centered ri">What I've Built</h2>
       <p class="section-sub ri">Real tools. Real deployments. No filler.</p>
       <div class="projects-grid">
-        <div class="project-card featured ri" id="ariaCard">
+        <div class="project-card featured ri">
           <div class="project-glow"></div>
           <div class="project-tag">FEATURED · AUTONOMOUS AI SYSTEM</div>
           <h3 class="project-name">ARIA</h3>
           <p class="project-subtitle">Autonomous Reasoning &amp; Intelligent AI Assistant</p>
-          <p class="project-desc">ARIA is not a chatbot. It is a multi-agent reasoning system where four specialized AI agents — Strategist, Critic, Realist, and Judge — operate in parallel, actively debate each other's outputs, and converge on the most defensible answer. Each agent runs its own reasoning chain with differentiated temperature settings, then the results are cross-examined before a final synthesis is delivered. Built for high-stakes analytical use: investment research, financial decision support, and expense intelligence. The long-term vision is a personal operating system — connected to your accounts, understanding your patterns, and proactively surfacing what matters before you have to ask. Currently live with real-time web search, weather API integration, and voice interaction via Web Speech API.</p>
+          <p class="project-desc">Not a chatbot. A multi-agent reasoning system where four specialized AI agents — Strategist, Critic, Realist, and Judge — operate in parallel, debate each other's outputs, and converge on the most defensible answer. Built for investment research, financial decision support, and expense intelligence. Long-term vision: a personal OS connected to your accounts, understanding your patterns, surfacing what matters before you ask.</p>
           <div class="project-stack">
-            <span>Node.js</span><span>Express</span><span>OpenAI API</span><span>JavaScript</span><span>HTML/CSS</span><span>Web Speech API</span><span>REST APIs</span>
+            <span>Node.js</span><span>Express</span><span>OpenAI API</span><span>JavaScript</span><span>Web Speech API</span><span>REST APIs</span>
           </div>
           <div class="project-links">
             <a href="https://kritesh2006.github.io/Personal-Ai/" target="_blank" class="proj-link live">↗ Live Demo</a>
@@ -259,21 +278,17 @@
         <div class="project-card ri d1">
           <div class="project-tag">WEB APP · DEPLOYED TOOL</div>
           <h3 class="project-name">Pay Report</h3>
-          <p class="project-desc">A real-world payroll calculation system actively used by employees at a phone repair store in Greensboro to calculate hours for monthly and bi-monthly pay cycles. Eliminates manual wage errors — shipped as a functional, production-deployed tool solving a real workplace problem.</p>
-          <div class="project-stack">
-            <span>Python</span><span>JavaScript</span><span>HTML/CSS</span><span>GitHub</span>
-          </div>
+          <p class="project-desc">Real-world payroll calculation system actively used by employees at a phone repair store in Greensboro. Calculates hours for monthly and bi-monthly pay cycles. Eliminates manual wage errors — a functional, production-deployed tool solving a real workplace problem.</p>
+          <div class="project-stack"><span>Python</span><span>JavaScript</span><span>HTML/CSS</span></div>
           <div class="project-links">
             <a href="http://ifixtimesheet.online/" target="_blank" class="proj-link live">↗ Live Tool</a>
           </div>
         </div>
         <div class="project-card ri d2">
           <div class="project-tag">WEB · UI DEMO</div>
-          <h3 class="project-name">iFixandRepair Booking</h3>
-          <p class="project-desc">A fully designed online booking system for a phone repair business. End-to-end ownership — concept, UI design, build, and deployment. Demonstrates what a professional service booking experience looks like when built from scratch rather than off a template.</p>
-          <div class="project-stack">
-            <span>HTML5</span><span>CSS3</span><span>JavaScript</span><span>GitHub Pages</span>
-          </div>
+          <h3 class="project-name">iFixandRepair</h3>
+          <p class="project-desc">Fully designed online booking system for a phone repair business. End-to-end ownership — concept, UI design, build, and deployment. What a professional service booking experience looks like when built from scratch.</p>
+          <div class="project-stack"><span>HTML5</span><span>CSS3</span><span>JavaScript</span><span>GitHub Pages</span></div>
           <div class="project-links">
             <a href="https://kritesh2006.github.io/iFixandrepair/" target="_blank" class="proj-link live">↗ Live Demo</a>
             <a href="https://github.com/Kritesh2006" target="_blank" class="proj-link gh">⌥ GitHub</a>
@@ -285,6 +300,7 @@
 
   <!-- SKILLS -->
   <section id="skills">
+    <canvas class="sec-canvas"></canvas>
     <div class="section-inner">
       <div class="section-label ri">04 — SKILLS</div>
       <h2 class="section-title centered ri">Tech Stack</h2>
@@ -301,7 +317,7 @@
         <div class="skill-group ri d1">
           <div class="skill-group-title">Frontend & Backend</div>
           <div class="skill-items">
-            <div class="skill-item"><span class="skill-label">Responsive Design / UI·UX</span><span class="skill-bar" data-w="85"></span></div>
+            <div class="skill-item"><span class="skill-label">Responsive Design</span><span class="skill-bar" data-w="85"></span></div>
             <div class="skill-item"><span class="skill-label">Node.js / Express</span><span class="skill-bar" data-w="75"></span></div>
             <div class="skill-item"><span class="skill-label">DOM APIs</span><span class="skill-bar" data-w="80"></span></div>
             <div class="skill-item"><span class="skill-label">Web Speech API</span><span class="skill-bar" data-w="78"></span></div>
@@ -313,7 +329,7 @@
             <div class="skill-item"><span class="skill-label">OpenAI API</span><span class="skill-bar" data-w="88"></span></div>
             <div class="skill-item"><span class="skill-label">Prompt Engineering</span><span class="skill-bar" data-w="85"></span></div>
             <div class="skill-item"><span class="skill-label">Multi-Agent Systems</span><span class="skill-bar" data-w="82"></span></div>
-            <div class="skill-item"><span class="skill-label">REST APIs / JSON</span><span class="skill-bar" data-w="78"></span></div>
+            <div class="skill-item"><span class="skill-label">REST APIs</span><span class="skill-bar" data-w="78"></span></div>
           </div>
         </div>
         <div class="skill-group ri d3">
@@ -338,6 +354,7 @@
 
   <!-- RESUME -->
   <section id="resume">
+    <canvas class="sec-canvas"></canvas>
     <div class="section-inner">
       <div class="section-label ri">05 — RESUME</div>
       <h2 class="section-title centered ri">Credentials</h2>
@@ -370,75 +387,45 @@
     </div>
   </section>
 
-
-  <!-- GAME SECTION -->
-  <section id="game-section">
+  <!-- NEURAL NETWORK GAME -->
+  <section id="neural">
+    <canvas class="sec-canvas"></canvas>
     <div class="section-inner">
-      <div class="game-invite ri">
-        <div class="section-label">07 — PLAYGROUND</div>
-        <h2 class="section-title centered">Bored? Wanna try the built-in game?</h2>
-        <p class="section-sub">A particle playground built into this portfolio. Drag, connect, and form patterns.</p>
-        <button id="openGame" class="btn-open-game">
-          <span class="game-btn-icon">⬡</span>
-          Open Game
+      <div class="section-label ri">06 — PLAYGROUND</div>
+      <div class="neural-invite ri">
+        <h2 class="section-title centered">Bored? Enter The Neural Network</h2>
+        <p class="section-sub">A futuristic node simulation built into this portfolio.<br/>Drag nodes · Connect them · Watch the network grow.</p>
+        <button id="openGame" class="btn-neural">
+          <span class="neural-btn-pulse"></span>
+          <span class="neural-btn-icon">⬡</span>
+          <span>INITIALIZE NETWORK</span>
         </button>
       </div>
     </div>
   </section>
 
-  <!-- FULL SCREEN GAME -->
-  <div id="gameOverlay" class="game-overlay screen-hidden">
-    <canvas id="gameCanvas"></canvas>
-    <div class="game-ui">
-      <div class="game-header">
-        <div class="game-title-ui">PARTICLE CONNECT</div>
-        <div class="game-score-wrap">
-          <span class="game-score-label">SCORE</span>
-          <span class="game-score" id="gameScore">0</span>
-          <span class="game-combo" id="gameCombo"></span>
-        </div>
-        <div class="game-controls">
-          <button id="gameReset" class="game-btn">↺ Reset</button>
-          <button id="gameClose" class="game-btn close">✕ Exit</button>
-        </div>
-      </div>
-      <div class="game-hint" id="gameHint">Drag particles to move · Click two particles to connect them</div>
-    </div>
-  </div>
-
   <!-- CONTACT -->
   <section id="contact">
+    <canvas class="sec-canvas"></canvas>
     <div class="section-inner">
-      <div class="section-label ri">06 — CONTACT</div>
+      <div class="section-label ri">07 — CONTACT</div>
       <h2 class="section-title centered ri">Let's Connect</h2>
       <p class="section-sub ri">Whether it's a project, an opportunity, or just a conversation — I'm open.</p>
       <div class="contact-grid">
         <div class="contact-links ri">
-          <a href="mailto:kriteshdhungel07@gmail.com" class="contact-item" target="_blank">
-            <span class="ci-icon">✉</span><span class="ci-text"><strong>Email</strong><br/>kriteshdhungel07@gmail.com</span>
-          </a>
-          <a href="https://github.com/Kritesh2006" class="contact-item" target="_blank">
-            <span class="ci-icon">⌥</span><span class="ci-text"><strong>GitHub</strong><br/>github.com/Kritesh2006</span>
-          </a>
-          <a href="https://www.linkedin.com/in/kritesh-dhungel-0aa2ab31a/" class="contact-item" target="_blank">
-            <span class="ci-icon">◈</span><span class="ci-text"><strong>LinkedIn</strong><br/>kritesh-dhungel</span>
-          </a>
-          <a href="https://www.instagram.com/4.kiorr_/" class="contact-item" target="_blank">
-            <span class="ci-icon">◉</span><span class="ci-text"><strong>Instagram</strong><br/>@4.kiorr_</span>
-          </a>
-          <a href="https://x.com/KriteshDhungel" class="contact-item" target="_blank">
-            <span class="ci-icon">✕</span><span class="ci-text"><strong>X / Twitter</strong><br/>@KriteshDhungel</span>
-          </a>
-          <a href="https://www.facebook.com/kritesh.R123" class="contact-item" target="_blank">
-            <span class="ci-icon">⬡</span><span class="ci-text"><strong>Facebook</strong><br/>kritesh.R123</span>
-          </a>
+          <a href="mailto:kriteshdhungel07@gmail.com" class="contact-item"><span class="ci-icon">✉</span><span class="ci-text"><strong>Email</strong><br/>kriteshdhungel07@gmail.com</span></a>
+          <a href="https://github.com/Kritesh2006" class="contact-item" target="_blank"><span class="ci-icon">⌥</span><span class="ci-text"><strong>GitHub</strong><br/>github.com/Kritesh2006</span></a>
+          <a href="https://www.linkedin.com/in/kritesh-dhungel-0aa2ab31a/" class="contact-item" target="_blank"><span class="ci-icon">◈</span><span class="ci-text"><strong>LinkedIn</strong><br/>kritesh-dhungel</span></a>
+          <a href="https://www.instagram.com/4.kiorr_/" class="contact-item" target="_blank"><span class="ci-icon">◉</span><span class="ci-text"><strong>Instagram</strong><br/>@4.kiorr_</span></a>
+          <a href="https://x.com/KriteshDhungel" class="contact-item" target="_blank"><span class="ci-icon">✕</span><span class="ci-text"><strong>X / Twitter</strong><br/>@KriteshDhungel</span></a>
+          <a href="https://www.facebook.com/kritesh.R123" class="contact-item" target="_blank"><span class="ci-icon">⬡</span><span class="ci-text"><strong>Facebook</strong><br/>kritesh.R123</span></a>
         </div>
         <div class="contact-card ri d1">
           <div class="cc-inner">
             <div class="cc-name">Kritesh Dhungel</div>
             <div class="cc-role">Full-Stack Developer · AI Systems Builder</div>
             <div class="cc-loc">📍 Winston-Salem, NC</div>
-            <div class="cc-available"><span class="status-dot"></span> Available for opportunities</div>
+            <div class="cc-available"><span class="status-dot"></span>Available for opportunities</div>
             <div class="cc-quote">"Self-taught. Financially independent.<br/>Building real things from scratch."</div>
           </div>
         </div>
@@ -456,8 +443,32 @@
       </div>
     </div>
   </footer>
+</div>
 
-</div><!-- /mainSite -->
+<!-- NEURAL GAME OVERLAY -->
+<div id="gameOverlay" class="game-overlay screen-hidden">
+  <canvas id="gameCanvas"></canvas>
+  <div class="game-ui">
+    <div class="game-header">
+      <div class="game-brand">
+        <div class="game-title-ui">NEURAL NETWORK</div>
+        <div class="game-subtitle-ui">PARTICLE CONNECT SYSTEM</div>
+      </div>
+      <div class="game-stats">
+        <div class="game-stat"><span class="gstat-label">NODES</span><span class="gstat-val" id="nodeCount">0</span></div>
+        <div class="game-stat"><span class="gstat-label">LINKS</span><span class="gstat-val" id="linkCount">0</span></div>
+        <div class="game-stat"><span class="gstat-label">SCORE</span><span class="gstat-val" id="gameScore">0</span></div>
+        <div class="game-stat combo"><span class="gstat-label">COMBO</span><span class="gstat-val" id="gameCombo">x1</span></div>
+      </div>
+      <div class="game-controls">
+        <button id="gameReset" class="game-btn">↺ Reset</button>
+        <button id="gameClose" class="game-btn close">✕ Exit</button>
+      </div>
+    </div>
+    <div class="game-hint" id="gameHint">Click to select a node · Click another to connect · Drag to move</div>
+    <div class="game-achievement" id="gameAchievement"></div>
+  </div>
+</div>
 
 <script src="./script.js"></script>
 </body>
