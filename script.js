@@ -25,8 +25,8 @@ function Particles(canvasId,opts){
   if(!canvas)return{stop:function(){}};
   var ctx=canvas.getContext('2d');
   opts=opts||{};
-  var c1=opts.c1||'#e83030',c2=opts.c2||'#c8882a';
-  var n=opts.n||80,react=opts.react!==false,grid=opts.grid!==false;
+  var c1=opts.c1||'#ff2f2f',c2=opts.c2||'#ffb347';
+  var n=opts.n||120,react=opts.react!==false,grid=opts.grid!==false;
   var W=1,H=1,t=0,alive=true,mx=-999,my=-999;
   var ps=[];
 
@@ -43,8 +43,8 @@ function Particles(canvasId,opts){
     if(!alive)return;
     ctx.clearRect(0,0,W,H);
     if(grid){ctx.strokeStyle='rgba(232,48,48,.02)';ctx.lineWidth=1;for(var gx=0;gx<W;gx+=62){ctx.beginPath();ctx.moveTo(gx,0);ctx.lineTo(gx,H);ctx.stroke();}for(var gy=0;gy<H;gy+=62){ctx.beginPath();ctx.moveTo(0,gy);ctx.lineTo(W,gy);ctx.stroke();}}
-    for(var a=0;a<ps.length;a++){for(var b=a+1;b<ps.length;b++){var dx=ps[a].x-ps[b].x,dy=ps[a].y-ps[b].y,d=Math.sqrt(dx*dx+dy*dy);if(d<85){ctx.beginPath();ctx.moveTo(ps[a].x,ps[a].y);ctx.lineTo(ps[b].x,ps[b].y);ctx.strokeStyle='rgba(232,48,48,'+((1-d/85)*.11)+')';ctx.lineWidth=.5;ctx.stroke();}}}
-    for(var i=0;i<ps.length;i++){var p=ps[i];p.vx+=Math.sin(t*.009+p.y*.004)*.013;p.vy+=Math.cos(t*.007+p.x*.004)*.011;p.vx*=.982;p.vy*=.982;if(react){var rdx=p.x-mx,rdy=p.y-my,rd=Math.sqrt(rdx*rdx+rdy*rdy);if(rd<75&&rd>0){var f=(1-rd/75)*1.4;p.vx+=(rdx/rd)*f*.48;p.vy+=(rdy/rd)*f*.48;}}p.x+=p.vx;p.y+=p.vy;p.life++;if(p.life>p.max||p.x<-10||p.x>W+10||p.y<-10||p.y>H+10){ps[i]=mkP(false);continue;}var alpha=Math.sin((p.life/p.max)*Math.PI)*.6;var hex=Math.floor(alpha*255).toString(16).padStart(2,'0');ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=p.col+hex;ctx.fill();}
+    for(var a=0;a<ps.length;a++){for(var b=a+1;b<ps.length;b++){var dx=ps[a].x-ps[b].x,dy=ps[a].y-ps[b].y,d=Math.sqrt(dx*dx+dy*dy);if(d<85){ctx.beginPath();ctx.moveTo(ps[a].x,ps[a].y);ctx.lineTo(ps[b].x,ps[b].y);ctx.strokeStyle='rgba(255,47,47,'+((1-d/85)*.35)+')';ctx.lineWidth=.5;ctx.stroke();}}}
+    for(var i=0;i<ps.length;i++){var p=ps[i];p.vx+=Math.sin(t*.009+p.y*.004)*.013;p.vy+=Math.cos(t*.007+p.x*.004)*.011;p.vx*=.982;p.vy*=.982;if(react){var rdx=p.x-mx,rdy=p.y-my,rd=Math.sqrt(rdx*rdx+rdy*rdy);if(rd<75&&rd>0){var f=(1-rd/75)*1.4;p.vx+=(rdx/rd)*f*.48;p.vy+=(rdy/rd)*f*.48;}}p.x+=p.vx;p.y+=p.vy;p.life++;if(p.life>p.max||p.x<-10||p.x>W+10||p.y<-10||p.y>H+10){ps[i]=mkP(false);continue;}var alpha=Math.sin((p.life/p.max)*Math.PI)*1;var hex=Math.floor(alpha*255).toString(16).padStart(2,'0');ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=p.col+hex;ctx.fill();}
     t++;requestAnimationFrame(draw);
   }
   draw();
