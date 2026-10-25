@@ -44,17 +44,17 @@
     all.push(ch);
   }
   const full = '-260 -900 520 940';
-  cell('Front', full, { opts: { turn: 0, outfit: 'tee' } });
-  cell('3/4', full, { opts: { turn: 0.5, outfit: 'tee' } });
-  cell('Side', full, { opts: { turn: 0.9, outfit: 'tee', pose: 'relaxed' } });
-  cell('Back', full, { opts: { turn: 0, outfit: 'layers', view: 'back' } });
+  cell('Front', full, { opts: { turn: 0, outfit: 'hoodie' } });
+  cell('3/4', full, { opts: { turn: 0.5, outfit: 'hoodie' } });
+  cell('Side', full, { opts: { turn: 0.9, outfit: 'hoodie', pose: 'relaxed' } });
+  cell('Back', full, { opts: { turn: 0, outfit: 'hoodie', view: 'back' } });
   cell('Face close-up', '-75 -870 150 190', { opts: { turn: 0.15 } });
   const ex = ['neutral', 'focused', 'smile', 'tired', 'determined', 'thinking'];
   ex.forEach((e) => cell(e, '-75 -870 150 190', { opts: { turn: 0.3, expr: e } }));
-  cell('Outfit // US layers', full, { opts: { turn: 0.4, outfit: 'layers' } });
-  cell('Outfit // now', full, { opts: { turn: 0.4, outfit: 'black', pose: 'phone' } });
-  cell('Seated // typing', '-300 -720 600 760', { opts: { turn: 0.6, outfit: 'black', pose: 'type' } });
-  cell('Walk', full, { opts: { turn: 0.7, outfit: 'layers' }, after: (c) => c.walk(true) });
+  cell('Back // white tee', full, { opts: { turn: 0, outfit: 'whitetee', view: 'back' } });
+  cell('White tee', full, { opts: { turn: 0.4, outfit: 'whitetee', pose: 'phone' } });
+  cell('Seated // typing', '-300 -720 600 760', { opts: { turn: 0.6, outfit: 'hoodie', pose: 'type' } });
+  cell('Walk', full, { opts: { turn: 0.7, outfit: 'hoodie' }, after: (c) => c.walk(true) });
   let last = performance.now();
   const still = new URLSearchParams(location.search).has('still');
   function loop(now) {

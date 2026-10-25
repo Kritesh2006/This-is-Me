@@ -45,6 +45,11 @@ export const OUTFITS = {
   layers: { top: '#1C1C1F', topShade: '#111113', jacket: '#8A7D74', jacketShade: '#6E625A', pants: '#25272D', pantsShade: '#18191D', shoe: '#ECE9E2', sleeve: 'long' },
   // Now: black tee, the shop / desk outfit
   black: { top: '#1E1E21', topShade: '#141416', pants: '#C9C2B4', pantsShade: '#A8A092', shoe: '#ECE9E2', sleeve: 'short' },
+  // LOCKED DESIGN (character master sheet): open black zip hoodie, plain white
+  // tee, loose grey camo cargo joggers, black sneakers with white soles
+  hoodie: { top: '#EEEAE2', topShade: '#CFC8BC', jacket: '#1B1B1D', jacketShade: '#0F0F10', pants: '#A5A39E', pantsShade: '#87857F', camo: true, shoe: '#17171A', sole: '#F2EFE8', sleeve: 'long', hood: true },
+  // same look with the hoodie off (the street walk)
+  whitetee: { top: '#EEEAE2', topShade: '#CFC8BC', pants: '#A5A39E', pantsShade: '#87857F', camo: true, shoe: '#17171A', sole: '#F2EFE8', sleeve: 'short', baggy: true },
 };
 
 const NS = 'http://www.w3.org/2000/svg';
@@ -65,6 +70,21 @@ export function smooth(pts, closed = true, tension = 1) {
     d += `C${f(c1[0])},${f(c1[1])} ${f(c2[0])},${f(c2[1])} ${f(p2[0])},${f(p2[1])}`;
   }
   return closed ? d + 'Z' : d;
+}
+
+/* Round scalloped arc: a run of little bumps along an ellipse — reads as curls. */
+function scallop(cx, cy, rx, ry, th0, th1, n, amp, sx = (x) => x, seed = 3) {
+  const r = rng(seed);
+  const P = [];
+  for (let i = 0; i <= n; i++) { const th = th0 + (th1 - th0) * (i / n); P.push([cx + Math.cos(th) * rx, cy + Math.sin(th) * ry, th]); }
+  let d = `M${f(sx(P[0][0]))},${f(P[0][1])}`;
+  for (let i = 1; i < P.length; i++) {
+    const a = P[i - 1], b = P[i];
+    const tm = (a[2] + b[2]) / 2, k = amp * (0.8 + r() * 0.5);
+    const mx = cx + Math.cos(tm) * (rx + k * 2.2), my = cy + Math.sin(tm) * (ry + k * 2.2);
+    d += ` Q${f(sx(mx))},${f(my)} ${f(sx(b[0]))},${f(b[1])}`;
+  }
+  return d;
 }
 
 function rng(seed) {
@@ -122,19 +142,11 @@ const EXPRESSIONS = {
 };
 
 function hairBack(t) {
-  const r = rng(11);
-  const pts = [];
-  const cx = t * 6, cy = -36, rx = 55 - Math.abs(t) * 3, ry = 57;
-  const n = 18;
-  for (let i = 0; i <= n; i++) {
-    const th = Math.PI * 1.02 + (Math.PI * 0.96) * (i / n);
-    let bump = i % 2 ? 1.035 + r() * 0.03 : 0.995;
-    if (i === 3 || i === 15) bump += 0.05;
-    if (i === 2 || i === 16) bump += 0.035;
-    pts.push([cx + Math.cos(th) * (rx + 4) * bump, cy + Math.sin(th) * ry * bump]);
-  }
-  pts.push([cx + 47 - t * 4, -8], [cx + 43 - t * 4, 6], [0, 14], [cx - 43 - t * 2 + Math.max(0, t) * 12, 6], [cx - 48 + Math.max(0, t) * 10, -8]);
-  return smooth(pts);
+  const cx = t * 6, cy = -36, rx = 54 - Math.abs(t) * 3, ry = 58;
+  let d = scallop(cx, cy, rx, ry, Math.PI * 0.98, Math.PI * 2.02, 16, 4.2, (x) => x, 11);
+  const pts = [[cx + 47 - t * 4, -8], [cx + 43 - t * 4, 6], [0, 14], [cx - 43 - t * 2 + Math.max(0, t) * 12, 6], [cx - 48 + Math.max(0, t) * 10, -8]];
+  pts.forEach(([x, y]) => (d += ` L${f(x)},${f(y)}`));
+  return d + 'Z';
 }
 
 function hairSX(t) {
@@ -166,16 +178,9 @@ function fringe(t) {
 
 function fringeTop(t) {
   const sx = hairSX(t);
-  const r = rng(5);
-  const pts = [];
-  const n = 16;
-  for (let i = 0; i <= n; i++) {
-    const th = Math.PI * 1.03 + Math.PI * 0.94 * (i / n);
-    const bump = i % 2 ? 1.04 + r() * 0.025 : 0.99;
-    pts.push([Math.cos(th) * 53 * bump, -40 + Math.sin(th) * 58 * bump]);
-  }
-  pts.push([44, -34], [0, -36], [-44, -34]);
-  return smooth(pts.map(([x, y]) => [sx(x), y]));
+  let d = scallop(0, -40, 51, 57, Math.PI * 1.02, Math.PI * 1.98, 14, 4, sx, 5);
+  d += ` L${f(sx(44))},-34 L${f(sx(0))},-36 L${f(sx(-44))},-34Z`;
+  return d;
 }
 
 function hairStrands(t) {
@@ -187,10 +192,10 @@ function hairStrands(t) {
     [16, -70, 20, -46, 11, -27], [32, -62, 36, -44, 26, -27], [-40, -54, -46, -40, -45, -32],
   ]);
   // wavy texture arcs across the crown
-  const arcs = [
-    [-6, -94, -24, -86, -38, -70], [4, -96, 22, -90, 38, -74], [-2, -88, -12, -74, -24, -60],
-    [8, -88, 16, -76, 24, -62], [-20, -92, -40, -88, -50, -64], [18, -94, 38, -88, 50, -66],
-  ];
+  // tight curl marks spread over the crown and along the fringe
+  const CURLS = [[-34, -82], [-18, -92], [0, -96], [18, -92], [34, -82], [-44, -62], [-26, -70], [-8, -78], [10, -78], [28, -70], [44, -60],
+    [-36, -46], [-18, -54], [2, -58], [20, -54], [38, -46], [-26, -34], [-6, -40], [14, -38], [32, -32]];
+  const arcs = CURLS.map(([x, y], i) => { const r = 5 + (i % 3); const d = i % 2 ? 1 : -1; return [x - r, y, x, y - r * 1.4 * d, x + r, y + 1]; });
   const hi = q([
     [-26, -84, -20, -90, -10, -86], [6, -92, 14, -96, 24, -88], [-36, -66, -30, -74, -20, -72],
     [12, -76, 20, -80, 30, -72], [-8, -60, -2, -66, 6, -62],
@@ -299,15 +304,15 @@ export function createCharacter(opts = {}) {
     const upper = el('g', {}, g);
     el('path', { d: limb(G.upper, 38, 30), fill: skin, stroke: P.line, 'stroke-width': 1.4 }, upper);
     if (o.sleeve === 'short') {
-      el('path', { d: `M-20,-6 Q-22,40 -19,74 Q0,82 19,74 Q22,40 20,-6 Q0,-16 -20,-6Z`, fill: back ? o.topShade : o.top, stroke: P.line, 'stroke-width': 1.4 }, upper);
+      el('path', { d: o.baggy ? `M-24,-8 Q-27,44 -24,88 Q0,96 24,88 Q27,44 24,-8 Q0,-18 -24,-8Z` : `M-20,-6 Q-22,40 -19,74 Q0,82 19,74 Q22,40 20,-6 Q0,-16 -20,-6Z`, fill: back ? o.topShade : o.top, stroke: P.line, 'stroke-width': 1.4 }, upper);
     } else {
-      el('path', { d: limb(G.upper + 6, 40, 32), fill: back ? (o.jacketShade || o.topShade) : (o.jacket || o.top), stroke: P.line, 'stroke-width': 1.4 }, upper);
+      el('path', { d: limb(G.upper + 6, o.hood ? 46 : 40, o.hood ? 38 : 32), fill: back ? (o.jacketShade || o.topShade) : (o.jacket || o.top), stroke: P.line, 'stroke-width': 1.4 }, upper);
     }
     const fore = el('g', {}, upper);
     el('path', { d: limb(G.fore, 30, 23), fill: skin, stroke: P.line, 'stroke-width': 1.4 }, fore);
     if (o.sleeve === 'long') {
-      el('path', { d: limb(G.fore - 6, 33, 27), fill: back ? (o.jacketShade || o.topShade) : (o.jacket || o.top), stroke: P.line, 'stroke-width': 1.4 }, fore);
-      el('path', { d: `M-13,${G.fore - 14} L13,${G.fore - 14}`, stroke: o.top, 'stroke-width': 5 }, fore);
+      el('path', { d: limb(G.fore - 6, o.hood ? 38 : 33, o.hood ? 31 : 27), fill: back ? (o.jacketShade || o.topShade) : (o.jacket || o.top), stroke: P.line, 'stroke-width': 1.4 }, fore);
+      el('path', { d: `M-14,${G.fore - 14} L14,${G.fore - 14}`, stroke: o.hood ? '#2A2A2D' : o.top, 'stroke-width': 6 }, fore);
     }
     const hand = el('g', {}, fore);
     const hp = el('path', { d: handPath(false), fill: skin, stroke: P.line, 'stroke-width': 1.4 }, hand);
@@ -319,13 +324,24 @@ export function createCharacter(opts = {}) {
     g.innerHTML = '';
     const o = outfit();
     const thigh = el('g', {}, g);
-    el('path', { d: limb(G.thigh + 8, 56, 44), fill: back ? o.pantsShade : o.pants, stroke: P.line, 'stroke-width': 1.4 }, thigh);
+    const pc = back ? o.pantsShade : o.pants;
+    const wide = o.camo ? 1.2 : 1;
+    el('path', { d: limb(G.thigh + 8, 56 * wide, 46 * wide), fill: pc, stroke: P.line, 'stroke-width': 1.4 }, thigh);
+    if (o.camo) {
+      const cam = (dark) => (dark ? '#6F6D68' : '#C8C6C0');
+      [[-12, 40, 14, 9, 1], [10, 90, 12, 16, 0], [-8, 150, 16, 10, 1], [14, 190, 9, 12, 0], [-14, 110, 8, 12, 0]].forEach(([x, y, rx, ry, dk]) => el('ellipse', { cx: x, cy: y, rx, ry, fill: cam(dk), opacity: back ? 0.4 : 0.55 }, thigh));
+      el('rect', { x: 18, y: 96, width: 20, height: 34, rx: 3, fill: 'none', stroke: o.pantsShade, 'stroke-width': 2 }, thigh); // cargo pocket
+    }
     const shin = el('g', {}, thigh);
-    el('path', { d: limb(G.shin, 44, 34), fill: back ? o.pantsShade : o.pants, stroke: P.line, 'stroke-width': 1.4 }, shin);
+    el('path', { d: limb(G.shin, 46 * wide, (o.camo ? 30 : 34)), fill: pc, stroke: P.line, 'stroke-width': 1.4 }, shin);
+    if (o.camo) {
+      [[8, 40, 12, 9, 1], [-10, 90, 10, 14, 0], [6, 140, 9, 8, 1]].forEach(([x, y, rx, ry, dk]) => el('ellipse', { cx: x, cy: y, rx, ry, fill: dk ? '#6F6D68' : '#C8C6C0', opacity: back ? 0.4 : 0.55 }, shin));
+      el('path', { d: `M-17,${G.shin - 12} Q0,${G.shin - 4} 17,${G.shin - 12}`, fill: 'none', stroke: o.pantsShade, 'stroke-width': 3 }, shin); // elastic cuff
+    }
     const foot = el('g', {}, shin);
     // sneaker, pointing toward +x
-    el('path', { d: 'M-20,-6 Q-24,14 -18,20 L34,20 Q44,18 42,8 Q38,-2 18,-4 Q10,-12 -4,-12 Q-16,-12 -20,-6Z', fill: back ? '#CFCBC2' : o.shoe, stroke: P.line, 'stroke-width': 1.4 }, foot);
-    el('path', { d: 'M-19,14 L41,14', stroke: '#B9B3A8', 'stroke-width': 3 }, foot);
+    el('path', { d: 'M-20,-6 Q-24,14 -18,20 L34,20 Q44,18 42,8 Q38,-2 18,-4 Q10,-12 -4,-12 Q-16,-12 -20,-6Z', fill: o.sole ? o.shoe : (back ? '#CFCBC2' : o.shoe), stroke: P.line, 'stroke-width': 1.4 }, foot);
+    el('path', { d: 'M-19,15 L41,15', stroke: o.sole || '#B9B3A8', 'stroke-width': o.sole ? 6 : 3 }, foot);
     return { thigh, shin, foot };
   }
 
@@ -340,6 +356,20 @@ export function createCharacter(opts = {}) {
     el('path', { d: `M-17,${G.neckTop + 4} Q0,${G.neckTop + 24} 17,${G.neckTop + 4} L17,${G.neckTop}  L-17,${G.neckTop}Z`, fill: P.skinShade, opacity: 0.8 }, neckG);
     const sy = G.shoulderY, hy = G.hipY;
     const torso = `M-80,${sy - 10} Q-94,${sy} -90,${sy + 44} L-72,${hy - 10} Q-68,${hy + 10} -56,${hy + 12} L56,${hy + 12} Q68,${hy + 10} 72,${hy - 10} L90,${sy + 44} Q94,${sy} 80,${sy - 10} Q52,${sy - 24} 26,${sy - 22} Q0,${sy - 2} -26,${sy - 22} Q-52,${sy - 24} -80,${sy - 10}Z`;
+    if (state.view === 'back' && (o.hood || o.baggy)) {
+      const back = torso.replace(`Q0,${sy - 2}`, `Q0,${sy - 18}`);
+      el('path', { d: back, fill: o.top, stroke: P.line, 'stroke-width': 1.4 }, torsoG);
+      if (o.hood) {
+        // oversized hoodie back; white tee hem shows underneath
+        el('path', { d: `M-90,${sy - 12} Q-104,${sy} -100,${sy + 50} L-84,${hy - 6} Q-78,${hy + 2} -64,${hy + 2} L64,${hy + 2} Q78,${hy + 2} 84,${hy - 6} L100,${sy + 50} Q104,${sy} 90,${sy - 12} Q0,${sy - 30} -90,${sy - 12}Z`, fill: o.jacket, stroke: P.line, 'stroke-width': 1.4 }, torsoG);
+        el('path', { d: `M-70,${hy - 8} L70,${hy - 8}`, stroke: '#2A2A2D', 'stroke-width': 7 }, torsoG);
+        el('path', { d: `M-46,${sy - 22} Q-52,${sy + 60} 0,${sy + 76} Q52,${sy + 60} 46,${sy - 22} Q0,${sy - 34} -46,${sy - 22}Z`, fill: '#141416', stroke: P.line, 'stroke-width': 1.2 }, torsoG);
+        el('path', { d: `M0,${sy - 30} L0,${sy + 74}`, stroke: '#0A0A0B', 'stroke-width': 1.6 }, torsoG);
+      } else {
+        el('path', { d: `M-40,${sy + 40} Q-20,${sy + 120} -30,${hy - 20} M36,${sy + 60} Q24,${sy + 140} 30,${hy - 30}`, fill: 'none', stroke: o.topShade, 'stroke-width': 3, opacity: 0.8 }, torsoG);
+      }
+      return;
+    }
     if (state.view === 'back') {
       el('path', { d: torso.replace(`Q0,${sy - 2}`, `Q0,${sy - 18}`), fill: o.top, stroke: P.line, 'stroke-width': 1.4 }, torsoG);
       if (o.jacket) el('path', { d: torso.replace(`Q0,${sy - 2}`, `Q0,${sy - 18}`), fill: o.jacket, stroke: P.line, 'stroke-width': 1.4 }, torsoG);
@@ -367,6 +397,23 @@ export function createCharacter(opts = {}) {
       // collar points + chest pocket
       el('path', { d: `M-40,${sy - 14} L-30,${sy + 34} L-50,${sy + 12}Z M42,${sy - 14} L34,${sy + 34} L54,${sy + 12}Z`, fill: o.jacketShade, stroke: P.line, 'stroke-width': 1.2 }, torsoG);
       el('path', { d: `M-72,${sy + 70} L-44,${sy + 70} L-44,${sy + 104} L-72,${sy + 104}Z`, fill: 'none', stroke: o.jacketShade, 'stroke-width': 2 }, torsoG);
+    } else if (state.outfit === 'hoodie') {
+      // white tee underneath (already drawn), crew collar
+      el('path', { d: `M-28,${sy - 21} Q0,${sy + 4} 28,${sy - 21}`, fill: 'none', stroke: o.topShade, 'stroke-width': 4 }, torsoG);
+      // hood bunched behind the neck
+      el('path', { d: `M-52,${sy - 18} Q-60,${sy - 46} -30,${sy - 34} Q0,${sy - 26} 30,${sy - 34} Q60,${sy - 46} 52,${sy - 18} Q30,${sy - 22} 28,${sy - 21} Q0,${sy - 8} -28,${sy - 21} Q-30,${sy - 22} -52,${sy - 18}Z`, fill: '#141416', stroke: P.line, 'stroke-width': 1.2 }, torsoG);
+      // open oversized zip hoodie panels
+      const L = `M-90,${sy - 12} Q-104,${sy} -100,${sy + 50} L-84,${hy - 6} Q-78,${hy + 2} -64,${hy + 2} L-34,${hy + 2} L-30,${sy + 60} L-34,${sy - 20} Q-62,${sy - 26} -90,${sy - 12}Z`;
+      const R = `M90,${sy - 12} Q104,${sy} 100,${sy + 50} L84,${hy - 6} Q78,${hy + 2} 64,${hy + 2} L36,${hy + 2} L32,${sy + 60} L36,${sy - 20} Q62,${sy - 26} 90,${sy - 12}Z`;
+      el('path', { d: L, fill: o.jacket, stroke: P.line, 'stroke-width': 1.4 }, torsoG);
+      el('path', { d: R, fill: o.jacketShade, stroke: P.line, 'stroke-width': 1.4 }, torsoG);
+      // zip edges, drawstrings, ribbed hem
+      el('path', { d: `M-32,${sy - 18} L-34,${hy} M34,${sy - 18} L36,${hy}`, stroke: '#3A3A3E', 'stroke-width': 2 }, torsoG);
+      el('path', { d: `M-24,${sy - 14} Q-26,${sy + 30} -22,${sy + 70} M22,${sy - 14} Q24,${sy + 30} 20,${sy + 66}`, fill: 'none', stroke: '#0A0A0B', 'stroke-width': 2.6, 'stroke-linecap': 'round' }, torsoG);
+      el('path', { d: `M-82,${hy - 6} L-36,${hy - 6} M36,${hy - 6} L82,${hy - 6}`, stroke: '#2A2A2D', 'stroke-width': 7 }, torsoG);
+    } else if (state.outfit === 'whitetee') {
+      el('path', { d: `M-28,${sy - 21} Q0,${sy + 4} 28,${sy - 21}`, fill: 'none', stroke: o.topShade, 'stroke-width': 4 }, torsoG);
+      el('path', { d: `M-46,${sy + 50} Q-30,${sy + 130} -40,${hy - 20}`, fill: 'none', stroke: o.topShade, 'stroke-width': 3, opacity: 0.8 }, torsoG);
     } else {
       el('path', { d: `M-28,${sy - 21} Q0,${sy + 2} 28,${sy - 21}`, fill: 'none', stroke: '#2C2C30', 'stroke-width': 4 }, torsoG);
     }
@@ -443,7 +490,7 @@ export function createCharacter(opts = {}) {
     H.fringe = el('path', { fill: P.hair, stroke: P.line, 'stroke-width': 1.4, 'stroke-linejoin': 'round' }, head);
     H.crown = el('path', { fill: P.hair }, head);
     H.parts = el('path', { fill: 'none', stroke: '#120D0C', 'stroke-width': 1.5, 'stroke-linecap': 'round', opacity: 0.85 }, head);
-    H.curls = el('path', { fill: 'none', stroke: '#120D0C', 'stroke-width': 1.4, 'stroke-linecap': 'round', opacity: 0.7 }, head);
+    H.curls = el('path', { fill: 'none', stroke: '#0E0A09', 'stroke-width': 1.6, 'stroke-linecap': 'round', opacity: 0.75 }, head);
     H.hairHi = el('path', { fill: 'none', stroke: P.hairHi, 'stroke-width': 2.6, 'stroke-linecap': 'round', opacity: 0.6 }, head);
     H.sideburnL = el('path', { fill: P.hair }, head);
     H.sideburnR = el('path', { fill: P.hair }, head);
@@ -469,12 +516,20 @@ export function createCharacter(opts = {}) {
       node.style.display = back ? 'none' : '';
     });
     if (back) {
-      H.fringe.setAttribute('d', smooth([[-44, 4], [-50, -40], [-46, -78], [-24, -100], [0, -104], [24, -100], [46, -78], [50, -40], [44, 4], [30, 26], [0, 32], [-30, 26]]));
+      // curly mass seen from behind: bumpy outline, curl marks all over, short at the nape
+      let bd = scallop(0, -36, 52, 62, Math.PI * 0.8, Math.PI * 2.2, 20, 4, (x) => x, 17);
+      bd += ' Q40,30 26,44 Q0,54 -26,44 Q-40,30 -40,4Z';
+      H.fringe.setAttribute('d', bd);
       H.crown.setAttribute('d', '');
-      H.parts.setAttribute('d', 'M-30,-80 Q-28,-30 -24,20 M-8,-96 Q-6,-40 -6,26 M12,-94 Q12,-40 10,26 M30,-80 Q30,-30 26,20');
-      const st = hairStrands(0);
-      H.hairHi.setAttribute('d', st.hiD);
-      H.curls.setAttribute('d', st.curlD);
+      H.parts.setAttribute('d', '');
+      const BC = [];
+      for (let yy = -92; yy <= 12; yy += 15) for (let xx = -44; xx <= 44; xx += 15) {
+        if (Math.hypot(xx / 52, (yy + 36) / 62) > 0.92) continue;
+        const ox = ((yy / 15) % 2) ? 7 : 0, r = 5 + ((xx + yy) & 2);
+        BC.push(`M${xx + ox - r},${yy} Q${xx + ox},${yy - r * 1.4} ${xx + ox + r},${yy + 1}`);
+      }
+      H.hairHi.setAttribute('d', 'M-30,-80 q8,-6 16,-2 M6,-90 q8,-6 16,-1 M-20,-50 q8,-6 16,-2 M14,-58 q8,-6 16,-2');
+      H.curls.setAttribute('d', BC.join(' '));
       H.sideburnL.setAttribute('d', ''); H.sideburnR.setAttribute('d', '');
       return;
     }

@@ -62,7 +62,7 @@ function loadStoryCss() {
   if (storyCss) return storyCss;
   storyCss = new Promise((res) => {
     const l = document.createElement('link');
-    l.rel = 'stylesheet'; l.href = './css/story.css?v=3';
+    l.rel = 'stylesheet'; l.href = './css/story.css?v=4';
     l.onload = res; l.onerror = res;
     document.head.appendChild(l);
   });
@@ -75,7 +75,7 @@ async function startStory(push = true) {
   if (push) history.pushState({ v: 'story' }, '', location.pathname + '#story');
   storyHost.innerHTML = '<div class="st-loading"><span>KRITESH</span><i></i></div>';
   try {
-    const [mod] = await Promise.all([import('./story/story.js'), loadStoryCss()]);
+    const [mod] = await Promise.all([import('./story/story.js?v=4'), loadStoryCss()]);
     if (current !== 'story') return;
     story = mod.createStory(storyHost, {
       reducedMotion: reduce.matches,

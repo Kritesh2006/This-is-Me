@@ -1,201 +1,163 @@
 /* ============================================================
-   story.js — the PLAY MY STORY engine.
-   One stage (an SVG in screen pixels, with a canvas underneath
-   for the driving chapters), one shared character, and a list
-   of chapters that each run as an async function. Every chapter
-   uses a different mechanic.
+   story.js — PLAY MY STORY, as a short film you can touch.
+   A three.js stage graded like a music video (monochrome + crimson,
+   fog, rain, grain, letterbox). The locked 2D character is baked into
+   animation frames and lives inside the 3D scenes as a billboard.
    ============================================================ */
-import { createCharacter } from '../char/character.js';
+import * as THREE from '../../vendor/three.module.min.js';
 import { createAudio } from './audio.js';
-import { CHAPTERS } from './chapters.js';
-import { loadCar } from './car.js';
 import { sfx } from '../sfx.js';
-
-const NS = 'http://www.w3.org/2000/svg';
+import { bake } from './sprites.js';
+import { SHOTS } from './shots/index.js';
 
 export function createStory(host, opts) {
-  host.innerHTML = '';
-  host.className = 'st';
   const reduced = !!opts.reducedMotion;
-
-  /* ---------- DOM ---------- */
+  host.className = 'st film';
   host.innerHTML = `
-    <canvas class="st-canvas" aria-hidden="true"></canvas>
-    <svg class="st-svg" aria-hidden="true"><defs></defs><g class="st-world"></g><g class="st-fx"></g></svg>
-    <div class="st-hot" aria-label="Interactive objects"></div>
+    <canvas class="st-gl" aria-hidden="true"></canvas>
+    <div class="fx-grain" aria-hidden="true"></div>
+    <div class="fx-vignette" aria-hidden="true"></div>
+    <div class="fx-bars" aria-hidden="true"><i></i><i></i></div>
+    <div class="fx-white" aria-hidden="true"></div>
+    <div class="fx-glitch" aria-hidden="true"></div>
+    <div class="st-hot"></div>
     <div class="st-hud">
       <header class="st-bar">
         <p class="st-chapter"><span class="st-ch-n"></span><span class="st-ch-t"></span></p>
         <div class="st-tools">
           <button type="button" class="st-icon st-sound" aria-pressed="true" aria-label="Sound on"><svg viewBox="0 0 24 24"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path class="on" d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.6"/><path class="off" d="M16.5 9.5l5 5m0-5l-5 5" stroke="currentColor" stroke-width="1.6"/></svg></button>
-          <button type="button" class="st-skip">Skip chapter</button>
+          <button type="button" class="st-skip">Skip scene</button>
           <button type="button" class="st-icon st-close" aria-label="Leave the story"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.8"/></svg></button>
         </div>
       </header>
       <div class="st-progress" aria-hidden="true"><i></i></div>
       <div class="st-title" aria-live="polite"></div>
       <p class="st-caption" aria-live="polite"></p>
-      <div class="st-copilot" hidden><i></i><span></span></div>
       <div class="st-unlock" role="status" aria-live="polite"></div>
       <div class="st-controls"></div>
     </div>
-    <div class="st-veil"></div>`;
-
+    <div class="st-veil on"></div>
+    <div class="st-boot"><span>KRITESH</span><i><b></b></i><em>Loading the film</em></div>`;
   const q = (s) => host.querySelector(s);
-  const canvas = q('.st-canvas');
-  const svg = q('.st-svg');
-  const defs = svg.querySelector('defs');
-  const world = q('.st-world');
-  const fx = q('.st-fx');
-  const hot = q('.st-hot');
-  const controls = q('.st-controls');
-  const veil = q('.st-veil');
-  const captionEl = q('.st-caption');
-  const titleEl = q('.st-title');
-  const unlockEl = q('.st-unlock');
-  const copilotEl = q('.st-copilot');
-  const ctx2d = canvas.getContext('2d');
+  const canvas = q('.st-gl'), hot = q('.st-hot'), controls = q('.st-controls');
+  const veil = q('.st-veil'), white = q('.fx-white'), glitch = q('.fx-glitch'), bars = q('.fx-bars');
+  const captionEl = q('.st-caption'), titleEl = q('.st-title'), unlockEl = q('.st-unlock');
 
-  /* ---------- state ---------- */
+  /* ---------- renderer ---------- */
+  const small = Math.min(innerWidth, innerHeight) < 600;
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: !small, powerPreference: 'high-performance' });
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.05;
   let W = 0, H = 0, dpr = 1;
-  let alive = true;
-  let frameFns = new Set();
-  let resizeFns = new Set();
-  let skipToken = { skip: false };
-  const audio = createAudio();
+  let scene = new THREE.Scene();
+  let camera = new THREE.PerspectiveCamera(45, 1, 0.05, 600);
 
-  const S = {
-    host, svg, defs, world, fx, hot, controls, canvas, ctx2d, audio, reduced,
-    get W() { return W; }, get H() { return H; }, get dpr() { return dpr; },
+  let alive = true, frameFns = new Set(), resizeFns = new Set(), skipTok = { skip: false };
+  const audio = createAudio();
+  const raycaster = new THREE.Raycaster();
+
+  function resize() {
+    W = host.clientWidth; H = host.clientHeight;
+    dpr = Math.min(window.devicePixelRatio || 1, small ? 1.5 : 1.75);
+    renderer.setPixelRatio(dpr);
+    renderer.setSize(W, H, false);
+    camera.aspect = W / H; camera.updateProjectionMatrix();
+    resizeFns.forEach((fn) => fn(W, H));
+  }
+  const ro = new ResizeObserver(resize); ro.observe(host);
+
+  /* ---------- shared film context ---------- */
+  const F = {
+    THREE, renderer, audio, reduced, small, host, controls, hot,
+    get scene() { return scene; }, get camera() { return camera; },
+    get W() { return W; }, get H() { return H; },
     get portrait() { return H > W * 1.05; },
-    char: createCharacter({ outfit: 'tee', turn: 0.4 }),
+    get skipped() { return skipTok.skip; },
+    sprites: {},
     abilities: new Set(),
-    car: loadCar(),
-    memories: [],
-    el(tag, attrs = {}, parent) {
-      const n = document.createElementNS(NS, tag);
-      for (const k in attrs) n.setAttribute(k, attrs[k]);
-      if (parent) parent.appendChild(n);
-      return n;
-    },
-    g(parent = world, attrs = {}) { return S.el('g', attrs, parent); },
-    html(parent, svgString) { // parse an SVG fragment into a group
-      const g = S.el('g', {}, parent);
-      g.innerHTML = svgString;
-      return g;
-    },
     onFrame(fn) { frameFns.add(fn); return () => frameFns.delete(fn); },
     onResize(fn) { resizeFns.add(fn); fn(W, H); return () => resizeFns.delete(fn); },
-    clearStage() {
-      world.innerHTML = ''; fx.innerHTML = ''; hot.innerHTML = ''; controls.innerHTML = '';
-      frameFns = new Set([charTick]); resizeFns = new Set();
-      ctx2d.setTransform(1, 0, 0, 1, 0, 0); ctx2d.clearRect(0, 0, canvas.width, canvas.height);
-      canvas.style.opacity = 0;
+    newScene({ fog = 0x000000, density = 0.03, bg = 0x000000, fov = 45 } = {}) {
+      disposeScene();
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(bg);
+      scene.fog = new THREE.FogExp2(fog, density);
+      const lens = (w, h) => (h > w * 1.05 ? Math.min(fov * 1.45, 78) : fov);
+      camera = new THREE.PerspectiveCamera(lens(W, H), W / H || 1, 0.05, 600);
+      frameFns = new Set(); resizeFns = new Set([(w, h) => { camera.aspect = w / h; camera.fov = lens(w, h); camera.updateProjectionMatrix(); }]);
+      hot.innerHTML = ''; controls.innerHTML = '';
       captionEl.classList.remove('on');
-      copilotEl.hidden = true;
+      return scene;
     },
     wait(ms) {
-      const tok = skipToken;
+      const tok = skipTok;
       return new Promise((res) => {
-        const t = setTimeout(res, reduced ? Math.min(ms, 700) : ms);
-        const iv = setInterval(() => { if (tok.skip || !alive) { clearTimeout(t); clearInterval(iv); res(); } }, 60);
-        setTimeout(() => clearInterval(iv), ms + 100);
+        const t0 = performance.now(), lim = reduced ? Math.min(ms, 900) : ms;
+        const iv = setInterval(() => { if (tok.skip || !alive || performance.now() - t0 >= lim) { clearInterval(iv); res(); } }, 40);
       });
     },
-    get skipped() { return skipToken.skip; },
+    until(fn) { const tok = skipTok; return new Promise((res) => { const iv = setInterval(() => { if (tok.skip || !alive || fn()) { clearInterval(iv); res(); } }, 60); }); },
     caption(text, ms) {
-      captionEl.classList.remove('on');
-      clearTimeout(S._capT);
+      captionEl.classList.remove('on'); clearTimeout(F._c);
       if (!text) return;
       requestAnimationFrame(() => { captionEl.textContent = text; captionEl.classList.add('on'); });
-      if (ms) S._capT = setTimeout(() => captionEl.classList.remove('on'), ms);
+      if (ms) F._c = setTimeout(() => captionEl.classList.remove('on'), ms);
     },
-    async title(big, small, ms = 2200) {
-      titleEl.innerHTML = `${small ? `<span class="t-sub">${small}</span>` : ''}<span class="t-big">${big}</span>`;
-      titleEl.classList.add('on');
-      await S.wait(ms);
-      titleEl.classList.remove('on');
-      await S.wait(500);
-    },
-    async card(lines, opts2 = {}) { // big centred lines, one after another
+    async card(lines, { keep = false, dark = false } = {}) {
+      titleEl.classList.toggle('dark', dark);
       titleEl.classList.add('on', 'card');
       for (const l of lines) {
-        titleEl.innerHTML = `<span class="t-big${l.small ? ' t-small' : ''}">${l.text}</span>`;
+        titleEl.innerHTML = `${l.sub ? `<span class="t-sub">${l.sub}</span>` : ''}<span class="t-big${l.small ? ' t-small' : ''}">${l.text}</span>`;
         titleEl.classList.remove('beat'); void titleEl.offsetWidth; titleEl.classList.add('beat');
-        await S.wait(l.ms || 1600);
+        await F.wait(l.ms || 1800);
       }
-      if (!opts2.keep) { titleEl.classList.remove('on', 'card'); await S.wait(400); }
+      if (!keep) { titleEl.classList.remove('on', 'card'); await F.wait(450); }
     },
-    hideTitle() { titleEl.classList.remove('on', 'card'); },
-    async fade(out, ms = 600) {
-      veil.style.transitionDuration = (reduced ? 200 : ms) + 'ms';
-      veil.classList.toggle('on', out);
-      await S.wait(reduced ? 220 : ms);
-    },
-    chapter(n, t) {
-      q('.st-ch-n').textContent = n;
-      q('.st-ch-t').textContent = t;
-      q('.st-progress i').style.transform = `scaleX(${(CHAPTERS.findIndex((c) => c.title === t) + 1) / CHAPTERS.length})`;
-    },
-    /* A real button in the control dock. Resolves when pressed. */
+    hideCard() { titleEl.classList.remove('on', 'card', 'dark'); },
+    async fade(out, ms = 700) { veil.style.transitionDuration = ms + 'ms'; veil.classList.toggle('on', out); await F.wait(ms); },
+    whiteout(v, ms = 1200) { white.style.transitionDuration = ms + 'ms'; white.style.opacity = v; },
+    glitch(on) { glitch.classList.toggle('on', on); },
+    bars(on) { bars.classList.toggle('on', on); },
     button(label, cls = '') {
-      const tok = skipToken;
+      const tok = skipTok;
       return new Promise((res) => {
         const b = document.createElement('button');
         b.type = 'button'; b.className = 'st-btn ' + cls; b.innerHTML = label;
-        controls.appendChild(b);
-        requestAnimationFrame(() => b.classList.add('in'));
-        const done = () => { b.remove(); clearInterval(iv); res(); };
-        b.addEventListener('click', () => { audio.tick(); done(); });
+        controls.appendChild(b); requestAnimationFrame(() => b.classList.add('in'));
+        const done = () => { clearInterval(iv); b.remove(); res(); };
+        b.addEventListener('click', done);
         const iv = setInterval(() => { if (tok.skip || !alive) done(); }, 80);
-        if (!('ontouchstart' in window)) setTimeout(() => b.focus({ preventScroll: true }), 50);
       });
     },
-    /* Press-and-hold ring. Resolves when held long enough. */
-    hold(label, ms = 1600) {
-      const tok = skipToken;
+    hold(label, ms = 1700) {
+      const tok = skipTok;
       return new Promise((res) => {
         const b = document.createElement('button');
         b.type = 'button'; b.className = 'st-hold';
         b.innerHTML = `<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" class="trk"/><circle cx="50" cy="50" r="46" class="bar" pathLength="1"/></svg><span>${label}</span>`;
-        controls.appendChild(b);
-        requestAnimationFrame(() => b.classList.add('in'));
+        controls.appendChild(b); requestAnimationFrame(() => b.classList.add('in'));
         const bar = b.querySelector('.bar');
-        let p = 0, holding = false, last = 0, raf = 0;
+        let p = 0, down = false, last = 0, raf = 0;
         const step = (now) => {
-          const dt = last ? (now - last) : 0; last = now;
-          p = Math.max(0, Math.min(1, p + (holding ? dt / ms : -dt / 500)));
+          const dt = last ? now - last : 0; last = now;
+          p = Math.max(0, Math.min(1, p + (down ? dt / ms : -dt / 500)));
           bar.style.strokeDashoffset = 1 - p;
-          if (holding) audio.holdTone(p);
-          if (p >= 1) { finish(); return; }
+          F.holdProgress = p;
+          if (down) audio.holdTone(p);
+          if (p >= 1) return finish();
           raf = requestAnimationFrame(step);
         };
-        const start = (e) => { e.preventDefault(); holding = true; b.classList.add('down'); };
-        const stop = () => { holding = false; b.classList.remove('down'); audio.holdTone(-1); };
-        b.addEventListener('pointerdown', start);
-        b.addEventListener('pointerup', stop); b.addEventListener('pointerleave', stop); b.addEventListener('pointercancel', stop);
-        b.addEventListener('keydown', (e) => { if ((e.key === ' ' || e.key === 'Enter') && !e.repeat) start(e); });
-        b.addEventListener('keyup', (e) => { if (e.key === ' ' || e.key === 'Enter') stop(); });
+        const on = (e) => { e.preventDefault(); down = true; b.classList.add('down'); };
+        const off = () => { down = false; b.classList.remove('down'); audio.holdTone(-1); };
+        b.addEventListener('pointerdown', on); b.addEventListener('pointerup', off); b.addEventListener('pointerleave', off); b.addEventListener('pointercancel', off);
+        b.addEventListener('keydown', (e) => { if ((e.key === ' ' || e.key === 'Enter') && !e.repeat) on(e); });
+        b.addEventListener('keyup', (e) => { if (e.key === ' ' || e.key === 'Enter') off(); });
         b.addEventListener('contextmenu', (e) => e.preventDefault());
         raf = requestAnimationFrame(step);
         const iv = setInterval(() => { if (tok.skip || !alive) finish(); }, 80);
-        function finish() { cancelAnimationFrame(raf); clearInterval(iv); audio.holdTone(-1); b.remove(); res(); }
-        setTimeout(() => b.focus({ preventScroll: true }), 50);
+        function finish() { cancelAnimationFrame(raf); clearInterval(iv); audio.holdTone(-1); F.holdProgress = 0; b.remove(); res(); }
       });
-    },
-    /* Clickable hotspot over something in the scene (screen coords). */
-    hotspot({ label, onTap, cls = '' }) {
-      const b = document.createElement('button');
-      b.type = 'button'; b.className = 'st-spot ' + cls;
-      b.innerHTML = `<i></i><span>${label}</span>`;
-      hot.appendChild(b);
-      b.addEventListener('click', () => { audio.tick(); onTap && onTap(b); });
-      return {
-        el: b,
-        place(x, y) { b.style.transform = `translate(${Math.round(x)}px, ${Math.round(y)}px)`; },
-        done() { b.classList.add('seen'); },
-        remove() { b.remove(); },
-      };
     },
     prompt(text) {
       let p = controls.querySelector('.st-prompt');
@@ -204,49 +166,92 @@ export function createStory(host, opts) {
       p.innerHTML = text;
     },
     unlock(title, text) {
-      unlockEl.innerHTML = `<b>Unlocked · ${title}</b><span>${text}</span>`;
+      unlockEl.innerHTML = `<b>${title}</b><span>${text}</span>`;
       unlockEl.classList.remove('on'); void unlockEl.offsetWidth; unlockEl.classList.add('on');
       audio.unlock();
-      clearTimeout(S._unT); S._unT = setTimeout(() => unlockEl.classList.remove('on'), 3400);
+      clearTimeout(F._u); F._u = setTimeout(() => unlockEl.classList.remove('on'), 3200);
     },
-    copilot(text) {
-      if (!S.abilities.has('copilot')) return;
-      copilotEl.hidden = false;
-      copilotEl.querySelector('span').textContent = text;
-      copilotEl.classList.remove('talk'); void copilotEl.offsetWidth; copilotEl.classList.add('talk');
+    /* screen position of a 3D point (for HTML labels) */
+    toScreen(v) {
+      const p = v.clone().project(camera);
+      return [(p.x * 0.5 + 0.5) * W, (-p.y * 0.5 + 0.5) * H, p.z < 1];
     },
-    placeChar(x, y, h) { // feet at (x,y), height h px
-      const s = h / 880;
-      S.char.el.setAttribute('transform', `translate(${x.toFixed(1)},${y.toFixed(1)}) scale(${s.toFixed(4)})`);
+    /* objects under a pointer event */
+    pick(e, objects) {
+      const r = canvas.getBoundingClientRect();
+      const m = new THREE.Vector2(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+      raycaster.setFromCamera(m, camera);
+      return raycaster.intersectObjects(objects, true);
+    },
+    /* --- texture helpers --- */
+    canvasTex(w, h, draw) {
+      const c = document.createElement('canvas'); c.width = w; c.height = h;
+      draw(c.getContext('2d'), w, h);
+      const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4;
+      return t;
+    },
+    glowTex(inner = 'rgba(255,255,255,1)', outer = 'rgba(255,255,255,0)') {
+      return F.canvasTex(128, 128, (g, w, h) => {
+        const gr = g.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, w / 2);
+        gr.addColorStop(0, inner); gr.addColorStop(0.25, inner.replace(/[\d.]+\)$/, '0.55)')); gr.addColorStop(1, outer);
+        g.fillStyle = gr; g.fillRect(0, 0, w, h);
+      });
+    },
+    glow(color = 0xffffff, size = 1, opacity = 1) {
+      const m = new THREE.SpriteMaterial({ map: F._glow || (F._glow = F.glowTex()), color, transparent: true, opacity, blending: THREE.AdditiveBlending, depthWrite: false, fog: false });
+      const s = new THREE.Sprite(m); s.scale.set(size, size, 1); return s;
+    },
+    /* --- the character as a billboard, playing a baked atlas --- */
+    character(key, height = 1.8) {
+      const sp = F.sprites[key];
+      let tex = new THREE.CanvasTexture(sp.canvas);
+      tex.colorSpace = THREE.SRGBColorSpace;
+      tex.repeat.set(1 / sp.cols, 1 / sp.rows);
+      tex.magFilter = THREE.LinearFilter; tex.minFilter = THREE.LinearMipmapLinearFilter;
+      const geo = new THREE.PlaneGeometry(height * sp.aspect, height);
+      geo.translate(0, height * (0.5 - (1 - sp.feet)), 0); // origin at the feet
+      const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, alphaTest: 0.04, side: THREE.DoubleSide, fog: true });
+      const mesh = new THREE.Mesh(geo, mat);
+      const api = {
+        mesh, mat,
+        frame(i) {
+          const s = F.sprites[api.key];
+          const k = ((i % s.n) + s.n) % s.n;
+          tex.offset.set((k % s.cols) / s.cols, 1 - (Math.floor(k / s.cols) + 1) / s.rows);
+        },
+        key,
+        use(k2) { // swap to another atlas (new texture: atlases differ in size)
+          const s2 = F.sprites[k2];
+          const t2 = new THREE.CanvasTexture(s2.canvas);
+          t2.colorSpace = THREE.SRGBColorSpace; t2.repeat.set(1 / s2.cols, 1 / s2.rows);
+          tex.dispose(); tex = t2; mat.map = t2; mat.needsUpdate = true;
+          api.key = k2; api.frame(0);
+        },
+      };
+      api.frame(0);
+      return api;
     },
   };
 
-  const charTick = (dt) => S.char.update(dt);
-  frameFns.add(charTick);
-
-  /* ---------- size ---------- */
-  function resize() {
-    const r = host.getBoundingClientRect();
-    W = Math.round(r.width); H = Math.round(r.height);
-    dpr = Math.min(window.devicePixelRatio || 1, W * H > 1400000 ? 1.5 : 2);
-    canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
-    svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
-    resizeFns.forEach((fn) => fn(W, H));
+  function disposeScene() {
+    scene.traverse((o) => {
+      if (o.geometry) o.geometry.dispose();
+      if (o.material) [].concat(o.material).forEach((m) => { for (const k in m) if (m[k] && m[k].isTexture && m[k] !== F._glow) m[k].dispose(); m.dispose(); });
+      if (o.isReflector && o.dispose) o.dispose();
+    });
   }
-  const ro = new ResizeObserver(resize);
-  ro.observe(host);
-  resize();
 
   /* ---------- loop ---------- */
-  let last = 0, raf = 0;
+  let last = 0, raf = 0, slowFrames = 0;
   function loop(now) {
     if (!alive) return;
-    const dt = Math.min(0.05, last ? (now - last) / 1000 : 0.016);
-    last = now;
+    const dt = Math.min(0.25, last ? (now - last) / 1000 : 0.016); last = now;
     frameFns.forEach((fn) => fn(dt, now / 1000));
+    renderer.render(scene, camera);
+    // adaptive resolution if the device struggles
+    if (dt > 0.034) { if (++slowFrames > 40 && dpr > 1) { dpr = Math.max(1, dpr - 0.25); renderer.setPixelRatio(dpr); renderer.setSize(W, H, false); slowFrames = 0; } } else slowFrames = Math.max(0, slowFrames - 1);
     raf = requestAnimationFrame(loop);
   }
-  raf = requestAnimationFrame(loop);
   const onVis = () => { if (document.hidden) { cancelAnimationFrame(raf); audio.suspend(); } else { last = 0; raf = requestAnimationFrame(loop); audio.resume(); } };
   document.addEventListener('visibilitychange', onVis);
 
@@ -255,49 +260,54 @@ export function createStory(host, opts) {
   const setSound = (on) => { audio.setMuted(!on); sfx.setMuted(!on); soundBtn.setAttribute('aria-pressed', String(on)); soundBtn.setAttribute('aria-label', on ? 'Sound on' : 'Sound off'); };
   soundBtn.addEventListener('click', () => setSound(soundBtn.getAttribute('aria-pressed') !== 'true'));
   setSound(!sfx.muted);
-  q('.st-skip').addEventListener('click', () => { skipToken.skip = true; audio.tick(); });
+  q('.st-skip').addEventListener('click', () => { skipTok.skip = true; });
   q('.st-close').addEventListener('click', () => opts.onExit());
   const onKey = (e) => { if (e.key === 'Escape') opts.onExit(); };
   document.addEventListener('keydown', onKey);
 
   /* ---------- run ---------- */
   (async () => {
+    resize();
     audio.start();
-    for (let i = 0; i < CHAPTERS.length && alive; i++) {
-      const c = CHAPTERS[i];
-      skipToken = { skip: false };
-      S.clearStage();
-      S.chapter(String(i + 1).padStart(2, '0'), c.title);
-      q('.st-skip').hidden = !!c.noSkip;
-      try {
-        await c.run(S);
-      } catch (err) { if (alive) console.error(err); }
-      if (!alive) return;
-      if (skipToken.skip && c.onSkip) c.onSkip(S);
-      S.hideTitle(); S.caption('');
-      if (i < CHAPTERS.length - 1) await S.fade(true, 500);
-      skipToken = { skip: false };
-      if (i < CHAPTERS.length - 1) { S.clearStage(); await S.fade(false, 10); }
+    // bake the character into frames (a second or two)
+    const barEl = q('.st-boot b');
+    const jobs = [
+      ['walkBackTee', 'walkBack', 'whitetee', 12], ['walkBackHood', 'walkBack', 'hoodie', 12],
+      ['idleBackHood', 'idleBack', 'hoodie', 4], ['idleBackTee', 'idleBack', 'whitetee', 4],
+      ['type', 'type', 'hoodie', 6], ['idleFront', 'idleFront', 'hoodie', 6],
+    ];
+    for (let i = 0; i < jobs.length && alive; i++) {
+      const [key, kind, outfit, n] = jobs[i];
+      F.sprites[key] = await bake(kind, outfit, n, small ? 192 : 256);
+      barEl.style.transform = `scaleX(${(i + 1) / jobs.length})`;
     }
     if (!alive) return;
-    // the ending offers the portfolio
-    await S.wait(200);
-    q('.st-skip').hidden = true;
-    const b1 = S.button('View my work <i>→</i>', 'st-btn-red');
-    const b2 = S.button('Play again', 'st-btn-quiet');
-    const which = await Promise.race([b1.then(() => 'work'), b2.then(() => 'again')]);
+    q('.st-boot').classList.add('out');
+    raf = requestAnimationFrame(loop);
+    for (let i = 0; i < SHOTS.length && alive; i++) {
+      const s = SHOTS[i];
+      skipTok = { skip: false };
+      q('.st-ch-n').textContent = String(i + 1).padStart(2, '0');
+      q('.st-ch-t').textContent = s.title;
+      q('.st-progress i').style.transform = `scaleX(${(i + 1) / SHOTS.length})`;
+      q('.st-skip').hidden = !!s.noSkip;
+      try { await s.run(F); } catch (err) { if (alive) console.error(err); }
+      if (!alive) return;
+      F.caption(''); F.prompt('');
+      if (i < SHOTS.length - 1) { F.hideCard(); await F.fade(true, 600); F.whiteout(0, 10); F.glitch(false); }
+    }
     if (!alive) return;
-    if (which === 'work') opts.onViewWork(); else opts.onReplay();
+    q('.st-skip').hidden = true;
+    const which = await Promise.race([F.button('View my work <i>→</i>', 'st-btn-red').then(() => 'w'), F.button('Watch again', 'st-btn-quiet').then(() => 'a')]);
+    if (!alive) return;
+    if (which === 'w') opts.onViewWork(); else opts.onReplay();
   })();
 
   const api = {
     destroy() {
-      alive = false;
-      cancelAnimationFrame(raf);
-      ro.disconnect();
-      document.removeEventListener('visibilitychange', onVis);
-      document.removeEventListener('keydown', onKey);
-      audio.stop();
+      alive = false; cancelAnimationFrame(raf); ro.disconnect();
+      document.removeEventListener('visibilitychange', onVis); document.removeEventListener('keydown', onKey);
+      audio.stop(); disposeScene(); renderer.dispose();
       host.innerHTML = '';
     },
   };
