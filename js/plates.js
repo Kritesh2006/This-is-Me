@@ -62,14 +62,14 @@ export const PLATES = {
   payreport: (acc) => `
   <svg viewBox="0 0 400 300" aria-hidden="true">
     <g ${font}>
-      ${T(40, 50, 'CURRENT PAY PERIOD · AUTO-DETECTED')}
+      ${T(40, 50, 'CURRENT PERIOD · AUTO-DETECTED')}
       ${Array.from({ length: 35 }, (_, i) => {
         const x = 40 + (i % 7) * 46, y = 66 + Math.floor(i / 7) * 36;
         const day = i - 2;
         const inP = day >= 15 && day <= 30;
         return day >= 0 && day < 31 ? `<rect x="${x}" y="${y}" width="40" height="30" fill="${inP ? 'currentColor' : 'none'}" opacity="${inP ? 0.16 : 1}" stroke="currentColor" stroke-opacity=".35"/>${T(x + 4, y + 12, day + 1)}` : '';
       }).join('')}
-      <rect x="40" y="252" width="320" height="28" fill="${acc}"/>${T(52, 270, 'TOTAL HOURS · READY FOR MANAGER', 'fill="#F1ECE2"')}
+      <rect x="40" y="252" width="320" height="28" fill="${acc}"/>${T(52, 270, 'SUMMARY · READY FOR MANAGER', 'fill="#F1ECE2"')}
     </g>
   </svg>`,
 

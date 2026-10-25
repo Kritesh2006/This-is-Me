@@ -10,7 +10,7 @@
 
 /* loading */
 .st-loading { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 18px; background: #06110C; color: #F1ECE2; text-align: center; padding: 24px; }
-.st-loading span { font: 900 72px/1 'Bodoni Moda', Georgia, serif; color: #CC2D26; }
+.st-loading span { font: 900 clamp(44px, 12vw, 96px)/1 'Bodoni Moda', Georgia, serif; color: #CC2D26; }
 .st-loading i { width: 120px; height: 2px; background: rgba(241, 236, 226, .15); position: relative; overflow: hidden; }
 .st-loading i::after { content: ''; position: absolute; inset: 0; width: 40%; background: #CC2D26; animation: stl 1s ease-in-out infinite; }
 @keyframes stl { from { transform: translateX(-100%); } to { transform: translateX(260%); } }

@@ -67,7 +67,7 @@ async function startStory(push = true) {
   if (story) { story.destroy(); story = null; }
   setScreen('story');
   if (push) history.pushState({ v: 'story' }, '', location.pathname + '#story');
-  storyHost.innerHTML = '<div class="st-loading"><span>RON</span><i></i></div>';
+  storyHost.innerHTML = '<div class="st-loading"><span>KRITESH</span><i></i></div>';
   try {
     const [mod] = await Promise.all([import('./story/story.js'), loadStoryCss()]);
     if (current !== 'story') return;
