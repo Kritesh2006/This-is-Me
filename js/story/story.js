@@ -9,6 +9,7 @@ import { createCharacter } from '../char/character.js';
 import { createAudio } from './audio.js';
 import { CHAPTERS } from './chapters.js';
 import { loadCar } from './car.js';
+import { sfx } from '../sfx.js';
 
 const NS = 'http://www.w3.org/2000/svg';
 
@@ -251,9 +252,9 @@ export function createStory(host, opts) {
 
   /* ---------- tools ---------- */
   const soundBtn = q('.st-sound');
-  const setSound = (on) => { audio.setMuted(!on); soundBtn.setAttribute('aria-pressed', String(on)); soundBtn.setAttribute('aria-label', on ? 'Sound on' : 'Sound off'); };
+  const setSound = (on) => { audio.setMuted(!on); sfx.setMuted(!on); soundBtn.setAttribute('aria-pressed', String(on)); soundBtn.setAttribute('aria-label', on ? 'Sound on' : 'Sound off'); };
   soundBtn.addEventListener('click', () => setSound(soundBtn.getAttribute('aria-pressed') !== 'true'));
-  setSound(true);
+  setSound(!sfx.muted);
   q('.st-skip').addEventListener('click', () => { skipToken.skip = true; audio.tick(); });
   q('.st-close').addEventListener('click', () => opts.onExit());
   const onKey = (e) => { if (e.key === 'Escape') opts.onExit(); };

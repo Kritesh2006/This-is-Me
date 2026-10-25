@@ -6,6 +6,7 @@
    ============================================================ */
 import { currentAge, OWNER_NOTE } from './data.js';
 import { renderPortfolio, wirePortfolio } from './portfolio.js';
+import { sfx } from './sfx.js';
 
 const $ = (id) => document.getElementById(id);
 const root = document.documentElement;
@@ -17,6 +18,11 @@ document.querySelectorAll('[data-age]').forEach((n) => (n.textContent = `${curre
 
 renderPortfolio();
 wirePortfolio();
+
+/* click-sound toggles (entry + header) */
+const sndBtns = [...document.querySelectorAll('[data-sound]')];
+sfx.onChange((m) => sndBtns.forEach((b) => { b.setAttribute('aria-pressed', String(!m)); b.setAttribute('aria-label', m ? 'Click sounds off' : 'Click sounds on'); }));
+sndBtns.forEach((b) => b.addEventListener('click', () => { sfx.setMuted(!sfx.muted); if (!sfx.muted) sfx.click('big'); }));
 
 /* ---------- screens ---------- */
 let current = null;
@@ -56,7 +62,7 @@ function loadStoryCss() {
   if (storyCss) return storyCss;
   storyCss = new Promise((res) => {
     const l = document.createElement('link');
-    l.rel = 'stylesheet'; l.href = './css/story.css';
+    l.rel = 'stylesheet'; l.href = './css/story.css?v=3';
     l.onload = res; l.onerror = res;
     document.head.appendChild(l);
   });

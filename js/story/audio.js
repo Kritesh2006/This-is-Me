@@ -77,6 +77,8 @@ export function createAudio() {
       engine.f.frequency.setTargetAtTime(180 + speed01 * 500, now(), 0.15);
     },
     tick() {
+      return; // clicks are handled site-wide by sfx.js
+      // eslint-disable-next-line no-unreachable
       if (!ac || muted) return;
       const o = ac.createOscillator(), g = ac.createGain();
       o.type = 'sine'; o.frequency.value = 1400;

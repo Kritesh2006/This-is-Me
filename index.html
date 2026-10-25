@@ -13,8 +13,8 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%230C1F17'/%3E%3Crect x='10' y='46' width='44' height='4' fill='%23A31C1B'/%3E%3Ctext x='32' y='40' font-family='Georgia,serif' font-weight='700' font-size='32' fill='%23F1ECE2' text-anchor='middle'%3ER%3C/text%3E%3C/svg%3E">
 <link rel="preload" href="./assets/fonts/bodoni.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="./assets/fonts/archivo.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="./css/site.css">
-<link rel="modulepreload" href="./js/app.js">
+<link rel="stylesheet" href="./css/site.css?v=3">
+<link rel="modulepreload" href="./js/app.js?v=3">
 <script>
   // Pick the first screen before paint so direct links never flash the chooser.
   (function () {
@@ -32,7 +32,7 @@
   <div class="entry-beam" aria-hidden="true"></div>
   <header class="entry-top">
     <p class="entry-name">Kritesh Dhungel</p>
-    <p class="entry-meta">Greensboro, NC <span>·</span> <span data-year></span></p>
+    <div class="entry-right"><p class="entry-meta">Greensboro, NC <span>·</span> <span data-year></span></p><button type="button" class="snd-btn" data-sound aria-pressed="true" aria-label="Click sounds on"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path class="on" d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.6"/><path class="off" d="M16.5 9.5l5 5m0-5l-5 5" stroke="currentColor" stroke-width="1.6"/></svg></button></div>
   </header>
   <div class="entry-mid">
     <h1 class="entry-ron"><button type="button" id="ronMark">Kritesh</button></h1>
@@ -85,7 +85,8 @@
       <a href="#contact">Contact</a>
       <button type="button" class="nav-play" data-play>Play my story</button>
     </nav>
-    <button type="button" class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="siteNav"><span></span><span></span><b class="sr">Menu</b></button>
+    <div class="head-right"><button type="button" class="snd-btn" data-sound aria-pressed="true" aria-label="Click sounds on"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path class="on" d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.6"/><path class="off" d="M16.5 9.5l5 5m0-5l-5 5" stroke="currentColor" stroke-width="1.6"/></svg></button>
+    <button type="button" class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="siteNav"><span></span><span></span><b class="sr">Menu</b></button></div>
   </header>
 
   <main>
@@ -261,6 +262,6 @@
 </div>
 
 <noscript><style>#entry{display:none!important}#site{display:block!important}</style></noscript>
-<script type="module" src="./js/app.js"></script>
+<script type="module" src="./js/app.js?v=3"></script>
 </body>
 </html>
