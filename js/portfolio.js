@@ -1,105 +1,88 @@
-/* portfolio.js — renders the portfolio from data.js and wires its
-   navigation. Works with zero WebGL: this is the fallback path and
-   the recruiter path, so it never depends on the experience. */
-import { PROJECTS, SKILLS, currentAge } from './data.js';
-import { unlocks } from './store.js';
-
-const JOURNEY = [
-  { when: '2006', where: 'Nepal', what: 'Born June 7. Music, language and taking things apart.' },
-  { when: '2022', where: 'Kathmandu', what: 'First job, behind a phone repair counter.' },
-  { when: 'Jan 2025', where: 'Dayton, Ohio', what: 'Arrived in the US alone at eighteen. Wright State University.' },
-  { when: 'May 2025', where: 'California', what: 'Three months across Bakersfield, Fresno, Visalia, Clovis and Porterville.' },
-  { when: '2025', where: 'Greensboro', what: 'Forsyth Tech. Repair shifts. First software other people rely on.' },
-  { when: 'Now', where: 'Building', what: 'HIMVEDA, Witness, and an internship search.', now: true },
-];
+/* portfolio.js — renders the editorial portfolio from data.js */
+import { PROJECTS, SKILLS, JOURNEY } from './data.js';
+import { PLATES } from './plates.js';
 
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const ACCENT = { forest: '#CC2D26', char: '#CC2D26', red: '#F1ECE2', mint: '#A31C1B' };
+const FEATURE_ORDER = ['aria', 'inventory', 'himveda'];
 
-function renderJourney() {
-  document.getElementById('journeyList').innerHTML = JOURNEY.map((j) => `
-    <li class="${j.now ? 'now' : ''}">
-      <p class="road-when">${esc(j.when)}</p>
-      <p class="road-where">${esc(j.where)}</p>
-      <p class="road-what">${esc(j.what)}</p>
-    </li>`).join('');
+function linkButtons(p) {
+  if (!p.links.length) return `<p class="f-private">Private build · link when public</p>`;
+  return `<div class="f-links">${p.links.map((l, i) => `<a class="btn ${i === 0 ? 'btn-red' : 'btn-line'}" href="${esc(l.href)}" target="_blank" rel="noopener">${esc(l.label)} <i aria-hidden="true">↗</i></a>`).join('')}</div>`;
 }
 
-function renderProjects() {
-  const got = unlocks.all();
-  document.getElementById('projectList').innerHTML = PROJECTS.map((p) => {
-    const links = p.links.length
-      ? `<div class="spec-links">${p.links.map((l) => `<a href="${esc(l.href)}" target="_blank" rel="noopener">${esc(l.label)}<span class="sr"> for ${esc(p.name)} (opens in a new tab)</span></a>`).join('')}</div>`
-      : `<p class="spec-private">Not public yet</p>`;
-    const live = /use|active/i.test(p.status);
-    const unlockLine = p.unlock && got.has(p.unlock.id)
-      ? `<p class="spec-unlock">Unlocked on the road: ${esc(p.unlock.title)}</p>` : '';
-    return `
-    <article class="spec${p.featured ? ' featured' : ''}" id="p-${p.id}">
-      <div class="spec-row">
-        <h3 class="spec-name">${esc(p.name)}<span class="spec-kind">${esc(p.kind)}</span></h3>
-        <div class="spec-body">
-          <p class="spec-sum">${esc(p.summary)}</p>
-          <p class="spec-detail" id="d-${p.id}" hidden>${esc(p.detail)}</p>
-          <ul class="spec-stack" aria-label="Built with">${p.stack.map((s) => `<li>${esc(s)}</li>`).join('')}</ul>
-          ${unlockLine}
-        </div>
-        <div class="spec-side">
-          <p class="spec-meta"><b class="${live ? 'live' : ''}">${esc(p.status)}</b>${esc(p.year)}</p>
-          ${links}
-          <button type="button" class="spec-more" aria-expanded="false" aria-controls="d-${p.id}">How it works</button>
-        </div>
+export function renderPortfolio() {
+  const total = PROJECTS.length;
+  const num = (p) => String(PROJECTS.indexOf(p) + 1).padStart(2, '0');
+  const featured = FEATURE_ORDER.map((id) => PROJECTS.find((p) => p.id === id));
+  const rest = PROJECTS.filter((p) => !FEATURE_ORDER.includes(p.id));
+
+  document.getElementById('featureList').innerHTML = featured.map((p, i) => `
+    <article class="feature rv${i === 0 ? ' big' : ''}" id="p-${p.id}">
+      <div class="feature-plate plate-${p.plate}">
+        <span class="plate-tag">${esc(p.kind)}</span>
+        ${PLATES[p.id] ? PLATES[p.id](ACCENT[p.plate]) : ''}
       </div>
-    </article>`;
-  }).join('');
+      <div class="feature-text">
+        <p class="f-meta"><span class="f-no">${num(p)} / ${String(total).padStart(2, '0')}</span><span>${esc(p.year)}</span><span class="f-status${/use|active/i.test(p.status) ? ' live' : ''}">${esc(p.status)}</span></p>
+        <h3 class="f-name">${esc(p.name)}</h3>
+        <p class="f-kind">${esc(p.kind)}</p>
+        <p class="f-sum">${esc(p.summary)}</p>
+        <p class="f-detail">${esc(p.detail)}</p>
+        <ul class="chips">${p.stack.map((s) => `<li>${esc(s)}</li>`).join('')}</ul>
+        ${linkButtons(p)}
+      </div>
+    </article>`).join('');
 
-  document.querySelectorAll('.spec-more').forEach((b) => b.addEventListener('click', () => {
-    const d = document.getElementById(b.getAttribute('aria-controls'));
-    const open = b.getAttribute('aria-expanded') !== 'true';
-    b.setAttribute('aria-expanded', open); d.hidden = !open;
-    b.textContent = open ? 'Less' : 'How it works';
-  }));
-}
+  document.getElementById('moreList').innerHTML = rest.map((p) => `
+    <li class="rv" id="p-${p.id}">
+      <span class="m-no">${num(p)}</span>
+      <h4 class="m-name">${esc(p.name)}<span class="m-kind">${esc(p.kind)} · ${esc(p.year)}</span></h4>
+      <div class="m-sum">${esc(p.summary)}<ul class="chips">${p.stack.map((s) => `<li>${esc(s)}</li>`).join('')}</ul></div>
+      <div class="m-links">${p.links.length ? p.links.map((l) => `<a href="${esc(l.href)}" target="_blank" rel="noopener">${esc(l.label)} ↗</a>`).join('') : `<span>${esc(p.status)}</span>`}</div>
+    </li>`).join('');
 
-function renderSkills() {
   document.getElementById('skillList').innerHTML = SKILLS.map((g) => `
-    <div><h3>${esc(g.group)}</h3><ul>${g.items.map((i) => `<li>${esc(i)}</li>`).join('')}</ul></div>`).join('');
+    <div class="skill-col rv"><h3>${esc(g.group)}</h3><ul>${g.items.map((s) => `<li>${esc(s)}</li>`).join('')}</ul></div>`).join('');
+
+  document.getElementById('journeyList').innerHTML = JOURNEY.map((j) => `
+    <li class="rv"><p class="road-when">${esc(j.when)}</p><p class="road-where">${esc(j.where)}</p><p class="road-what">${esc(j.what)}</p></li>`).join('');
 }
 
-function wireNav() {
+export function wirePortfolio() {
   const head = document.getElementById('siteHead');
   const nav = document.getElementById('siteNav');
-  const btn = document.getElementById('menuBtn');
-  const close = () => { nav.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); };
-  btn.addEventListener('click', () => {
+  const menu = document.getElementById('menuBtn');
+  const setSolid = () => head.classList.toggle('solid', window.scrollY > 40 || nav.classList.contains('open'));
+  window.addEventListener('scroll', setSolid, { passive: true });
+  setSolid();
+
+  const closeMenu = () => { nav.classList.remove('open'); menu.setAttribute('aria-expanded', 'false'); document.body.style.overflow = ''; setSolid(); };
+  menu.addEventListener('click', () => {
     const open = !nav.classList.contains('open');
-    nav.classList.toggle('open', open); btn.setAttribute('aria-expanded', open);
-    if (open) nav.querySelector('a').focus({ preventScroll: true });
+    nav.classList.toggle('open', open);
+    menu.setAttribute('aria-expanded', String(open));
+    document.body.style.overflow = open ? 'hidden' : '';
+    setSolid();
   });
-  nav.addEventListener('click', (e) => { if (e.target.closest('a')) close(); });
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && nav.classList.contains('open')) { close(); btn.focus(); } });
+  nav.addEventListener('click', (e) => { if (e.target.closest('a,button')) closeMenu(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && nav.classList.contains('open')) closeMenu(); });
 
-  addEventListener('scroll', () => head.classList.toggle('scrolled', scrollY > 10), { passive: true });
+  // reveal on scroll
+  const items = document.querySelectorAll('#site .rv, .sec-head, .about-big, .hero-copy, .hero-photo');
+  if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    items.forEach((el) => el.classList.add('rv'));
+    const io = new IntersectionObserver((ents) => ents.forEach((en) => { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } }), { rootMargin: '0px 0px -8% 0px' });
+    items.forEach((el) => io.observe(el));
+  } else items.forEach((el) => el.classList.add('in'));
 
-  // Highlight the section in view.
-  const links = new Map([...nav.querySelectorAll('a')].map((a) => [a.getAttribute('href').slice(1), a]));
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach((en) => {
-      if (!en.isIntersecting) return;
-      links.forEach((a) => a.classList.remove('active'));
-      const id = en.target.id === 'now' ? 'work' : en.target.id;
-      links.get(id)?.classList.add('active');
-    });
-  }, { rootMargin: '-45% 0px -50% 0px' });
-  document.querySelectorAll('main section[id]').forEach((s) => io.observe(s));
+  // current section in nav
+  const links = [...nav.querySelectorAll('a[href^="#"]')];
+  const secs = links.map((a) => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  if ('IntersectionObserver' in window) {
+    const io2 = new IntersectionObserver((ents) => ents.forEach((en) => {
+      if (en.isIntersecting) links.forEach((a) => a.classList.toggle('on', a.getAttribute('href') === '#' + en.target.id));
+    }), { rootMargin: '-45% 0px -50% 0px' });
+    secs.forEach((s) => io2.observe(s));
+  }
 }
-
-export function initPortfolio() {
-  renderJourney();
-  renderProjects();
-  renderSkills();
-  wireNav();
-  const age = currentAge();
-  document.querySelectorAll('[data-age]').forEach((n) => (n.textContent = age));
-}
-
-export function refreshUnlocks() { renderProjects(); }

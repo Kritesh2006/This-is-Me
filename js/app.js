@@ -1,184 +1,152 @@
-/* app.js — flow: boot → entry → (garage ⇄ road) or portfolio.
-   The portfolio is always one action away, from every state. */
-import { initPortfolio, refreshUnlocks } from './portfolio.js';
-import { OWNER_NOTE } from './data.js';
-import { get, set } from './store.js';
-import * as audio from './audio.js';
+/* ============================================================
+   app.js — routing between the three screens:
+   opening chooser · story (lazy) · portfolio.
+   The story's code, art and styles are only fetched when
+   someone chooses PLAY MY STORY.
+   ============================================================ */
+import { currentAge, OWNER_NOTE } from './data.js';
+import { renderPortfolio, wirePortfolio } from './portfolio.js';
 
 const $ = (id) => document.getElementById(id);
-const body = document.body;
-const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-const wait = (ms) => new Promise((r) => setTimeout(r, reduced ? Math.min(ms, 50) : ms));
-
-let mode = 'boot';
-// Only move focus programmatically for keyboard users; mouse users get no stray rings.
-let keyboardUser = false;
-addEventListener('keydown', (e) => { if (e.key === 'Tab' || e.key === 'Enter' || e.key.startsWith('Arrow')) keyboardUser = true; }, true);
-addEventListener('pointerdown', () => { keyboardUser = false; }, true);
-const focus = (el) => { if (el && keyboardUser) el.focus({ preventScroll: true }); };
-let xp = null, xpLoading = null;
-let hideTimers = [];
-const later = (fn, ms) => hideTimers.push(setTimeout(fn, ms));
-const clearLater = () => { hideTimers.forEach(clearTimeout); hideTimers = []; };
+const root = document.documentElement;
+const entry = $('entry'), site = $('site'), storyHost = $('story');
+const reduce = matchMedia('(prefers-reduced-motion: reduce)');
 
 document.querySelectorAll('[data-year]').forEach((n) => (n.textContent = new Date().getFullYear()));
-initPortfolio();
+document.querySelectorAll('[data-age]').forEach((n) => (n.textContent = `${currentAge()}`));
 
-/* ---------- toast ---------- */
-let toastT;
-function toast(msg, ms = 3600) {
-  const t = $('toast'); t.textContent = msg; t.classList.add('show');
-  clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), ms);
+renderPortfolio();
+wirePortfolio();
+
+/* ---------- screens ---------- */
+let current = null;
+let story = null;      // story module instance
+let entryArt = null;   // little animated character on the PLAY card
+
+function setScreen(name) {
+  current = name;
+  root.className = 'boot-' + (name === 'site' ? 'site' : name);
+  entry.hidden = name !== 'entry';
+  site.hidden = name !== 'site';
+  storyHost.hidden = name !== 'story';
+  document.body.classList.toggle('is-story', name === 'story');
+  if (name === 'entry') startEntryArt(); else stopEntryArt();
+  if (name !== 'story' && story) { story.destroy(); story = null; }
 }
 
-/* ---------- boot ---------- */
-async function boot() {
-  const seen = get('seen', false, 'session');
-  const linesEl = $('bootLines'), bar = $('bootBar');
-  const lines = ['Initializing', 'Loading identity', 'Loading memory', 'Connecting systems', 'Ready'];
-  let skipped = false;
-  const skip = () => { skipped = true; };
-  addEventListener('pointerdown', skip, { once: true });
-  addEventListener('keydown', skip, { once: true });
-  if (!seen && !reduced) {
-    for (let i = 0; i < lines.length && !skipped; i++) {
-      const li = document.createElement('li'); li.textContent = lines[i].toUpperCase(); linesEl.append(li);
-      bar.style.width = `${((i + 1) / lines.length) * 100}%`;
-      await wait(i === lines.length - 1 ? 260 : 190);
-    }
-  }
-  removeEventListener('pointerdown', skip); removeEventListener('keydown', skip);
-  set('seen', true, 'session');
-  $('boot').classList.add('out');
-  showEntry();
-  setTimeout(() => $('boot').remove(), 600);
+function showEntry(push = true) {
+  setScreen('entry');
+  window.scrollTo(0, 0);
+  if (push) history.pushState({ v: 'entry' }, '', location.pathname);
+  if (push) $('choosePlay').focus({ preventScroll: true });
 }
 
-/* ---------- entry ---------- */
-function showEntry() {
-  mode = 'entry';
-  const e = $('entry'); e.hidden = false;
-  requestAnimationFrame(() => e.classList.add('in'));
-  setTimeout(() => $('btnEnter').focus({ preventScroll: true }), 400); // entry: a single obvious action, focus it for everyone
-  // warm the 3D module in the background while the visitor reads
-  const save = navigator.connection && navigator.connection.saveData;
-  if (!save) setTimeout(() => loadXP().catch(() => {}), 900);
+function showSite(push = true, anchor) {
+  setScreen('site');
+  if (push) history.pushState({ v: 'site' }, '', location.pathname + (anchor ? anchor : '#top'));
+  requestAnimationFrame(() => {
+    const t = anchor && document.querySelector(anchor);
+    if (t) t.scrollIntoView({ behavior: 'instant' in document.documentElement.style ? 'instant' : 'auto', block: 'start' });
+    else window.scrollTo(0, 0);
+  });
 }
 
-function loadXP() {
-  if (!xpLoading) xpLoading = import('./xp/index.js');
-  return xpLoading;
+let storyCss = null;
+function loadStoryCss() {
+  if (storyCss) return storyCss;
+  storyCss = new Promise((res) => {
+    const l = document.createElement('link');
+    l.rel = 'stylesheet'; l.href = './css/story.css';
+    l.onload = res; l.onerror = res;
+    document.head.appendChild(l);
+  });
+  return storyCss;
 }
 
-$('btnEnter').addEventListener('click', () => enterExperience());
-$('btnSkip').addEventListener('click', () => showSite());
-
-addEventListener('keydown', (e) => {
-  if (mode === 'entry' && !$('owner').hidden) return;
-  if (mode === 'entry') {
-    if (e.key === 'Escape') { e.preventDefault(); showSite(); }
-  } else if (mode === 'xp' && e.key === 'Escape') { e.preventDefault(); showSite(); }
-  else if (mode === 'xp' && (e.key === 'm' || e.key === 'M')) audio.toggle();
-});
-
-/* ---------- experience ---------- */
-async function enterExperience() {
-  if (mode === 'xp') return;
-  audio.sfx('click');
-  const from = mode;
-  mode = 'xp';
-  clearLater();
-  body.className = 'mode-xp';
-  const stage = $('stage');
-  stage.hidden = false; stage.classList.remove('out');
-  $('garage').hidden = true; $('hud').hidden = true; $('ending').hidden = true;
-  $('darkVeil').style.opacity = '1';
-  if (from === 'entry') { $('entry').classList.add('out'); setTimeout(() => ($('entry').hidden = true), 700); }
-  if (from === 'site') $('site').hidden = true;
+async function startStory(push = true) {
+  if (story) { story.destroy(); story = null; }
+  setScreen('story');
+  if (push) history.pushState({ v: 'story' }, '', location.pathname + '#story');
+  storyHost.innerHTML = '<div class="st-loading"><span>RON</span><i></i></div>';
   try {
-    const mod = await loadXP();
-    if (!mod.webglAvailable()) throw new Error('webgl');
-    if (!xp) xp = await mod.createExperience({ onEnd: () => { refreshUnlocks(); focus($('btnSeeWork')); } });
-    window.__ron = xp; // handy for debugging in the console
-    await xp.showGarage();
-    focus($('btnDrive'));
+    const [mod] = await Promise.all([import('./story/story.js'), loadStoryCss()]);
+    if (current !== 'story') return;
+    story = mod.createStory(storyHost, {
+      reducedMotion: reduce.matches,
+      onViewWork: () => showSite(true, '#work'),
+      onExit: () => showEntry(true),
+      onPortfolio: () => showSite(true, '#top'),
+      onReplay: () => startStory(false),
+    });
   } catch (err) {
-    console.warn('3D experience unavailable:', err);
-    toast('This browser can\'t run the 3D drive, so here is the portfolio.', 5000);
-    showSite();
+    console.error(err);
+    storyHost.innerHTML = '<div class="st-loading st-fail"><p>The story could not load. The portfolio has everything.</p><button type="button" class="btn btn-line" id="failRead">Read my portfolio</button></div>';
+    $('failRead').onclick = () => showSite(true);
   }
 }
 
-$('btnDrive').addEventListener('click', async () => { audio.sfx('click'); await xp?.startDrive(); });
-$('btnBackGarage').addEventListener('click', () => xp?.showGarage().then(() => focus($('btnDrive'))));
-$('btnExit').addEventListener('click', () => showSite());
-$('btnGaragePortfolio').addEventListener('click', () => showSite());
-$('btnSeeWork').addEventListener('click', () => showSite('work'));
-[$('btnSiteDrive'), $('btnFootDrive')].forEach((b) => b.addEventListener('click', () => enterExperience()));
-
-/* ---------- portfolio ---------- */
-function showSite(target) {
-  if (mode === 'site') { if (target) $(target)?.scrollIntoView(); return; }
-  const from = mode;
-  mode = 'site';
-  xp?.pause();
-  audio.setEngine(0, false);
-  const site = $('site');
-  site.hidden = false; site.classList.add('enter');
-  body.className = 'mode-site';
-  clearLater();
-  ['entry', 'stage', 'boot'].forEach((id) => { const n = $(id); if (n) { n.classList.add('out'); later(() => (n.hidden = true), from === 'boot' ? 0 : 650); } });
-  if (target) requestAnimationFrame(() => $(target)?.scrollIntoView({ behavior: 'instant' }));
-  else scrollTo({ top: 0, behavior: 'instant' });
-  refreshUnlocks();
-  setTimeout(() => focus(target ? $(target)?.querySelector('h2') : document.querySelector('.wordmark')), 50);
+/* ---------- entry art: the same character used in the story ---------- */
+async function startEntryArt() {
+  if (entryArt) { entryArt.run(); return; }
+  const host = $('playArt');
+  if (!host) return;
+  const { createCharacter } = await import('./char/character.js');
+  if (current !== 'entry') return;
+  const NS = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(NS, 'svg');
+  svg.setAttribute('viewBox', '-150 -895 300 430');
+  const ch = createCharacter({ outfit: 'layers', turn: -0.35, expr: 'neutral', pose: 'relaxed' });
+  svg.appendChild(ch.el);
+  host.appendChild(svg);
+  let raf = 0, last = 0, t = 0;
+  const loop = (now) => {
+    const dt = Math.min(0.05, (now - (last || now)) / 1000); last = now; t += dt;
+    // idle: glance toward the visitor, then away
+    const phase = Math.floor(t / 3.2) % 3;
+    ch.look(phase === 1 ? 0.6 : phase === 2 ? -0.2 : 0, phase === 2 ? 0.2 : 0);
+    ch.setTurn(phase === 1 ? -0.15 : -0.35);
+    ch.update(dt);
+    raf = requestAnimationFrame(loop);
+  };
+  entryArt = {
+    run() { if (!raf && !reduce.matches) { last = 0; raf = requestAnimationFrame(loop); } },
+    stop() { cancelAnimationFrame(raf); raf = 0; },
+  };
+  for (let i = 0; i < 20; i++) ch.update(0.05);
+  entryArt.run();
 }
-// headings can receive focus programmatically for screen readers after a mode switch
-document.querySelectorAll('#site h2').forEach((h) => h.setAttribute('tabindex', '-1'));
+function stopEntryArt() { entryArt && entryArt.stop(); }
 
-/* ---------- sound ---------- */
-const sndBtn = $('btnSound');
-sndBtn.addEventListener('click', () => audio.toggle());
-audio.onChange((on) => {
-  sndBtn.setAttribute('aria-pressed', on);
-  sndBtn.setAttribute('aria-label', on ? 'Sound on. Turn sound off' : 'Sound off. Turn sound on');
-});
-audio.resumeOnGesture();
+/* ---------- wiring ---------- */
+$('choosePlay').addEventListener('click', () => startStory());
+$('chooseRead').addEventListener('click', () => showSite());
+document.querySelectorAll('[data-play]').forEach((b) => b.addEventListener('click', () => startStory()));
+$('backToChoice').addEventListener('click', () => showEntry());
 
-/* ---------- owner note (easter egg) ----------
-   The old version hid a passcode in JavaScript, which anyone can read.
-   This is honest about what it is: tap RON five times, or type "owner". */
-let taps = 0, tapT;
+function route(push) {
+  const h = location.hash, q = location.search;
+  if (h === '#story') return startStory(push);
+  if (/[?&]portfolio\b/.test(q) || (h && h !== '#story')) return showSite(push, h && h !== '#story' ? h : undefined);
+  return showEntry(push);
+}
+window.addEventListener('popstate', () => route(false));
+history.replaceState({ v: 'boot' }, '', location.href);
+route(false);
+
+/* ---------- owner note (easter egg, not a login) ---------- */
+let taps = 0, tapTimer = 0, typed = '';
+function openOwner() {
+  $('ownerText').innerHTML = OWNER_NOTE.map((l) => `<p>${l}</p>`).join('');
+  $('owner').hidden = false;
+  $('ownerClose').focus();
+}
 $('ronMark').addEventListener('click', () => {
-  taps++; clearTimeout(tapT); tapT = setTimeout(() => (taps = 0), 1600);
+  taps++; clearTimeout(tapTimer); tapTimer = setTimeout(() => (taps = 0), 1200);
   if (taps >= 5) { taps = 0; openOwner(); }
 });
-let typed = '';
-addEventListener('keydown', (e) => {
-  if (mode !== 'entry' || e.key.length !== 1) return;
+document.addEventListener('keydown', (e) => {
+  if (current !== 'entry' || e.key.length !== 1) return;
   typed = (typed + e.key.toLowerCase()).slice(-5);
   if (typed === 'owner') openOwner();
 });
-function openOwner() {
-  const o = $('owner'), t = $('ownerText');
-  t.innerHTML = '';
-  OWNER_NOTE.forEach((line, i) => { const p = document.createElement('p'); p.textContent = line; p.style.animationDelay = `${0.2 + i * 0.55}s`; t.append(p); });
-  o.hidden = false; $('ownerClose').focus();
-}
-$('ownerClose').addEventListener('click', () => { $('owner').hidden = true; $('btnEnter').focus(); });
-$('owner').addEventListener('keydown', (e) => { if (e.key === 'Escape' || e.key === 'Tab') { e.preventDefault(); if (e.key === 'Escape') $('ownerClose').click(); } });
-
-addEventListener('hashchange', () => { const h = location.hash.slice(1); if (mode !== 'site' && h && $(h)) showSite(h); });
-
-/* ---------- start ----------
-   Deep links (#work, ?portfolio) and returning recruiters skip the intro. */
-const params = new URLSearchParams(location.search);
-const hash = location.hash.slice(1);
-if (params.has('portfolio') || (hash && $(hash))) {
-  $('boot').remove(); $('entry').hidden = true;
-  showSite(hash && $(hash) ? hash : undefined);
-} else if (params.has('drive')) {
-  $('boot').remove(); mode = 'entry'; enterExperience();
-} else {
-  boot();
-}
+$('ownerClose').addEventListener('click', () => ($('owner').hidden = true));

@@ -31,7 +31,7 @@ export function currentAge(now = new Date()) {
    ------------------------------------------------------------ */
 export const PROJECTS = [
   {
-    id: 'aria',
+    id: 'aria', plate: 'forest',
     name: 'ARIA',
     kind: 'AI reasoning system',
     year: '2025–26',
@@ -47,7 +47,7 @@ export const PROJECTS = [
     unlock: { id: 'copilot', title: 'Co-driver', text: 'ARIA now reads the road ahead and calls the clear lane.' },
   },
   {
-    id: 'himveda',
+    id: 'himveda', plate: 'mint',
     name: 'HIMVEDA',
     kind: 'Marketplace and traceability platform',
     year: '2026',
@@ -63,7 +63,7 @@ export const PROJECTS = [
     unlock: { id: 'paint-himalaya', title: 'Himalaya paint', text: 'A new paint is waiting in the garage.' },
   },
   {
-    id: 'inventory',
+    id: 'inventory', plate: 'char',
     name: 'Price Lookup',
     kind: 'Internal production tool',
     year: '2025–26',
@@ -76,7 +76,7 @@ export const PROJECTS = [
     unlock: { id: 'magnet', title: 'Lane assist', text: 'Fragments in the next lane now drift toward you.' },
   },
   {
-    id: 'payreport',
+    id: 'payreport', plate: 'red',
     name: 'Pay Report',
     kind: 'Timesheet web app',
     year: '2025',
@@ -91,7 +91,7 @@ export const PROJECTS = [
     unlock: { id: 'tune', title: 'Engine tune', text: 'First shipped software. Top speed raised.' },
   },
   {
-    id: 'nxtlevelos',
+    id: 'nxtlevelos', plate: 'char',
     name: 'NxtLevelOS',
     kind: 'Local-first desktop app',
     year: '2026',
@@ -103,7 +103,7 @@ export const PROJECTS = [
     unlock: null,
   },
   {
-    id: 'airos',
+    id: 'airos', plate: 'forest',
     name: 'AIR OS',
     kind: 'Hands-free computer control',
     year: '2025–26',
@@ -115,7 +115,7 @@ export const PROJECTS = [
     unlock: { id: 'scan', title: 'Scanner', text: 'A sweep now outlines what is ahead before you reach it.' },
   },
   {
-    id: 'witness',
+    id: 'witness', plate: 'red',
     name: 'Witness',
     kind: 'Physical-state engine',
     year: '2026',
@@ -127,7 +127,7 @@ export const PROJECTS = [
     unlock: { id: 'trail', title: 'Memory trail', text: 'Your path is now recorded behind you.' },
   },
   {
-    id: 'ifix',
+    id: 'ifix', plate: 'mint',
     name: 'Repair booking site',
     kind: 'Web design',
     year: '2025',
@@ -144,95 +144,15 @@ export const PROJECTS = [
 ];
 
 /* ------------------------------------------------------------
-   CHAPTERS — the road.
-   len: metres of road. env: look of the world.
-   lines: [fractionOfChapter, text] radio messages.
-   gates: project billboards that unlock upgrades (by project id).
+   JOURNEY — the portfolio's short version of the story.
    ------------------------------------------------------------ */
-export const CHAPTERS = [
-  {
-    id: 'origin', title: 'Nepal', sub: '2006', len: 620,
-    env: { fog: 0x0a1410, fogNear: 30, fogFar: 230, ground: 0x07110c, sky: 0x0b1a13, props: 'mountain', light: 0.9 },
-    lines: [
-      [0.12, 'Born June 7, 2006.'],
-      [0.36, 'Always taking things apart to see how they worked.'],
-      [0.6, 'Music. Language. Machines.'],
-      [0.84, '2022. A repair counter in Kathmandu. First real job.'],
-    ],
-  },
-  {
-    id: 'leaving', title: 'Leaving home', sub: 'Age 18', len: 520,
-    env: { fog: 0x050806, fogNear: 14, fogFar: 140, ground: 0x040605, sky: 0x050806, props: 'sparse', light: 0.55 },
-    lines: [
-      [0.18, 'Leaving Nepal at eighteen.'],
-      [0.48, 'The road doesn\'t tell you where it ends.'],
-      [0.72, 'You drive anyway.'],
-    ],
-  },
-  {
-    id: 'usa', title: 'United States', sub: 'January 2025', len: 520,
-    env: { fog: 0x0b0d0f, fogNear: 30, fogFar: 260, ground: 0x0b0c0c, sky: 0x0c0f12, props: 'interstate', light: 1 },
-    lines: [
-      [0.15, 'New country. New rules.'],
-      [0.45, 'Bank accounts, leases, credit. Learn it all at once.'],
-      [0.75, 'Nobody here knows your name yet.'],
-    ],
-  },
-  {
-    id: 'ohio', title: 'Ohio', sub: 'Dayton', len: 560,
-    env: { fog: 0x12151a, fogNear: 22, fogFar: 200, ground: 0x15181c, sky: 0x13161b, props: 'winter', light: 1, snow: true },
-    lines: [
-      [0.15, 'Wright State University.'],
-      [0.42, 'First dorm. First winter.'],
-      [0.7, 'Figuring out how everything here works, alone.'],
-    ],
-  },
-  {
-    id: 'california', title: 'California', sub: 'May 2025', len: 560,
-    env: { fog: 0x1d0f0c, fogNear: 30, fogFar: 260, ground: 0x140b08, sky: 0x24110c, props: 'palms', light: 1.1 },
-    lines: [
-      [0.15, 'Bakersfield. Fresno. Visalia.'],
-      [0.45, 'Three months, five cities.'],
-      [0.75, 'Different landscape. Same question: what now?'],
-    ],
-  },
-  {
-    id: 'dark', title: '', sub: '', len: 620, dark: true,
-    env: { fog: 0x000000, fogNear: 4, fogFar: 40, ground: 0x010101, sky: 0x000000, props: 'none', light: 0.15 },
-    lines: [
-      [0.06, 'Working shifts. Building at night.'],
-      [0.2, 'Ideas that didn\'t work.'],
-      [0.4, 'No map.'],
-      [0.56, 'No guarantee.'],
-      [0.74, 'Keep going.'],
-    ],
-  },
-  {
-    id: 'nc', title: 'North Carolina', sub: 'Now', len: 1150,
-    env: { fog: 0x06110c, fogNear: 30, fogFar: 260, ground: 0x06100b, sky: 0x08160f, props: 'city', light: 1.1 },
-    lines: [
-      [0.04, 'Greensboro. Forsyth Tech. Repair shifts.'],
-      [0.9, 'Studying. Working. Building.'],
-    ],
-    gates: [
-      [0.14, 'payreport'],
-      [0.3, 'inventory'],
-      [0.46, 'aria'],
-      [0.6, 'airos'],
-      [0.72, 'himveda'],
-      [0.82, 'witness'],
-    ],
-  },
-];
-
-/* Hidden lines found by collecting the rare gold fragments. */
-export const SECRETS = [
-  'Speaks four languages.',
-  'Taught himself web development before any class did.',
-  'Also a musician.',
-  'Has rebuilt the ARIA interface more than once.',
-  'The first app anyone used was a timesheet. Not glamorous. Real.',
-  'Still fixes phones.',
+export const JOURNEY = [
+  { when: '2006', where: 'Nepal', what: 'Born June 7. Always taking things apart to see how they worked.' },
+  { when: '2022', where: 'Kathmandu', what: 'First real job: a phone repair counter. Diagnosis, repairs, customers.' },
+  { when: '2025', where: 'United States', what: 'Moved alone at eighteen, in January. New country, new rules, learned at once.' },
+  { when: 'Ohio', where: 'Wright State', what: 'First dorm, first winter. Then plans changed.' },
+  { when: 'Cali', where: 'California', what: 'A short chapter. Different landscape, same question: what now?' },
+  { when: 'Now', where: 'Greensboro, NC', what: 'Forsyth Tech, repair shifts, and building software at night.' },
 ];
 
 /* Owner's note — shown as a presentation easter egg, not a login.
