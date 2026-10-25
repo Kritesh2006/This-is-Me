@@ -461,7 +461,8 @@ main { max-width: var(--max); margin: 0 auto; }
   body { font-size: 16px; }
   .btn { --h: 48px; padding: 0 20px; }
   .xp-brand span { display: none; }
-  .head-tools .btn-sm { padding: 0 12px; }
+  .head-tools .btn-sm { padding: 0 14px; }
+  .hide-sm { display: none; }
   .wordmark { font-size: 19px; }
   .hero-name span:last-child { padding-left: 14vw; }
   .hero-facts { grid-template-columns: 1fr 1fr; gap: 16px 20px; }
