@@ -1,475 +1,269 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Kritesh Dhungel , Full-Stack Developer & AI Systems Builder</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="./style.css"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kritesh Dhungel — RON // The Road</title>
+<meta name="description" content="Kritesh Dhungel builds software and AI systems in Greensboro, North Carolina. Drive through his story or go straight to the work.">
+<meta name="theme-color" content="#050505">
+<meta property="og:title" content="Kritesh Dhungel — RON // The Road">
+<meta property="og:description" content="Software and AI systems. Drive through the story, or skip straight to the work.">
+<meta property="og:image" content="./assets/img/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23050505'/%3E%3Crect x='10' y='44' width='44' height='4' fill='%23D52320'/%3E%3Ctext x='32' y='38' font-family='Georgia,serif' font-size='30' fill='%23F1EEE8' text-anchor='middle'%3ER%3C/text%3E%3C/svg%3E">
+<link rel="preload" href="./assets/fonts/bodoni.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="./assets/fonts/archivo.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="./css/site.css">
+<link rel="modulepreload" href="./js/app.js">
+<script type="importmap">{ "imports": { "three": "./vendor/three.min.js" } }</script>
 </head>
-<body>
+<body class="mode-intro">
+<a class="skiplink" href="#work">Skip to projects</a>
 
-<!-- LOADER -->
-<div id="loader">
-  <canvas id="loaderCanvas"></canvas>
-  <div class="loader-content">
-    <div class="loader-logo">KD<span class="dot">.</span></div>
-    <div class="loader-bar-wrap"><div class="loader-bar"></div></div>
-    <div class="loader-status" id="loaderStatus">INITIALIZING SYSTEM</div>
-    <div class="loader-skip">CLICK ANYWHERE TO SKIP THS INTERFACE</div>
-  </div>
+<!-- ============ BOOT ============ -->
+<div id="boot" class="layer" aria-hidden="true">
+  <ol class="boot-lines" id="bootLines"></ol>
+  <div class="boot-rule"><span id="bootBar"></span></div>
 </div>
 
-<!-- ENTRY GATE -->
-<div id="entryGate" class="screen-hidden">
-  <canvas id="gateCanvas"></canvas>
-  <div class="gate-content">
-    <div class="gate-label">ACCESS TERMINAL</div>
-    <h2 class="gate-title">Who are you?</h2>
-    <p class="gate-sub">Choose your entry path to continue.</p>
-    <div class="gate-buttons">
-      <button class="btn-gate viewer" id="btnViewer">
-        <span class="btn-icon">◈</span>
-        <span class="btn-label">VIEWER</span>
-        <span class="btn-hint">Explore the portfolio</span>
+<!-- ============ ENTRY ============ -->
+<section id="entry" class="layer" aria-labelledby="entryTitle" hidden>
+  <div class="entry-glow" aria-hidden="true"></div>
+  <div class="entry-inner">
+    <p class="entry-kicker">Personal system // <span data-year></span></p>
+    <h1 id="entryTitle" class="entry-mark"><button type="button" class="ron" id="ronMark" aria-label="RON">RON</button></h1>
+    <p class="entry-road">The Road</p>
+    <p class="entry-who">Kritesh Dhungel builds software and AI systems in Greensboro, North Carolina. This is his story as a drive — or skip straight to the work.</p>
+    <div class="entry-actions">
+      <button type="button" class="btn btn-red" id="btnEnter"><span>Enter</span><i aria-hidden="true"></i></button>
+      <button type="button" class="btn btn-quiet" id="btnSkip"><span>Skip to portfolio</span></button>
+    </div>
+  </div>
+  <p class="entry-foot" aria-hidden="true"><span class="kbd">Enter</span> to start <span class="sep"></span> <span class="kbd">Esc</span> to skip</p>
+</section>
+
+<!-- ============ 3D STAGE ============ -->
+<div id="stage" class="layer" hidden>
+  <div id="canvasHost"></div>
+  <div class="stage-vignette" aria-hidden="true"></div>
+
+  <header class="xp-bar">
+    <p class="xp-brand">RON <span>// The Road</span></p>
+    <div class="xp-tools">
+      <button type="button" class="icon-btn" id="btnSound" aria-pressed="false" aria-label="Sound off. Turn sound on">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path class="snd-on" d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.6"/><path class="snd-off" d="M16.5 9.5l5 5m0-5l-5 5" stroke="currentColor" stroke-width="1.6"/></svg>
       </button>
-      <button class="btn-gate owner" id="btnOwner">
-        <span class="btn-icon">⬡</span>
-        <span class="btn-label">OWNER</span>
-        <span class="btn-hint">Restricted access</span>
-      </button>
+      <button type="button" class="btn btn-line btn-sm" id="btnExit"><span>Portfolio</span></button>
     </div>
-  </div>
-  <div id="ownerModal" class="modal screen-hidden">
-    <div class="modal-box">
-      <div class="modal-title">ENTER CODE</div>
-      <div class="code-inputs">
-        <input class="code-digit" maxlength="1" type="password" inputmode="numeric" pattern="[0-9]*" autocomplete="off"/>
-        <input class="code-digit" maxlength="1" type="password" inputmode="numeric" pattern="[0-9]*" autocomplete="off"/>
-        <input class="code-digit" maxlength="1" type="password" inputmode="numeric" pattern="[0-9]*" autocomplete="off"/>
-        <input class="code-digit" maxlength="1" type="password" inputmode="numeric" pattern="[0-9]*" autocomplete="off"/>
-      </div>
-      <div id="codeError" class="code-error screen-hidden">Invalid code. Try again.</div>
-      <div class="keypad">
-        <div class="keypad-row">
-          <button class="kp-btn" data-val="1">1</button>
-          <button class="kp-btn" data-val="2">2</button>
-          <button class="kp-btn" data-val="3">3</button>
-        </div>
-        <div class="keypad-row">
-          <button class="kp-btn" data-val="4">4</button>
-          <button class="kp-btn" data-val="5">5</button>
-          <button class="kp-btn" data-val="6">6</button>
-        </div>
-        <div class="keypad-row">
-          <button class="kp-btn" data-val="7">7</button>
-          <button class="kp-btn" data-val="8">8</button>
-          <button class="kp-btn" data-val="9">9</button>
-        </div>
-        <div class="keypad-row">
-          <button class="kp-btn kp-del" data-val="del">⌫</button>
-          <button class="kp-btn" data-val="0">0</button>
-          <button class="kp-btn kp-enter" data-val="enter">↵</button>
-        </div>
-      </div>
-      <button id="cancelCode" class="btn-cancel">← BACK</button>
+  </header>
+
+  <!-- GARAGE -->
+  <section id="garage" class="xp-panel" aria-label="Garage" hidden>
+    <div class="garage-head">
+      <h2 class="garage-title">Your car</h2>
+      <p class="garage-hint" id="garageHint">Drag to turn it. Changes apply instantly.</p>
     </div>
+    <div class="builder">
+      <div class="builder-tabs" role="tablist" aria-label="Customize">
+        <button role="tab" id="tab-paint" aria-controls="pane" aria-selected="true" data-tab="paint">Paint</button>
+        <button role="tab" id="tab-wheels" aria-controls="pane" aria-selected="false" data-tab="wheels">Wheels</button>
+        <button role="tab" id="tab-body" aria-controls="pane" aria-selected="false" data-tab="body">Body</button>
+        <button role="tab" id="tab-lights" aria-controls="pane" aria-selected="false" data-tab="lights">Lights</button>
+      </div>
+      <div class="builder-pane" id="pane" role="tabpanel" aria-labelledby="tab-paint"></div>
+    </div>
+    <div class="garage-cta">
+      <button type="button" class="btn btn-red btn-lg" id="btnDrive"><span>Drive</span><i aria-hidden="true"></i></button>
+      <button type="button" class="btn btn-quiet" id="btnGaragePortfolio"><span>Explore portfolio</span></button>
+      <p class="garage-note">About three minutes. There is no way to lose.</p>
+    </div>
+  </section>
+
+  <!-- DRIVE HUD -->
+  <section id="hud" class="xp-panel" aria-label="Driving" hidden>
+    <div class="hud-chapter" id="hudChapter" aria-live="polite">
+      <p class="hud-ch-sub" id="hudChSub"></p>
+      <h2 class="hud-ch-title" id="hudChTitle"></h2>
+    </div>
+    <p class="hud-radio" id="hudRadio" aria-live="polite"></p>
+    <p class="hud-copilot" id="hudCopilot" hidden></p>
+    <div class="hud-unlock" id="hudUnlock" role="status" aria-live="polite"></div>
+    <div class="hud-dash">
+      <div class="dash-speed"><b id="hudSpeed">0</b><span>mph</span></div>
+      <div class="dash-progress" aria-hidden="true"><i id="hudProgress"></i><ol id="hudTicks"></ol></div>
+      <div class="dash-frag" title="Fragments collected"><b id="hudFrag">0</b><span>fragments</span></div>
+    </div>
+    <div class="hud-upgrades" id="hudUpgrades" aria-label="Upgrades unlocked"></div>
+    <div class="hud-help" id="hudHelp">
+      <p class="help-desk"><span class="kbd">A</span><span class="kbd">D</span> or <span class="kbd">←</span><span class="kbd">→</span> change lane <span class="sep"></span> <span class="kbd">W</span> faster <span class="sep"></span> <span class="kbd">S</span> brake</p>
+      <p class="help-touch">Tap left or right side to change lane</p>
+    </div>
+    <div class="touch-zones" id="touchZones" aria-hidden="true"><span class="tz-l"></span><span class="tz-r"></span></div>
+    <div class="hud-buttons">
+      <button type="button" class="hud-btn" id="btnLaneL" aria-label="Move one lane left">◀</button>
+      <button type="button" class="hud-btn" id="btnLaneR" aria-label="Move one lane right">▶</button>
+    </div>
+  </section>
+
+  <!-- ENDING -->
+  <section id="ending" class="xp-panel" aria-labelledby="endAge" hidden>
+    <div class="end-inner">
+      <p class="end-line" id="endAge"></p>
+      <p class="end-line end-small">Current chapter // Building</p>
+      <p class="end-line end-pct">Story completion <b id="endPct">12%</b></p>
+      <p class="end-line end-big">The rest hasn't happened yet.</p>
+      <p class="end-line end-stats" id="endStats"></p>
+      <div class="end-line end-actions">
+        <button type="button" class="btn btn-red btn-lg" id="btnSeeWork"><span>See what I'm building</span><i aria-hidden="true"></i></button>
+        <button type="button" class="btn btn-quiet" id="btnBackGarage"><span>Back to the garage</span></button>
+      </div>
+    </div>
+  </section>
+
+  <div class="dark-veil" id="darkVeil" aria-hidden="true"></div>
+</div>
+
+<!-- ============ OWNER NOTE (easter egg) ============ -->
+<div id="owner" class="layer" role="dialog" aria-modal="true" aria-labelledby="ownerTitle" hidden>
+  <div class="owner-inner">
+    <p class="owner-tag" id="ownerTitle">Note to self</p>
+    <div class="owner-text" id="ownerText"></div>
+    <button type="button" class="btn btn-line" id="ownerClose"><span>Close</span></button>
   </div>
 </div>
 
-<!-- OWNER MESSAGE -->
-<div id="ownerMessage" class="screen-hidden">
-  <canvas id="ownerMsgCanvas"></canvas>
-  <div class="om-content">
-    <div class="om-tag">PRIVATE · OWNER ONLY</div>
-    <div class="om-text" id="ownerTypewriter"></div>
-    <button id="ownerContinue" class="om-continue screen-hidden">Continue →</button>
-  </div>
-</div>
-
-<!-- TRANSITION -->
-<div id="transitionScreen" class="screen-hidden">
-  <canvas id="transCanvas"></canvas>
-  <div class="trans-text">LOADING PROFILE</div>
-</div>
-
-<!-- SOUND TOGGLE -->
-<button id="soundToggle" class="sound-toggle screen-hidden" title="Toggle Sound">
-  <span id="soundIcon">🔊</span>
-</button>
-
-<!-- MAIN SITE -->
-<div id="mainSite" class="screen-hidden">
-
-  <nav id="navbar">
-    <div class="nav-logo">KD<span class="dot">.</span></div>
-    <div class="nav-links">
-      <a href="#about" class="nav-link">About</a>
-      <a href="#story" class="nav-link">Story</a>
-      <a href="#projects" class="nav-link">Projects</a>
-      <a href="#skills" class="nav-link">Skills</a>
-      <a href="#resume" class="nav-link">Resume</a>
-      <a href="#neural" class="nav-link">Neural</a>
-      <a href="#contact" class="nav-link">Contact</a>
+<!-- ============ PORTFOLIO ============ -->
+<div id="site" hidden>
+  <header class="site-head" id="siteHead">
+    <a class="wordmark" href="#top">Kritesh Dhungel</a>
+    <nav class="site-nav" id="siteNav" aria-label="Sections">
+      <a href="#about">About</a>
+      <a href="#journey">Journey</a>
+      <a href="#work">Work</a>
+      <a href="#skills">Skills</a>
+      <a href="#record">Experience</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <div class="head-tools">
+      <button type="button" class="btn btn-line btn-sm" id="btnSiteDrive"><span>Drive the road</span></button>
+      <button type="button" class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="siteNav"><span></span><span></span><b class="sr">Menu</b></button>
     </div>
-    <div class="nav-status"><span class="status-dot"></span>Available</div>
-    <button class="nav-burger" id="navBurger">☰</button>
-  </nav>
-  <div id="mobileMenu" class="mobile-menu screen-hidden">
-    <a href="#about" class="mob-link">About</a>
-    <a href="#story" class="mob-link">Story</a>
-    <a href="#projects" class="mob-link">Projects</a>
-    <a href="#skills" class="mob-link">Skills</a>
-    <a href="#resume" class="mob-link">Resume</a>
-    <a href="#neural" class="mob-link">Neural</a>
-    <a href="#contact" class="mob-link">Contact</a>
-  </div>
+  </header>
 
-  <!-- HERO -->
-  <section id="hero">
-    <canvas id="heroCanvas"></canvas>
-    <div class="hero-grid-overlay"></div>
-    <div class="hero-inner">
-      <div class="hero-eyebrow ri">
-        <span class="hero-tag-dot"></span>
-        FULL-STACK DEVELOPER · AI SYSTEMS BUILDER · CS STUDENT
+  <main>
+    <!-- HERO -->
+    <section class="hero" id="top">
+      <div class="hero-copy">
+        <h2 class="hero-name"><span>Kritesh</span><span>Dhungel</span></h2>
+        <p class="hero-lede">I build software people actually use — tools for the repair shop where I work, a multi-model AI system, and a traceable marketplace for a business in Nepal. Computer science student at Forsyth Tech.</p>
+        <div class="hero-actions">
+          <a class="btn btn-red" href="#work"><span>See the work</span><i aria-hidden="true"></i></a>
+          <a class="btn btn-line" href="mailto:kriteshdhungel07@gmail.com"><span>Email me</span></a>
+        </div>
+        <dl class="hero-facts">
+          <div><dt>Based in</dt><dd>Greensboro, NC</dd></div>
+          <div><dt>From</dt><dd>Nepal</dd></div>
+          <div><dt>Open to</dt><dd>Software engineering internships</dd></div>
+          <div><dt>Code</dt><dd><a href="https://github.com/Kritesh2006" target="_blank" rel="noopener">github.com/Kritesh2006</a></dd></div>
+        </dl>
       </div>
-      <h1 class="hero-name ri d1">
-        <span class="name-first">Kritesh</span>
-        <span class="name-last">Dhungel</span>
-      </h1>
-      <p class="hero-tagline ri d2">Self-taught. Financially independent.<br/>Building real things from scratch , in a country I moved to alone at 18.</p>
-      <div class="hero-cta ri d3">
-        <a href="#projects" class="btn-primary">VIEW MY WORK</a>
-        <a href="#contact" class="btn-secondary">GET IN TOUCH</a>
-      </div>
-      <div class="hero-meta ri d4">
-        <span>📍 Greensboro, NC</span>
-        <span>🎓 Forsyth Tech</span>
-        <span>🇳🇵 From Nepal</span>
-        <span>🎵 Musician</span>
-      </div>
-    </div>
-    <div class="scroll-hint">
-      <div class="scroll-line"></div>
-      <span>SCROLL</span>
-    </div>
-  </section>
-  
+      <figure class="hero-photo">
+        <img src="./assets/img/portrait.webp" width="600" height="900" alt="Kritesh sitting at a table in late afternoon window light" fetchpriority="high">
+        <figcaption><span data-age></span>, building.</figcaption>
+      </figure>
+    </section>
 
-  <!-- ABOUT -->
-  <section id="about">
-    <canvas class="sec-canvas"></canvas>
-    <div class="section-inner">
-      <div class="section-label ri">01 , ABOUT</div>
-      <div class="about-layout">
-        <div class="about-left ri">
-          <h2 class="section-title">Who I Am</h2>
-          <p>I'm <strong>Kritesh Dhungel</strong> , a <strong id="dynamicAge">19</strong>-year-old Computer Science student from Nepal, living in Greensboro, North Carolina on an F-1 student visa. I arrived in the US in January 2025, and in just over a year I've gone from not knowing my dorm roommate's name to managing my own finances, building AI systems, and shipping real software products.</p>
-          <p>I'm a practical learner. I don't wait for a class to tell me what to do. I taught myself web development through AI tools, coding apps, and sheer persistence.</p>
-          <p>Semi-introverted but socially sharp. I adapt fast , new country, new financial system, new tech stack.</p>
-          <div class="about-tags">
-            <span class="tag">🧠 Self-Taught</span>
-            <span class="tag">⚡ Fast Adapter</span>
-            <span class="tag">🌐 4 Languages</span>
-            <span class="tag">🎵 Musician</span>
-          </div>
-        </div>
-        <div class="about-right ri d1">
-          <div class="about-stats">
-            <div class="stat-card">
-              <span class="stat-num">4</span>
-              <span class="stat-label">Languages<br/>Spoken</span>
-            </div>
-            <div class="stat-card">
-              <span class="stat-num">3</span>
-              <span class="stat-label">Live<br/>Projects</span>
-            </div>
-            <div class="stat-card">
-              <span class="stat-num">1+</span>
-              <span class="stat-label">Year<br/>in USA</span>
-            </div>
-            <div class="stat-card">
-              <span class="stat-num" id="ageStatNum">18</span>
-              <span class="stat-label">Age When<br/>Moved Alone</span>
-            </div>
-          </div>
+    <!-- ABOUT -->
+    <section class="sec about" id="about" aria-labelledby="aboutH">
+      <h2 class="sec-h" id="aboutH">About</h2>
+      <div class="about-body">
+        <p class="about-big">I moved from Nepal to the United States alone at eighteen, in January 2025, and have been learning two things at once ever since: how a new country works, and how to build software that holds up.</p>
+        <div class="about-cols">
+          <p>Most of what I know I taught myself before a class asked me to. I learn by shipping something small, watching where it breaks, and fixing it. That is how a timesheet for coworkers turned into a parts-lookup tool the whole shop now uses.</p>
+          <p>Before code, I fixed phones — first at a repair counter in Kathmandu, now in Greensboro. I still do. It taught me to diagnose before guessing, which turns out to be most of software too. I also play music and speak four languages.</p>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- STORY -->
-  <section id="story">
-    <canvas class="sec-canvas"></canvas>
-    <div class="section-inner">
-      <div class="section-label ri">02 , STORY</div>
-      <h2 class="section-title centered ri">The Journey</h2>
-      <p class="section-sub ri">From Nepal to building AI systems in America, aevery move was intentional.</p>
-      <div class="timeline">
-        <div class="tl-item ri" data-side="left">
-          <div class="tl-dot"></div>
-          <div class="tl-card">
-            <div class="tl-date">2006 · NEPAL</div>
-            <h3 class="tl-title">Origin</h3>
-            <p>Born June 7th in Nepal. Grew up curious , always taking things apart to understand how they work. Music, language, and technology became the three pillars early on.</p>
-          </div>
-        </div>
-        <div class="tl-item ri d1" data-side="right">
-          <div class="tl-dot"></div>
-          <div class="tl-card">
-            <div class="tl-date">JAN 15, 2025 · DAYTON, OHIO</div>
-            <h3 class="tl-title">First Landing</h3>
-            <p>Landed in Dayton, Ohio , alone, 18 years old. Wright State University. First real exposure to American systems: independent living. Trying to figure it out fast.</p>
-          </div>
-        </div>
-        <div class="tl-item ri d2" data-side="left">
-          <div class="tl-dot"></div>
-          <div class="tl-card">
-            <div class="tl-date">MAY 3rd 2025 · CALIFORNIA</div>
-            <h3 class="tl-title">California Chapter</h3>
-            <p>Three-month cross-state move , Bakersfield, Visalia, Fresno, Clovis, Porterville. Lived downtown Bakersfield on Truxtun Ave. Explored, adapted, kept building.</p>
-          </div>
-        </div>
-        <div class="tl-item ri d3" data-side="right">
-          <div class="tl-dot"></div>
-          <div class="tl-card">
-            <div class="tl-date">2025 · GREENSBORO, NC</div>
-            <h3 class="tl-title">North Carolina</h3>
-            <p>Relocated to Greensboro. Chose Forsyth Technical Community College in Winston-Salem for its focused CS track , strategic move toward UNC-system transfer.</p>
-          </div>
-        </div>
-        <div class="tl-item ri d4" data-side="left">
-          <div class="tl-dot active"></div>
-          <div class="tl-card active">
-            <div class="tl-date">NOW · BUILDING</div>
-            <h3 class="tl-title">Present</h3>
-            <p>Studying CS at Forsyth Tech, building AI systems, shipping real projects. Goal: Software dev. Timeline: sooner than expected.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+    <!-- JOURNEY -->
+    <section class="sec journey" id="journey" aria-labelledby="journeyH">
+      <h2 class="sec-h" id="journeyH">Journey</h2>
+      <ol class="road" id="journeyList"></ol>
+    </section>
 
-  <!-- PROJECTS -->
-  <section id="projects">
-    <canvas class="sec-canvas"></canvas>
-    <div class="section-inner">
-      <div class="section-label ri">03 , PROJECTS</div>
-      <h2 class="section-title centered ri">What I've Built</h2>
-      <p class="section-sub ri">Real tools. Real deployments. No filler.</p>
-      <div class="projects-grid">
-        <div class="project-card featured ri">
-          <div class="project-glow"></div>
-          <div class="project-tag">FEATURED · AUTONOMOUS AI SYSTEM</div>
-          <h3 class="project-name">ARIA</h3>
-          <p class="project-subtitle">Autonomous Reasoning &amp; Intelligent AI Assistant</p>
-          <p class="project-desc">Not a chatbot. A multi-agent reasoning system where four specialized AI agents , Strategist, Critic, Realist, and Judge , operate in parallel, debate each other's outputs, and converge on the most defensible answer. Built for investment research, financial decision support, and expense intelligence. Long-term vision: a personal OS connected to your accounts, understanding your patterns, surfacing what matters before you ask.</p>
-          <div class="project-stack">
-            <span>Node.js</span><span>Express</span><span>OpenAI API</span><span>JavaScript</span><span>Web Speech API</span><span>REST APIs</span>
-          </div>
-          <div class="project-links">
-            <a href="https://kritesh2006.github.io/Personal-Ai/" target="_blank" class="proj-link live">↗ Live Demo</a>
-            <a href="https://github.com/Kritesh2006" target="_blank" class="proj-link gh">⌥ GitHub</a>
-          </div>
-        </div>
-        <div class="project-card ri d1">
-          <div class="project-tag">WEB APP · DEPLOYED TOOL</div>
-          <h3 class="project-name">Pay Report</h3>
-          <p class="project-desc">Real-world payroll calculation system actively used by employees at a phone repair store in Greensboro. Calculates hours for monthly and bi-monthly pay cycles. Eliminates manual wage errors , a functional, production-deployed tool solving a real workplace problem.</p>
-          <div class="project-stack"><span>Python</span><span>JavaScript</span><span>HTML/CSS</span></div>
-          <div class="project-links">
-            <a href="http://ifixtimesheet.online/" target="_blank" class="proj-link live">↗ Live Tool</a>
-          </div>
-        </div>
-        <div class="project-card ri d2">
-          <div class="project-tag">WEB · UI DEMO</div>
-          <h3 class="project-name">iFixandRepair</h3>
-          <p class="project-desc">Fully designed online booking system for a phone repair business. End-to-end ownership , concept, UI design, build, and deployment. What a professional service booking experience looks like when built from scratch.</p>
-          <div class="project-stack"><span>HTML5</span><span>CSS3</span><span>JavaScript</span><span>GitHub Pages</span></div>
-          <div class="project-links">
-            <a href="https://kritesh2006.github.io/iFixandrepair/" target="_blank" class="proj-link live">↗ Live Demo</a>
-            <a href="https://github.com/Kritesh2006" target="_blank" class="proj-link gh">⌥ GitHub</a>
-          </div>
-        </div>
+    <!-- WORK -->
+    <section class="sec work" id="work" aria-labelledby="workH">
+      <div class="sec-top">
+        <h2 class="sec-h" id="workH">Work</h2>
+        <p class="sec-note">Real tools, mostly in use. Private projects are marked and have no link until they are public.</p>
       </div>
-    </div>
-  </section>
+      <div class="specs" id="projectList"></div>
+    </section>
 
-  <!-- SKILLS -->
-  <section id="skills">
-    <canvas class="sec-canvas"></canvas>
-    <div class="section-inner">
-      <div class="section-label ri">04 , SKILLS</div>
-      <h2 class="section-title centered ri">Tech Stack</h2>
-      <div class="skills-grid">
-        <div class="skill-group ri">
-          <div class="skill-group-title">Languages</div>
-          <div class="skill-items">
-            <div class="skill-item"><span class="skill-label">Python</span><span class="skill-bar" data-w="88"></span></div>
-            <div class="skill-item"><span class="skill-label">JavaScript</span><span class="skill-bar" data-w="85"></span></div>
-            <div class="skill-item"><span class="skill-label">HTML5</span><span class="skill-bar" data-w="90"></span></div>
-            <div class="skill-item"><span class="skill-label">CSS3</span><span class="skill-bar" data-w="87"></span></div>
-          </div>
-        </div>
-        <div class="skill-group ri d1">
-          <div class="skill-group-title">Frontend & Backend</div>
-          <div class="skill-items">
-            <div class="skill-item"><span class="skill-label">Responsive Design</span><span class="skill-bar" data-w="85"></span></div>
-            <div class="skill-item"><span class="skill-label">Node.js / Express</span><span class="skill-bar" data-w="75"></span></div>
-            <div class="skill-item"><span class="skill-label">DOM APIs</span><span class="skill-bar" data-w="80"></span></div>
-            <div class="skill-item"><span class="skill-label">Web Speech API</span><span class="skill-bar" data-w="78"></span></div>
-          </div>
-        </div>
-        <div class="skill-group ri d2">
-          <div class="skill-group-title">AI & APIs</div>
-          <div class="skill-items">
-            <div class="skill-item"><span class="skill-label">OpenAI API</span><span class="skill-bar" data-w="88"></span></div>
-            <div class="skill-item"><span class="skill-label">Prompt Engineering</span><span class="skill-bar" data-w="85"></span></div>
-            <div class="skill-item"><span class="skill-label">Multi-Agent Systems</span><span class="skill-bar" data-w="82"></span></div>
-            <div class="skill-item"><span class="skill-label">REST APIs</span><span class="skill-bar" data-w="78"></span></div>
-          </div>
-        </div>
-        <div class="skill-group ri d3">
-          <div class="skill-group-title">Dev Tools</div>
-          <div class="skill-items">
-            <div class="skill-item"><span class="skill-label">Git / GitHub</span><span class="skill-bar" data-w="85"></span></div>
-            <div class="skill-item"><span class="skill-label">GitHub Pages</span><span class="skill-bar" data-w="82"></span></div>
-            <div class="skill-item"><span class="skill-label">VS Code</span><span class="skill-bar" data-w="90"></span></div>
-            <div class="skill-item"><span class="skill-label">Command Line</span><span class="skill-bar" data-w="72"></span></div>
-          </div>
-        </div>
-      </div>
-      <div class="cert-box ri">
-        <div class="cert-icon">✦</div>
-        <div class="cert-text">
-          <div class="cert-title">Python Programming Fundamentals</div>
-          <div class="cert-meta">Microsoft · Coursera · May 2026 · <a href="https://coursera.org/verify/4YJG8SI4K01K" target="_blank">Verify ↗</a></div>
-        </div>
-      </div>
-    </div>
-  </section>
+    <!-- NOW -->
+    <section class="sec now" id="now" aria-labelledby="nowH">
+      <h2 class="sec-h" id="nowH">On the bench</h2>
+      <ul class="now-list">
+        <li><b>HIMVEDA</b><span>Finishing the producer-to-buyer traceability flow and the owner's studio.</span></li>
+        <li><b>Witness</b><span>Building the truth layer before the camera rig exists.</span></li>
+        <li><b>Coursework</b><span>Associate in Science at Forsyth Tech, aiming to transfer into the UNC system.</span></li>
+        <li><b>Looking for</b><span>A software engineering internship where I can work on real systems.</span></li>
+      </ul>
+    </section>
 
-  <!-- RESUME -->
-  <section id="resume">
-    <canvas class="sec-canvas"></canvas>
-    <div class="section-inner">
-      <div class="section-label ri">05 , RESUME</div>
-      <h2 class="section-title centered ri">Credentials</h2>
-      <p class="section-sub ri">The full picture , education, projects, and experience.</p>
-      <div class="resume-card ri">
-        <div class="resume-icon">⬡</div>
-        <div class="resume-info">
-          <div class="resume-name">Kritesh_Dhungel_Resume.pdf</div>
-          <div class="resume-meta">Full-Stack Developer · AI Systems Builder · CS Student</div>
-        </div>
-        <div class="resume-actions">
-          <a href="./resume.pdf" target="_blank" class="btn-resume view">View Resume</a>
-          <a href="./resume.pdf" download="Kritesh_Dhungel_Resume.pdf" class="btn-resume download">↓ Download</a>
-        </div>
-      </div>
-      <div class="resume-highlights ri d1">
-        <div class="rh-item">
-          <div class="rh-icon">🎓</div>
-          <div class="rh-text"><strong>Forsyth Technical Community College</strong><br/>A.S. Computer Science Track · Expected 2029 · GPA 3.00</div>
-        </div>
-        <div class="rh-item">
-          <div class="rh-icon">✦</div>
-          <div class="rh-text"><strong>Python Programming Fundamentals</strong><br/>Microsoft · Coursera · May 2026</div>
-        </div>
-        <div class="rh-item">
-          <div class="rh-icon">🌐</div>
-          <div class="rh-text"><strong>Languages</strong><br/>English (Fluent) · Nepali (Native) · 4 languages total</div>
-        </div>
-      </div>
-    </div>
-  </section>
+    <!-- SKILLS -->
+    <section class="sec skills" id="skills" aria-labelledby="skillsH">
+      <h2 class="sec-h" id="skillsH">Skills</h2>
+      <div class="skill-grid" id="skillList"></div>
+    </section>
 
-  <!-- NEURAL NETWORK GAME -->
-  <section id="neural">
-    <canvas class="sec-canvas"></canvas>
-    <div class="section-inner">
-      <div class="section-label ri">06 , PLAYGROUND</div>
-      <div class="neural-invite ri">
-        <h2 class="section-title centered">Bored? Enter The Neural Network</h2>
-        <p class="section-sub">A futuristic node simulation built into this portfolio.<br/>Drag nodes · Connect them · Watch the network grow.</p>
-        <button id="openGame" class="btn-neural">
-          <span class="neural-btn-pulse"></span>
-          <span class="neural-btn-icon">⬡</span>
-          <span>INITIALIZE NETWORK</span>
-        </button>
-      </div>
-    </div>
-  </section>
-
-  <!-- CONTACT -->
-  <section id="contact">
-    <canvas class="sec-canvas"></canvas>
-    <div class="section-inner">
-      <div class="section-label ri">07 , CONTACT</div>
-      <h2 class="section-title centered ri">Let's Connect</h2>
-      <p class="section-sub ri">Whether it's a project, an opportunity, or just a conversation , I'm open.</p>
-      <div class="contact-grid">
-        <div class="contact-links ri">
-          <a href="mailto:kriteshdhungel07@gmail.com" class="contact-item"><span class="ci-icon">✉</span><span class="ci-text"><strong>Email</strong><br/>kriteshdhungel07@gmail.com</span></a>
-          <a href="https://github.com/Kritesh2006" class="contact-item" target="_blank"><span class="ci-icon">⌥</span><span class="ci-text"><strong>GitHub</strong><br/>github.com/Kritesh2006</span></a>
-          <a href="https://www.linkedin.com/in/kritesh-dhungel-0aa2ab31a/" class="contact-item" target="_blank"><span class="ci-icon">◈</span><span class="ci-text"><strong>LinkedIn</strong><br/>kritesh-dhungel</span></a>
-          <a href="https://www.instagram.com/4.kiorr_/" class="contact-item" target="_blank"><span class="ci-icon">◉</span><span class="ci-text"><strong>Instagram</strong><br/>@4.kiorr_</span></a>
-          <a href="https://x.com/KriteshDhungel" class="contact-item" target="_blank"><span class="ci-icon">✕</span><span class="ci-text"><strong>X / Twitter</strong><br/>@KriteshDhungel</span></a>
-          <a href="https://www.facebook.com/kritesh.R123" class="contact-item" target="_blank"><span class="ci-icon">⬡</span><span class="ci-text"><strong>Facebook</strong><br/>kritesh.R123</span></a>
+    <!-- RECORD -->
+    <section class="sec record" id="record" aria-labelledby="recordH">
+      <h2 class="sec-h" id="recordH">Experience <span>&amp; education</span></h2>
+      <div class="record-cols">
+        <div>
+          <h3 class="record-h">Experience</h3>
+          <ol class="rec">
+            <li><p class="rec-when">2025 — now</p><p class="rec-what">Repair technician, phone repair shop</p><p class="rec-where">Greensboro, NC</p><p class="rec-note">Repairs, plus the internal tools: the timesheet and the price lookup system staff use every day.</p></li>
+            <li><p class="rec-when">2022 — 2024</p><p class="rec-what">Repair technician and sales, JPG Cellphone Repair</p><p class="rec-where">Kathmandu, Nepal</p><p class="rec-note">Diagnosis and repairs, and the customer side of the counter.</p></li>
+          </ol>
         </div>
-        <div class="contact-card ri d1">
-          <div class="cc-inner">
-            <div class="cc-name">Kritesh Dhungel</div>
-            <div class="cc-role">Full-Stack Developer · AI Systems Builder</div>
-            <div class="cc-loc">📍 Greensboro, NC</div>
-            <div class="cc-available"><span class="status-dot"></span>Available for opportunities</div>
-            <div class="cc-quote">"Self-taught. Financially independent.<br/>Building real things from scratch."</div>
-          </div>
+        <div>
+          <h3 class="record-h">Education</h3>
+          <ol class="rec">
+            <li><p class="rec-when">2025 — now</p><p class="rec-what">Associate in Science, computer science track</p><p class="rec-where">Forsyth Technical Community College</p><p class="rec-note">Planning to transfer to a UNC-system university.</p></li>
+            <li><p class="rec-when">2025</p><p class="rec-what">Undergraduate studies</p><p class="rec-where">Wright State University, Dayton, Ohio</p></li>
+            <li><p class="rec-when">May 2026</p><p class="rec-what">Python Programming Fundamentals</p><p class="rec-where">Microsoft, via Coursera</p><p class="rec-note"><a href="https://coursera.org/verify/4YJG8SI4K01K" target="_blank" rel="noopener">Verify certificate</a></p></li>
+          </ol>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <footer>
-    <div class="footer-inner">
-      <div class="footer-logo">KD<span class="dot">.</span></div>
-      <div class="footer-text">© 2025 Kritesh Dhungel , Built from scratch.</div>
-      <div class="footer-links">
-        <a href="https://github.com/Kritesh2006" target="_blank">GitHub</a>
-        <a href="https://www.linkedin.com/in/kritesh-dhungel-0aa2ab31a/" target="_blank">LinkedIn</a>
-      </div>
+    <!-- CONTACT -->
+    <section class="sec contact" id="contact" aria-labelledby="contactH">
+      <h2 class="sec-h" id="contactH">Contact</h2>
+      <a class="contact-mail" href="mailto:kriteshdhungel07@gmail.com">kriteshdhungel07<wbr>@gmail.com</a>
+      <ul class="contact-links">
+        <li><a href="https://github.com/Kritesh2006" target="_blank" rel="noopener">GitHub</a></li>
+        <li><a href="https://www.linkedin.com/in/kritesh-dhungel-0aa2ab31a/" target="_blank" rel="noopener">LinkedIn</a></li>
+        <li><a href="https://www.instagram.com/4.kiorr_/" target="_blank" rel="noopener">Instagram</a></li>
+        <li><a href="https://x.com/KriteshDhungel" target="_blank" rel="noopener">X</a></li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="site-foot">
+    <figure class="foot-photo"><img src="./assets/img/drive.webp" width="416" height="438" alt="Kritesh in the driver's seat" loading="lazy"></figure>
+    <div class="foot-copy">
+      <p class="foot-big">The road keeps going.</p>
+      <button type="button" class="btn btn-line" id="btnFootDrive"><span>Drive it</span><i aria-hidden="true"></i></button>
+      <p class="foot-small">© <span data-year></span> Kritesh Dhungel. </p>
     </div>
   </footer>
 </div>
 
-<!-- NEURAL GAME OVERLAY -->
-<div id="gameOverlay" class="game-overlay screen-hidden">
-  <canvas id="gameCanvas"></canvas>
-  <div class="game-ui">
-    <div class="game-header">
-      <div class="game-brand">
-        <div class="game-title-ui">NEURAL NETWORK</div>
-        <div class="game-subtitle-ui">PARTICLE CONNECT SYSTEM</div>
-      </div>
-      <div class="game-stats">
-        <div class="game-stat"><span class="gstat-label">NODES</span><span class="gstat-val" id="nodeCount">0</span></div>
-        <div class="game-stat"><span class="gstat-label">LINKS</span><span class="gstat-val" id="linkCount">0</span></div>
-        <div class="game-stat"><span class="gstat-label">SCORE</span><span class="gstat-val" id="gameScore">0</span></div>
-        <div class="game-stat combo"><span class="gstat-label">COMBO</span><span class="gstat-val" id="gameCombo">x1</span></div>
-      </div>
-      <div class="game-controls">
-        <button id="gameReset" class="game-btn">↺ Reset</button>
-        <button id="gameClose" class="game-btn close">✕ Exit</button>
-      </div>
-    </div>
-    <div class="game-hint" id="gameHint">Click to select a node · Click another to connect · Drag to move</div>
-    <div class="game-achievement" id="gameAchievement"></div>
-  </div>
-</div>
-
-<script src="./script.js"></script>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<noscript><style>#boot,#entry{display:none!important}#site{display:block!important}</style></noscript>
+<script type="module" src="./js/app.js"></script>
 </body>
 </html>
