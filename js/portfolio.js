@@ -1,9 +1,9 @@
 /* portfolio.js — renders the editorial portfolio from data.js */
-import { PROJECTS, SKILLS, JOURNEY } from './data.js';
+import { PROJECTS, SKILLS } from './data.js';
 import { PLATES } from './plates.js';
 
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-const ACCENT = { forest: '#CC2D26', char: '#CC2D26', red: '#F1ECE2', mint: '#A31C1B' };
+const ACCENT = { forest: '#CC2D26', char: '#CC2D26', red: '#171717' };
 const FEATURE_ORDER = ['aria', 'inventory', 'himveda'];
 
 function linkButtons(p) {
@@ -45,8 +45,6 @@ export function renderPortfolio() {
   document.getElementById('skillList').innerHTML = SKILLS.map((g) => `
     <div class="skill-col rv"><h3>${esc(g.group)}</h3><ul>${g.items.map((s) => `<li>${esc(s)}</li>`).join('')}</ul></div>`).join('');
 
-  document.getElementById('journeyList').innerHTML = JOURNEY.map((j) => `
-    <li class="rv"><p class="road-when">${esc(j.when)}</p><p class="road-where">${esc(j.where)}</p><p class="road-what">${esc(j.what)}</p></li>`).join('');
 }
 
 export function wirePortfolio() {
@@ -69,7 +67,7 @@ export function wirePortfolio() {
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && nav.classList.contains('open')) closeMenu(); });
 
   // reveal on scroll
-  const items = document.querySelectorAll('#site .rv, .sec-head, .about-big, .hero-copy, .hero-photo');
+  const items = document.querySelectorAll('.rv, .sec-head, .about-big, .hero-copy, .hero-photo');
   if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
     items.forEach((el) => el.classList.add('rv'));
     const io = new IntersectionObserver((ents) => ents.forEach((en) => { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } }), { rootMargin: '0px 0px -8% 0px' });

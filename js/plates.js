@@ -24,7 +24,7 @@ export const PLATES = {
       <circle cx="58" cy="150" r="14" fill="none" stroke="currentColor"/>${T(52, 154, '?', 'font-size="14" font-family="Bodoni Moda, serif"')}
       ${T(30, 182, 'QUESTION')}
       ${[['CLAUDE', 80], ['GEMINI', 150], ['DEEPSEEK', 220]].map(([n, y]) => `<rect x="170" y="${y - 16}" width="80" height="32" fill="none" stroke="currentColor"/>${T(180, y + 3, n)}`).join('')}
-      <rect x="310" y="126" width="74" height="48" fill="${acc}" />${T(320, 146, 'JUDGE', 'fill="#F1ECE2"')}${T(320, 162, 'GPT-4o', 'fill="#F1ECE2"')}
+      <rect x="310" y="126" width="74" height="48" fill="${acc}" />${T(320, 146, 'JUDGE', 'fill="#FFFFFF"')}${T(320, 162, 'GPT-4o', 'fill="#FFFFFF"')}
       ${T(170, 40, 'PARALLEL ANALYSIS')}${T(306, 200, 'FINAL JUDGMENT')}
     </g>
   </svg>`,
@@ -53,7 +53,7 @@ export const PLATES = {
       ${T(40, 104, 'QUERY CLASS: SPECIFIC · TOKEN MATCH: "A15"', 'opacity=".7"')}
       ${[['A15 SCREEN · OLED', '1.00', true], ['A15 SCREEN · LCD', '0.96', true], ['A15 BACK GLASS', '0.61', false], ['A51 SCREEN', '—', false]].map(([n, s, hit], i) => {
         const y = 128 + i * 34;
-        return `<rect x="40" y="${y}" width="320" height="28" fill="${i === 0 ? acc : 'none'}" stroke="currentColor" opacity="${hit || i === 2 ? 1 : 0.35}"/>${T(52, y + 18, n, i === 0 ? 'fill="#F1ECE2"' : '')}${T(320, y + 18, s, i === 0 ? 'fill="#F1ECE2"' : '')}`;
+        return `<rect x="40" y="${y}" width="320" height="28" fill="${i === 0 ? acc : 'none'}" stroke="currentColor" opacity="${hit || i === 2 ? 1 : 0.35}"/>${T(52, y + 18, n, i === 0 ? 'fill="#FFFFFF"' : '')}${T(320, y + 18, s, i === 0 ? 'fill="#FFFFFF"' : '')}`;
       }).join('')}
       ${T(40, 282, 'A51 NEVER OUTRANKS A15: WHOLE-TOKEN MATCHING', 'opacity=".7"')}
     </g>
@@ -69,7 +69,7 @@ export const PLATES = {
         const inP = day >= 15 && day <= 30;
         return day >= 0 && day < 31 ? `<rect x="${x}" y="${y}" width="40" height="30" fill="${inP ? 'currentColor' : 'none'}" opacity="${inP ? 0.16 : 1}" stroke="currentColor" stroke-opacity=".35"/>${T(x + 4, y + 12, day + 1)}` : '';
       }).join('')}
-      <rect x="40" y="252" width="320" height="28" fill="${acc}"/>${T(52, 270, 'SUMMARY · READY FOR MANAGER', 'fill="#F1ECE2"')}
+      <rect x="40" y="252" width="320" height="28" fill="${acc}"/>${T(52, 270, 'SUMMARY · READY FOR MANAGER', 'fill="#FFFFFF"')}
     </g>
   </svg>`,
 

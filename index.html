@@ -3,265 +3,136 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Kritesh Dhungel</title>
-<meta name="description" content="Kritesh Dhungel builds software and AI systems in Greensboro, North Carolina. Play his story, or read the portfolio.">
-<meta name="theme-color" content="#0C1F17">
-<meta property="og:title" content="Kritesh Dhungel">
-<meta property="og:description" content="Software, AI and systems. Play the story, or read the portfolio.">
+<title>Kritesh Dhungel — Full-stack &amp; AI Systems Engineer</title>
+<meta name="description" content="Kritesh Dhungel is a full-stack engineer building production web tools, local-first desktop software and multi-model AI systems.">
+<meta name="theme-color" content="#171717">
+<meta property="og:title" content="Kritesh Dhungel — Full-stack &amp; AI Systems Engineer">
+<meta property="og:description" content="Production tools, local-first software and multi-model AI systems.">
 <meta property="og:image" content="./assets/img/og.jpg">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%230C1F17'/%3E%3Crect x='10' y='46' width='44' height='4' fill='%23A31C1B'/%3E%3Ctext x='32' y='40' font-family='Georgia,serif' font-weight='700' font-size='32' fill='%23F1ECE2' text-anchor='middle'%3ER%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23171717'/%3E%3Crect x='10' y='46' width='44' height='4' fill='%23A31C1B'/%3E%3Ctext x='32' y='40' font-family='Georgia,serif' font-weight='700' font-size='32' fill='%23FFFFFF' text-anchor='middle'%3EK%3C/text%3E%3C/svg%3E">
 <link rel="preload" href="./assets/fonts/bodoni.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="./assets/fonts/archivo.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="./css/site.css?v=4">
-<link rel="modulepreload" href="./js/app.js?v=4">
-<script>
-  // Pick the first screen before paint so direct links never flash the chooser.
-  (function () {
-    var q = location.search, h = location.hash;
-    var wantsSite = /[?&]portfolio\b/.test(q) || (h && h !== '#story' && h !== '#top-entry');
-    document.documentElement.className = wantsSite ? 'boot-site' : (h === '#story' ? 'boot-story' : 'boot-entry');
-  })();
-</script>
+<link rel="stylesheet" href="./css/site.css?v=5">
 </head>
 <body>
 <a class="skiplink" href="#work">Skip to projects</a>
 
-<!-- ================= OPENING ================= -->
-<section id="entry" aria-labelledby="entryQ">
-  <div class="entry-beam" aria-hidden="true"></div>
-  <header class="entry-top">
-    <p class="entry-name">Kritesh Dhungel</p>
-    <div class="entry-right"><p class="entry-meta">Greensboro, NC <span>·</span> <span data-year></span></p><button type="button" class="snd-btn" data-sound aria-pressed="true" aria-label="Click sounds on"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path class="on" d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.6"/><path class="off" d="M16.5 9.5l5 5m0-5l-5 5" stroke="currentColor" stroke-width="1.6"/></svg></button></div>
-  </header>
-  <div class="entry-mid">
-    <h1 class="entry-ron"><button type="button" id="ronMark">Kritesh</button></h1>
-    <p class="entry-q" id="entryQ">How do you want to know me?</p>
-  </div>
-  <div class="entry-choices">
-    <button type="button" class="choice choice-play" id="choosePlay">
-      <span class="choice-art" id="playArt" aria-hidden="true"></span>
-      <span class="choice-body">
-        <span class="choice-meta">Interactive · ~3–5 min</span>
-        <span class="choice-title">Play my story</span>
-        <span class="choice-text">Experience the journey interactively.</span>
-      </span>
-      <span class="choice-arrow" aria-hidden="true">→</span>
-    </button>
-    <button type="button" class="choice choice-read" id="chooseRead">
-      <span class="choice-art choice-photo" aria-hidden="true"><img src="./assets/img/brick-tall.webp" width="600" height="700" alt=""></span>
-      <span class="choice-body">
-        <span class="choice-meta">Editorial · ~2 min</span>
-        <span class="choice-title">Read my portfolio</span>
-        <span class="choice-text">Projects, experience, skills and the person behind them.</span>
-      </span>
-      <span class="choice-arrow" aria-hidden="true">→</span>
-    </button>
-  </div>
-</section>
+<header class="site-head" id="siteHead">
+  <a class="wordmark" href="#top" aria-label="Kritesh Dhungel, top of page"><b>K</b>D</a>
+  <nav class="site-nav" id="siteNav" aria-label="Sections">
+    <a href="#work">Work</a>
+    <a href="#about">About</a>
+    <a href="#skills">Skills</a>
+    <a href="#contact">Contact</a>
+    <a class="nav-cta" href="mailto:kriteshdhungel07@gmail.com">Get in touch</a>
+  </nav>
+  <button type="button" class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="siteNav"><span></span><span></span><b class="sr">Menu</b></button>
+</header>
 
-<!-- ================= STORY (built on demand) ================= -->
-<div id="story" hidden></div>
-
-<!-- ================= OWNER NOTE (easter egg) ================= -->
-<div id="owner" role="dialog" aria-modal="true" aria-labelledby="ownerTitle" hidden>
-  <div class="owner-inner">
-    <p class="owner-tag" id="ownerTitle">Note to self</p>
-    <div class="owner-text" id="ownerText"></div>
-    <button type="button" class="btn btn-line" id="ownerClose">Close</button>
-  </div>
-</div>
-
-<!-- ================= PORTFOLIO ================= -->
-<div id="site">
-  <header class="site-head" id="siteHead">
-    <a class="wordmark" href="#top" aria-label="Kritesh Dhungel, top of page"><b>K</b>D</a>
-    <nav class="site-nav" id="siteNav" aria-label="Sections">
-      <a href="#work">Work</a>
-      <a href="#about">About</a>
-      <a href="#experience">Experience</a>
-      <a href="#skills">Skills</a>
-      <a href="#journey">Journey</a>
-      <a href="#contact">Contact</a>
-      <button type="button" class="nav-play" data-play>Play my story</button>
-    </nav>
-    <div class="head-right"><button type="button" class="snd-btn" data-sound aria-pressed="true" aria-label="Click sounds on"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path class="on" d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.6"/><path class="off" d="M16.5 9.5l5 5m0-5l-5 5" stroke="currentColor" stroke-width="1.6"/></svg></button>
-    <button type="button" class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="siteNav"><span></span><span></span><b class="sr">Menu</b></button></div>
-  </header>
-
-  <main>
-    <!-- HERO — forest -->
-    <section class="hero" id="top" aria-labelledby="heroName">
-      <div class="hero-beam" aria-hidden="true"></div>
-      <div class="hero-grid">
-        <div class="hero-copy">
-          <p class="kicker">Software · AI · Systems</p>
-          <h1 class="hero-name" id="heroName"><span class="hn-1">Kritesh</span><span class="hn-2">Dhungel</span></h1>
-          <p class="hero-lede">I build software people actually use: the tools a phone repair shop runs on every day, a multi-model AI reasoning system, and a traceable marketplace for a business in Nepal.</p>
-          <div class="hero-actions">
-            <a class="btn btn-red" href="#work">See the work <i aria-hidden="true">→</i></a>
-            <a class="btn btn-line" href="mailto:kriteshdhungel07@gmail.com">Email me</a>
-          </div>
-        </div>
-        <figure class="hero-photo">
-          <img src="./assets/img/portrait.webp" width="600" height="900" alt="Kritesh sitting at a table in late afternoon window light" fetchpriority="high">
-          <figcaption><span data-age></span> · Greensboro, NC</figcaption>
-        </figure>
-      </div>
-      <dl class="hero-facts">
-        <div><dt>Now</dt><dd>CS student, Forsyth Tech</dd></div>
-        <div><dt>Work</dt><dd>Repair tech + internal tools</dd></div>
-        <div><dt>From</dt><dd>Kathmandu, Nepal</dd></div>
-        <div><dt>Open to</dt><dd>Software internships</dd></div>
-      </dl>
-    </section>
-
-    <!-- WORK — off-white -->
-    <section class="work" id="work" aria-labelledby="workH">
-      <div class="sec-head">
-        <p class="sec-num">01</p>
-        <h2 class="sec-title" id="workH">Selected <em>work</em></h2>
-        <p class="sec-note">Real tools, most of them in use. Private projects are marked and have no link until they are public.</p>
-      </div>
-      <div class="features" id="featureList"></div>
-      <div class="more">
-        <h3 class="more-h">More work</h3>
-        <ol class="more-list" id="moreList"></ol>
-      </div>
-    </section>
-
-    <!-- PHOTO BREAK -->
-    <section class="photo-break" aria-label="Built differently">
-      <img src="./assets/img/brick.webp" width="1080" height="700" alt="Kritesh in a black hoodie and taupe jacket, standing in front of a brick wall in late sun" loading="lazy">
-      <div class="pb-copy">
-        <p class="pb-kicker">Same roads <span>/</span> new perspectives</p>
-        <p class="pb-big"><span>Built</span><span>differently.</span></p>
-      </div>
-    </section>
-
-    <!-- ABOUT — charcoal -->
-    <section class="about" id="about" aria-labelledby="aboutH">
-      <div class="sec-head">
-        <p class="sec-num">02</p>
-        <h2 class="sec-title" id="aboutH">About</h2>
-      </div>
-      <div class="about-grid">
-        <p class="about-big">I moved from Nepal to the United States alone at eighteen, in January 2025. Since then I have been learning two things at once: how a new country works, and how to build software that holds up.</p>
-        <div class="about-cols">
-          <p>Most of what I know I taught myself before a class asked me to. I learn by shipping something small, watching where it breaks, and fixing it. That is how a timesheet for coworkers turned into a parts-lookup tool the whole shop now uses.</p>
-          <p>Before code, I fixed phones, first at a repair counter in Kathmandu and now in Greensboro. I still do. It taught me to diagnose before guessing, which turns out to be most of software too. I also play music and speak four languages.</p>
-        </div>
-        <ul class="about-stats">
-          <li><b>2</b><span>tools coworkers use every week</span></li>
-          <li><b>4</b><span>AI models orchestrated in ARIA</span></li>
-          <li><b>4</b><span>languages spoken</span></li>
-          <li><b>3</b><span>states lived in since 2025</span></li>
-        </ul>
-      </div>
-    </section>
-
-    <!-- EXPERIENCE + EDUCATION — off-white -->
-    <section class="record" id="experience" aria-labelledby="expH">
-      <div class="sec-head">
-        <p class="sec-num">03</p>
-        <h2 class="sec-title" id="expH">Experience <em>&amp; education</em></h2>
-      </div>
-      <div class="record-grid">
-        <div>
-          <h3 class="record-h">Experience</h3>
-          <ol class="rec">
-            <li>
-              <p class="rec-when">2025 — now</p>
-              <div><p class="rec-what">Repair technician &amp; internal tooling</p><p class="rec-where">iFixandRepair · Greensboro, NC</p>
-              <p class="rec-note">Phone repairs and diagnostics, plus the software behind the counter: the price lookup system staff search all day, and the timesheet coworkers use every week. Also inventory and day-to-day operations.</p></div>
-            </li>
-            <li>
-              <p class="rec-when">2022 — 2024</p>
-              <div><p class="rec-what">Repair technician &amp; sales</p><p class="rec-where">JPG Cellphone Repair · Kathmandu, Nepal</p>
-              <p class="rec-note">Diagnosis and repairs, and the customer side of the counter.</p></div>
-            </li>
-          </ol>
-        </div>
-        <div id="education">
-          <h3 class="record-h">Education</h3>
-          <ol class="rec">
-            <li>
-              <p class="rec-when">2025 — now</p>
-              <div><p class="rec-what">Associate in Science, computer science track</p><p class="rec-where">Forsyth Technical Community College</p>
-              <p class="rec-note">Planning to transfer to a UNC-system university.</p></div>
-            </li>
-            <li>
-              <p class="rec-when">2025</p>
-              <div><p class="rec-what">Undergraduate studies</p><p class="rec-where">Wright State University · Dayton, Ohio</p></div>
-            </li>
-            <li>
-              <p class="rec-when">May 2026</p>
-              <div><p class="rec-what">Python Programming Fundamentals</p><p class="rec-where">Microsoft, via Coursera</p>
-              <p class="rec-note"><a href="https://coursera.org/verify/4YJG8SI4K01K" target="_blank" rel="noopener">Verify certificate ↗</a></p></div>
-            </li>
-          </ol>
+<main>
+  <!-- HERO — forest -->
+  <section class="hero" id="top" aria-labelledby="heroName">
+    <div class="hero-beam" aria-hidden="true"></div>
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <p class="kicker">Full-stack · AI systems · Product</p>
+        <h1 class="hero-name" id="heroName"><span class="hn-1">Kritesh</span><span class="hn-2">Dhungel</span></h1>
+        <p class="hero-lede">I build software that runs real operations: a search tool used daily across seven store locations, a multi-model AI reasoning engine, and a traceable marketplace platform for an herbal produce business.</p>
+        <div class="hero-actions">
+          <a class="btn btn-red" href="#work">See the work <i aria-hidden="true">→</i></a>
+          <a class="btn btn-line" href="https://github.com/Kritesh2006" target="_blank" rel="noopener">GitHub <i aria-hidden="true">↗</i></a>
         </div>
       </div>
-    </section>
-
-    <!-- SKILLS + NOW — forest -->
-    <section class="skills" id="skills" aria-labelledby="skillsH">
-      <div class="sec-head">
-        <p class="sec-num">04</p>
-        <h2 class="sec-title" id="skillsH">Skills</h2>
-      </div>
-      <div class="skill-grid" id="skillList"></div>
-      <div class="bench">
-        <h3 class="bench-h">On the bench</h3>
-        <ul class="bench-list">
-          <li><b>HIMVEDA</b><span>Finishing the producer-to-buyer traceability flow and the owner's studio.</span></li>
-          <li><b>Witness</b><span>Building the truth layer before the camera rig exists.</span></li>
-          <li><b>Coursework</b><span>Associate in Science, aiming to transfer into the UNC system.</span></li>
-          <li><b>Looking for</b><span>A software engineering internship on real systems.</span></li>
-        </ul>
-      </div>
-    </section>
-
-    <!-- JOURNEY — charcoal + crimson -->
-    <section class="journey" id="journey" aria-labelledby="journeyH">
-      <div class="sec-head">
-        <p class="sec-num">05</p>
-        <h2 class="sec-title" id="journeyH">Journey</h2>
-        <button type="button" class="btn btn-line btn-sm" data-play>Play it instead <i aria-hidden="true">→</i></button>
-      </div>
-      <ol class="road" id="journeyList"></ol>
-    </section>
-
-    <!-- CONTACT — off-white -->
-    <section class="contact" id="contact" aria-labelledby="contactH">
-      <div class="sec-head">
-        <p class="sec-num">06</p>
-        <h2 class="sec-title" id="contactH">Contact</h2>
-      </div>
-      <a class="contact-mail" href="mailto:kriteshdhungel07@gmail.com">kriteshdhungel07<wbr>@gmail.com</a>
-      <ul class="contact-links">
-        <li><a href="https://github.com/Kritesh2006" target="_blank" rel="noopener">GitHub ↗</a></li>
-        <li><a href="https://www.linkedin.com/in/kritesh-dhungel-0aa2ab31a/" target="_blank" rel="noopener">LinkedIn ↗</a></li>
-        <li><a href="https://www.instagram.com/4.kiorr_/" target="_blank" rel="noopener">Instagram ↗</a></li>
-        <li><a href="https://x.com/KriteshDhungel" target="_blank" rel="noopener">X ↗</a></li>
-      </ul>
-    </section>
-  </main>
-
-  <footer class="site-foot">
-    <figure class="foot-photo"><img src="./assets/img/drive.webp" width="416" height="438" alt="Kritesh in the driver's seat" loading="lazy"></figure>
-    <div class="foot-copy">
-      <p class="foot-big">The rest hasn't happened yet.</p>
-      <div class="foot-actions">
-        <button type="button" class="btn btn-red" data-play>Play my story <i aria-hidden="true">→</i></button>
-        <button type="button" class="btn btn-line" id="backToChoice">Back to the start</button>
-      </div>
-      <p class="foot-small">© <span data-year></span> Kritesh Dhungel</p>
+      <figure class="hero-photo">
+        <img src="./assets/img/portrait.webp" width="600" height="900" alt="Kritesh Dhungel" fetchpriority="high">
+        <figcaption>Greensboro, NC</figcaption>
+      </figure>
     </div>
-  </footer>
-</div>
+    <dl class="hero-facts">
+      <div><dt>Focus</dt><dd>Full-stack &amp; AI systems</dd></div>
+      <div><dt>Shipped</dt><dd>Tools in daily production use</dd></div>
+      <div><dt>Stack</dt><dd>TypeScript · React · Node · Python</dd></div>
+      <div><dt>Based in</dt><dd>North Carolina</dd></div>
+    </dl>
+  </section>
 
-<noscript><style>#entry{display:none!important}#site{display:block!important}</style></noscript>
-<script type="module" src="./js/app.js?v=4"></script>
+  <!-- WORK — charcoal -->
+  <section class="work" id="work" aria-labelledby="workH">
+    <div class="sec-head">
+      <p class="sec-num">01</p>
+      <h2 class="sec-title" id="workH">Selected <em>work</em></h2>
+      <p class="sec-note">Real systems, most of them in use. Private builds are marked and linked once public.</p>
+    </div>
+    <div class="features" id="featureList"></div>
+    <div class="more">
+      <h3 class="more-h">More work</h3>
+      <ol class="more-list" id="moreList"></ol>
+    </div>
+  </section>
+
+  <!-- ABOUT — forest -->
+  <section class="about" id="about" aria-labelledby="aboutH">
+    <div class="sec-head">
+      <p class="sec-num">02</p>
+      <h2 class="sec-title" id="aboutH">About</h2>
+    </div>
+    <div class="about-grid">
+      <p class="about-big">I build systems that hold up under daily use, then keep improving them based on how people actually use them.</p>
+      <div class="about-cols">
+        <p>My work sits where operations meet software. I start from a real bottleneck, ship the smallest thing that removes it, watch where it breaks, and harden it. That loop turned a spreadsheet people scrolled through into a ranked search engine staff rely on every day.</p>
+        <p>On the AI side, I build orchestration rather than wrappers: multiple models working in parallel, a judge model that weighs their output, and deterministic layers where correctness matters more than fluency.</p>
+      </div>
+      <ul class="about-stats">
+        <li><b>7</b><span>locations running my search tool daily</span></li>
+        <li><b>4</b><span>AI models orchestrated in ARIA</span></li>
+        <li><b>7</b><span>projects shipped or in active build</span></li>
+        <li><b>4</b><span>languages spoken</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- SKILLS — charcoal -->
+  <section class="skills" id="skills" aria-labelledby="skillsH">
+    <div class="sec-head">
+      <p class="sec-num">03</p>
+      <h2 class="sec-title" id="skillsH">Skills</h2>
+    </div>
+    <div class="skill-grid" id="skillList"></div>
+    <div class="bench">
+      <h3 class="bench-h">Currently building</h3>
+      <ul class="bench-list">
+        <li><b>HIMVEDA</b><span>Producer-to-buyer traceability and an owner-run admin studio.</span></li>
+        <li><b>Witness</b><span>A camera-based physical-state engine, starting with the core truth layer.</span></li>
+        <li><b>ARIA</b><span>Expanding multi-model debate into a desktop computer operator.</span></li>
+        <li><b>NxtLevelOS</b><span>Local-first desktop software with full-text search as the scale path.</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- CONTACT — forest -->
+  <section class="contact" id="contact" aria-labelledby="contactH">
+    <div class="sec-head">
+      <p class="sec-num">04</p>
+      <h2 class="sec-title" id="contactH">Contact</h2>
+    </div>
+    <a class="contact-mail" href="mailto:kriteshdhungel07@gmail.com">kriteshdhungel07<wbr>@gmail.com</a>
+    <ul class="contact-links">
+      <li><a href="https://github.com/Kritesh2006" target="_blank" rel="noopener">GitHub ↗</a></li>
+      <li><a href="https://www.linkedin.com/in/kritesh-dhungel-0aa2ab31a/" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+    </ul>
+  </section>
+</main>
+
+<footer class="site-foot">
+  <p class="foot-big">Let's build something that works.</p>
+  <div class="foot-actions">
+    <a class="btn btn-red" href="mailto:kriteshdhungel07@gmail.com">Email me <i aria-hidden="true">→</i></a>
+    <a class="btn btn-line" href="#top">Back to top</a>
+  </div>
+  <p class="foot-small">© <span data-year></span> Kritesh Dhungel</p>
+</footer>
+
+<script type="module" src="./js/app.js?v=5"></script>
 </body>
 </html>
