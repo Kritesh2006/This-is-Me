@@ -54,10 +54,11 @@
   window.scrollTo(0, 0);
 
   var MOBILE = matchMedia('(max-width: 760px)').matches;
-  var N_WORK = MOBILE ? 8 : 9;
+  var N_WORK = MOBILE ? 10 : 9;
   var N_AMB = MOBILE ? 4 : 9;
   var COLORS = ['#ff4d45', '#3ddc84', '#ff8a80', '#f4f4f4', '#8fe3b0', '#e0322b', '#2fbf71', '#ffb3ad', '#c9f2d8', '#ff6b5e', '#5fd896', '#ffd2cc'];
-  var S = { speed: MOBILE ? 1.35 : 1, skip: false, done: 0, total: 0, t0: 0, phase: 'boot' };
+  var TIME = MOBILE ? 1.3 : 1.45; // global pacing: >1 = slower, more 'cooking'
+  var S = { speed: 1, skip: false, done: 0, total: 0, t0: 0, phase: 'boot' };
   var agents = [], tasks = [], wiresEl, agentsEl, hud = {};
 
   var clamp = function (v, a, b) { return Math.max(a, Math.min(b, v)); };
@@ -67,7 +68,7 @@
 
   // rAF tween that respects speed + skip
   function tween(dur, fn) {
-    dur = dur / S.speed;
+    dur = dur * TIME / S.speed;
     return new Promise(function (res) {
       if (S.skip || dur <= 0) { fn(1); return res(); }
       var s = performance.now();
@@ -151,8 +152,8 @@
     var r = el.getBoundingClientRect();
     return { x: r.left + scrollX, y: r.top + scrollY, w: r.width, h: r.height, vx: r.left, vy: r.top };
   }
-  function makeWire(x, y, sel) {
-    var w = document.createElement('div'); w.className = 'wire' + (sel ? ' sel' : '');
+  function makeWire(x, y, sel, cls) {
+    var w = document.createElement('div'); w.className = 'wire' + (sel ? ' sel' : '') + (cls ? ' ' + cls : '');
     w.innerHTML = '<i></i><i></i><i></i><i></i><span class="dim"></span>';
     w.style.transform = 'translate(' + x + 'px,' + y + 'px)';
     w.style.width = '0px'; w.style.height = '0px';
@@ -164,7 +165,7 @@
   }
   function dropWire(w) {
     if (S.skip) return w.remove();
-    var an = w.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 320 / S.speed, easing: 'ease-out' });
+    var an = w.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 380 * TIME / S.speed, easing: 'ease-out' });
     an.onfinish = function () { w.remove(); };
   }
   function ripple(x, y) {
@@ -181,7 +182,7 @@
     S.done++; updateHud();
     if (S.skip || !anim) return;
     if (anim === FADE && getComputedStyle(t.el).transform !== 'none') anim = OPAC;
-    t.el.animate(anim, { duration: 380 / S.speed, easing: 'cubic-bezier(.2,.8,.2,1)' });
+    t.el.animate(anim, { duration: 520 * TIME / S.speed, easing: 'cubic-bezier(.2,.8,.2,1)' });
   }
   function textNodes(el) {
     var out = [], w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null), n;
@@ -196,6 +197,14 @@
 
   function runBox(a, t) {
     var r = docRect(t.el), H = innerHeight;
+    if (t.ghost) {
+      var g = t.ghost; t.ghost = null;
+      var px = r.vx + Math.min(r.w, innerWidth - 30), py = Math.min(r.vy + r.h, H - 26);
+      return a.moveTo(px, py).then(function () {
+        ripple(px, py); g.classList.add('sel');
+        return wait(220);
+      }).then(function () { reveal(t, FADE); dropWire(g); return wait(120); });
+    }
     return a.moveTo(r.vx, r.vy).then(function () {
       var w = makeWire(r.x, r.y);
       var dur = clamp(260 + (r.w + r.h) * .3, 340, 820);
@@ -209,11 +218,14 @@
   }
   function runImg(a, t) {
     var r = docRect(t.el), H = innerHeight;
+    var w = t.ghost; t.ghost = null;
     return a.moveTo(r.vx, r.vy).then(function () {
-      var w = makeWire(r.x, r.y);
+      if (w) return wait(200);
+      w = makeWire(r.x, r.y);
       return tween(700, function (p) {
         var e = easeOut(p), cw = r.w * e, ch = r.h * e; sizeWire(w, cw, ch); a.x = r.vx + cw; a.y = Math.min(r.vy + ch, H - 26);
-      }).then(function () {
+      });
+    }).then(function () {
         reveal(t, null);
         var scan = document.createElement('div'); scan.className = 'scan'; w.appendChild(scan);
         w.style.background = 'transparent';
@@ -223,15 +235,16 @@
           scan.style.top = (e * 100) + '%';
           a.y = Math.min(r.vy + r.h * e, H - 26); a.x = r.vx + r.w * .5 + Math.sin(e * 9) * r.w * .3;
         }).then(function () { t.el.style.clipPath = ''; dropWire(w); });
-      });
     });
   }
+  function clearGhost(t) { if (t.ghost) { dropWire(t.ghost); t.ghost = null; } }
   function runType(a, t) {
     var r = docRect(t.el), nodes = textNodes(t.el);
     var orig = nodes.map(function (n) { return n.data; });
     var total = orig.reduce(function (s, x) { return s + x.length; }, 0);
-    var dur = +t.el.dataset.dur || clamp(total * 26, 220, 1000);
+    var dur = +t.el.dataset.dur || clamp(total * 34, 300, 1400);
     return a.moveTo(r.vx - 2, r.vy + r.h * .55).then(function () {
+      clearGhost(t);
       nodes.forEach(function (n) { n.data = ''; });
       reveal(t, null); t.el.classList.add('b-sel');
       return tween(dur, function (p) {
@@ -250,6 +263,7 @@
   function runSweep(a, t) {
     var r = docRect(t.el);
     return a.moveTo(r.vx, r.vy + 4).then(function () {
+      clearGhost(t);
       var w = makeWire(r.x - 3, r.y - 3, true); sizeWire(w, 0, r.h + 6);
       reveal(t, null);
       var dur = clamp(r.w * .9 + r.h * 2, 380, 1050);
@@ -263,9 +277,32 @@
   function runPop(a, t) {
     var r = docRect(t.el);
     return a.moveTo(r.vx + r.w * .5, r.vy + r.h * .5).then(function () {
-      ripple(r.vx + r.w * .5, r.vy + r.h * .5);
+      ripple(r.vx + r.w * .5, r.vy + r.h * .5); clearGhost(t);
       reveal(t, POP);
-      return wait(110);
+      return wait(160);
+    });
+  }
+  /* Blueprint pass: sketch a ghost of every layer on screen before filling it */
+  function makeGhost(t, r) {
+    var text = t.type === 'type' || t.type === 'sweep', small = t.type === 'pop';
+    var w = makeWire(r.x, r.y, false, text ? 'ghost' : small ? 'mini-g' : '');
+    if (text) {
+      var lh = parseFloat(getComputedStyle(t.el).lineHeight); if (!lh || lh > r.h) lh = r.h;
+      var bar = Math.max(4, Math.round(lh * .5)), off = Math.round((lh - bar) / 2);
+      w.style.background = 'repeating-linear-gradient(to bottom, transparent 0 ' + off + 'px, rgba(255,255,255,.085) ' + off + 'px ' + (off + bar) + 'px, transparent ' + (off + bar) + 'px ' + lh + 'px)';
+    }
+    t.ghost = w; return w;
+  }
+  function runSketch(a, t) {
+    var r = docRect(t.el), H = innerHeight;
+    var text = t.type === 'type' || t.type === 'sweep', small = t.type === 'pop';
+    return a.moveTo(r.vx, r.vy, clamp(180 + Math.hypot(r.vx - a.x, r.vy - a.y) * .28, 200, 440)).then(function () {
+      var w = makeGhost(t, r);
+      return tween(text ? 230 : small ? 150 : 360, function (p) {
+        var e = easeOut(p);
+        sizeWire(w, r.w * e, text ? r.h : r.h * e);
+        a.x = r.vx + r.w * e; a.y = Math.min(r.vy + (text ? r.h * .5 : r.h * e), H - 26);
+      });
     });
   }
   var RUN = { box: runBox, img: runImg, type: runType, sweep: runSweep, pop: runPop };
@@ -282,19 +319,50 @@
     var from = scrollY, d = target - from;
     if (Math.abs(d) < 4) return Promise.resolve(false);
     setStatus('Touring', true);
-    return tween(clamp(500 + Math.abs(d) * .45, 650, 1200), function (p) { window.scrollTo({ top: from + d * ease(p), behavior: 'instant' }); })
-      .then(function () { setStatus('Building'); return true; });
+    var H = innerHeight, incoming = [];
+    tasks.forEach(function (x) {
+      if (x.taken || x.ghost || incoming.length >= 48) return;
+      var r = docRect(x.el);
+      if (r.y + r.h > target && r.y < target + H - 40) incoming.push({ t: x, r: r });
+    });
+    var drawn = 0;
+    return tween(clamp(600 + Math.abs(d) * .5, 800, 1500), function (p) {
+      window.scrollTo({ top: from + d * ease(p), behavior: 'instant' });
+      while (drawn < incoming.length && p >= drawn / incoming.length * .85) {
+        var g = makeGhost(incoming[drawn].t, incoming[drawn].r); sizeWire(g, incoming[drawn].r.w, incoming[drawn].r.h);
+        if (!S.skip) g.animate([{ clipPath: 'inset(0 100% 100% 0)', opacity: 0 }, { clipPath: 'inset(0 0 0 0)', opacity: 1 }], { duration: 420 * TIME / S.speed, easing: 'cubic-bezier(.2,.8,.2,1)' });
+        drawn++;
+      }
+    })
+      .then(function () { setStatus('Cooking'); return true; });
   }
 
   /* ---------------- Scheduler ---------------- */
   function schedule() {
     return new Promise(function (resolve) {
-      var inflight = 0, moving = false, force = null;
+      var inflight = 0, moving = false, force = null, sketchQ = [], skIn = 0, pausing = false, sketching = false;
+      function startScreen() {
+        sketchQ = tasks.filter(function (t) { return !t.taken && !t.ghost && inView(t); }).slice(0, 48);
+        sketching = sketchQ.length > 0;
+        if (sketching) setStatus('Sketching', true);
+      }
       function pump() {
         if (S.skip || moving) return;
+        var free = agents.filter(function (a) { return a.worker && !a.busy; });
+        if (sketching) {
+          while (free.length && sketchQ.length) {
+            (function (a, t) {
+              a.busy = true; skIn++;
+              wait(rnd(0, 80)).then(function () { return runSketch(a, t); })
+                .then(function () { a.busy = false; a.lock = false; a.newTarget(); skIn--; pump(); });
+            })(free.shift(), sketchQ.shift());
+          }
+          if (sketchQ.length || skIn) return;
+          if (!pausing) { pausing = true; setStatus('Cooking'); wait(450).then(function () { pausing = false; sketching = false; pump(); }); }
+          return;
+        }
         var pending = tasks.filter(function (t) { return !t.taken; });
         if (!pending.length) { if (!inflight) resolve(); return; }
-        var free = agents.filter(function (a) { return a.worker && !a.busy; });
         for (var i = 0; i < free.length; i++) {
           var t = null;
           for (var j = 0, look = 0; j < pending.length && look < 14; j++) {
@@ -313,10 +381,10 @@
         if (!inflight) {
           var next = pending.filter(function (t) { return !t.taken; })[0];
           moving = true;
-          camera(next).then(function (moved) { moving = false; if (!moved) force = next; pump(); });
+          camera(next).then(function (moved) { moving = false; if (!moved) force = next; else startScreen(); pump(); });
         }
       }
-      pump();
+      startScreen(); pump();
     });
   }
 
@@ -457,6 +525,8 @@
     for (var i = 0; i < N_WORK + N_AMB; i++) agents.push(new Agent(i, i < N_WORK));
     requestAnimationFrame(loop);
 
+    hud.a.textContent = agents.length; hud.t.textContent = S.total;
+    requestAnimationFrame(function () { hud.el.classList.remove('off'); });
     S.t0 = performance.now();
     intro().then(schedule).then(function () {
       if (S.skip) return;

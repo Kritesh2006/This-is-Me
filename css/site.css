@@ -245,6 +245,9 @@ html.live .card:hover, html.live .mini:hover { border-color: rgba(224, 50, 43, .
 .wire i:nth-child(3) { left: -4px; bottom: -4px; } .wire i:nth-child(4) { right: -4px; bottom: -4px; }
 .wire .dim { position: absolute; left: 50%; top: 100%; transform: translate(-50%, 7px); background: var(--green); color: #04150c; font: 600 10px/1 var(--mono); padding: 3px 5px; border-radius: 2px; white-space: nowrap; }
 .wire.sel i, .wire.sel .dim { display: none; }
+.wire.ghost { border: 0; }
+.wire.ghost i, .wire.ghost .dim, .wire.mini-g i, .wire.mini-g .dim { display: none; }
+.wire.mini-g { border-style: dashed; background: rgba(255, 255, 255, .05); }
 .scan { position: absolute; left: 0; right: 0; height: 2px; background: var(--green); box-shadow: 0 0 14px var(--green); }
 
 #agents { position: fixed; inset: 0; z-index: 70; pointer-events: none; overflow: hidden; }
