@@ -5,134 +5,285 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Kritesh Dhungel — Full-stack &amp; AI Systems Engineer</title>
 <meta name="description" content="Kritesh Dhungel is a full-stack engineer building production web tools, local-first desktop software and multi-model AI systems.">
-<meta name="theme-color" content="#171717">
+<meta name="theme-color" content="#0c0c0c">
 <meta property="og:title" content="Kritesh Dhungel — Full-stack &amp; AI Systems Engineer">
-<meta property="og:description" content="Production tools, local-first software and multi-model AI systems.">
+<meta property="og:description" content="Watch this portfolio build itself live — production tools, local-first software and multi-model AI systems.">
 <meta property="og:image" content="./assets/img/og.jpg">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23171717'/%3E%3Crect x='10' y='46' width='44' height='4' fill='%23A31C1B'/%3E%3Ctext x='32' y='40' font-family='Georgia,serif' font-weight='700' font-size='32' fill='%23FFFFFF' text-anchor='middle'%3EK%3C/text%3E%3C/svg%3E">
-<link rel="preload" href="./assets/fonts/bodoni.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%23E0322B'/%3E%3Ctext x='32' y='45' font-family='Arial' font-weight='900' font-size='36' fill='%23fff' text-anchor='middle'%3EK%3C/text%3E%3C/svg%3E">
 <link rel="preload" href="./assets/fonts/archivo.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="./css/site.css?v=5">
+<script>
+/* Decide before first paint: play the live build, or show the finished site.
+   Finished site for: reduced-motion users, ?skip links, and deep links (#work). */
+(function () {
+  var d = document.documentElement;
+  var rm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!rm && !/[?&]skip\b/.test(location.search) && !location.hash) d.className += ' building';
+  else d.className += ' live';
+})();
+</script>
+<link rel="stylesheet" href="./css/site.css?v=7">
 </head>
 <body>
-<a class="skiplink" href="#work">Skip to projects</a>
+<div class="bg-glow" aria-hidden="true"></div>
 
-<header class="site-head" id="siteHead">
-  <a class="wordmark" href="#top" aria-label="Kritesh Dhungel, top of page"><b>K</b>D</a>
-  <nav class="site-nav" id="siteNav" aria-label="Sections">
-    <a href="#work">Work</a>
-    <a href="#about">About</a>
-    <a href="#skills">Skills</a>
-    <a href="#contact">Contact</a>
-    <a class="nav-cta" href="mailto:kriteshdhungel07@gmail.com">Get in touch</a>
+<header class="nav" data-b="box">
+  <a class="logo" href="#top" aria-label="Kritesh Dhungel, back to top" data-b="pop">K</a>
+  <span class="logo-t" data-b="type">kritesh.</span>
+  <nav class="nav-links" aria-label="Sections">
+    <a href="#about" data-b="type">About</a>
+    <a href="#work" data-b="type">Work</a>
+    <a href="#matrix" data-b="type">Matrix</a>
+    <a href="#contact" data-b="type">Contact</a>
   </nav>
-  <button type="button" class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="siteNav"><span></span><span></span><b class="sr">Menu</b></button>
+  <span class="avail" data-b="type"><i aria-hidden="true"></i>Available</span>
+  <a class="nav-cta" href="mailto:kriteshdhungel07@gmail.com" data-b="pop">Get in touch</a>
 </header>
 
 <main>
-  <!-- HERO — forest -->
+  <!-- ============ HERO ============ -->
   <section class="hero" id="top" aria-labelledby="heroName">
-    <div class="hero-beam" aria-hidden="true"></div>
+    <p class="hero-word" aria-hidden="true" data-b="type" data-dur="1100">PORTFOLIO</p>
+
     <div class="hero-grid">
       <div class="hero-copy">
-        <p class="kicker">Full-stack · AI systems · Product</p>
-        <h1 class="hero-name" id="heroName"><span class="hn-1">Kritesh</span><span class="hn-2">Dhungel</span></h1>
-        <p class="hero-lede">I build software that runs real operations: a search tool used daily across seven store locations, a multi-model AI reasoning engine, and a traceable marketplace platform for an herbal produce business.</p>
-        <div class="hero-actions">
-          <a class="btn btn-red" href="#work">See the work <i aria-hidden="true">→</i></a>
-          <a class="btn btn-line" href="https://github.com/Kritesh2006" target="_blank" rel="noopener">GitHub <i aria-hidden="true">↗</i></a>
+        <p class="hello" data-b="type">Hello, I'm</p>
+        <h1 class="hero-name" id="heroName" data-b="box"><span data-b="type">KRITESH.</span><span class="sr"> Kritesh Dhungel</span></h1>
+        <p class="role" data-b="type"><i aria-hidden="true"></i>Full-stack &amp; AI systems engineer</p>
+        <p class="lede" data-b="sweep">Building <b>production web tools</b>, <b>local-first desktop software</b> and <b>multi-model AI systems</b> — from the first real bottleneck to software people rely on every day.</p>
+        <div class="hero-btns">
+          <a class="btn-glow" href="#work" data-b="box">See the work <span aria-hidden="true">→</span></a>
+          <a class="btn-dark" href="#matrix" data-b="box">Explore systems</a>
+        </div>
+        <dl class="hero-stats">
+          <div data-b="type"><dt>7</dt><dd>locations run my search tool daily</dd></div>
+          <div data-b="type"><dt>4</dt><dd>AI models orchestrated in ARIA</dd></div>
+          <div data-b="type"><dt>100%</dt><dd>local-first desktop data</dd></div>
+        </dl>
+      </div>
+
+      <figure class="hero-photo" data-b="img">
+        <img src="./assets/img/portrait.webp" width="600" height="900" alt="Portrait of Kritesh Dhungel" fetchpriority="high">
+        <figcaption data-b="type"><i aria-hidden="true"></i>Shipping daily · Greensboro, NC</figcaption>
+      </figure>
+
+      <aside class="hero-cards" aria-label="Highlights">
+        <article class="mini" data-b="box">
+          <header><span class="mini-n">01.</span><span class="mini-tag">Active</span></header>
+          <h2 data-b="type">Multi-model core</h2>
+          <p data-b="sweep">ARIA — Claude, Gemini and DeepSeek reason in parallel; GPT-4o judges the result.</p>
+        </article>
+        <article class="mini" data-b="box">
+          <header><span class="mini-n">02.</span><span class="mini-tag">In daily use</span></header>
+          <h2 data-b="type">Production search</h2>
+          <p data-b="sweep">Deterministic ranked search used across seven store locations.</p>
+        </article>
+        <article class="mini" data-b="box">
+          <header><span class="mini-n">03.</span><span class="mini-tag">In build</span></header>
+          <h2 data-b="type">Traceable marketplace</h2>
+          <p data-b="sweep">HIMVEDA — every batch traceable from producer to buyer.</p>
+        </article>
+        <ul class="chips" aria-label="Core stack">
+          <li data-b="pop">TypeScript</li><li data-b="pop">React</li><li data-b="pop">Node.js</li><li data-b="pop">Python</li><li data-b="pop">SQLite</li><li data-b="pop">PostgreSQL</li>
+        </ul>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ============ ABOUT ============ -->
+  <section class="sec" id="about" aria-labelledby="aboutH">
+    <p class="sec-code" data-b="type">// 01.00 SEC_ABOUT.INDEX</p>
+    <p class="eyebrow" data-b="pop">Profile · Background</p>
+    <h2 class="sec-title" id="aboutH" data-b="type">Background &amp; Philosophy</h2>
+
+    <div class="about-grid">
+      <div class="about-copy" data-b="box">
+        <p data-b="sweep">I'm <b>Kritesh Dhungel</b>, a full-stack engineer based in Greensboro, North Carolina. My work sits where <b>operations meet software</b>: I start from a real bottleneck, ship the smallest thing that removes it, watch where it breaks, and harden it.</p>
+        <p data-b="sweep">That loop turned a spreadsheet people scrolled through into a ranked search engine staff rely on every day. On the AI side I build <b>orchestration, not wrappers</b> — models working in parallel, a judge that weighs their output, and deterministic layers wherever correctness matters more than fluency.</p>
+        <blockquote data-b="sweep">“I build systems that hold up under daily use, then keep improving them based on how people actually use them.”</blockquote>
+      </div>
+
+      <ol class="principles" aria-label="How I work">
+        <li data-b="box"><span>01</span><h3>Start from a real bottleneck</h3><p>Watch the work before writing code. The problem decides the stack.</p></li>
+        <li data-b="box"><span>02</span><h3>Ship the smallest fix</h3><p>Get it into real hands fast, then let usage tell me what matters.</p></li>
+        <li data-b="box"><span>03</span><h3>Watch where it breaks</h3><p>Edge cases from real users beat imagined requirements.</p></li>
+        <li data-b="box"><span>04</span><h3>Harden it</h3><p>Deterministic paths, tests and clean boundaries once it earns its place.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============ WORK ============ -->
+  <section class="sec" id="work" aria-labelledby="workH">
+    <p class="sec-code" data-b="type">// 02.00 SEC_WORK.DEPLOYMENTS</p>
+    <p class="eyebrow" data-b="pop">Selected work</p>
+    <h2 class="sec-title" id="workH" data-b="type">Flagship Deployments</h2>
+    <p class="sec-sub" data-b="sweep">Production systems and active builds — real users, real constraints. Private builds are marked, never faked.</p>
+
+    <article class="flag card" data-b="box">
+      <div class="flag-head">
+        <span class="tag" data-b="pop"><i aria-hidden="true"></i>Active · Flagship</span>
+        <h3 data-b="type">ARIA — Multi-Model Reasoning Engine</h3>
+        <p data-b="sweep">Ask one question, get four models arguing about it. Claude, Gemini and DeepSeek analyse in parallel; GPT-4o reads all three and writes the final judgment. Built for decisions where one model's confident answer isn't enough.</p>
+      </div>
+      <div class="flag-stats">
+        <div data-b="box"><b>4</b><span>AI providers</span></div>
+        <div data-b="box"><b>3 → 1</b><span>parallel analysts, one judge</span></div>
+        <div data-b="box"><b>2</b><span>modes: debate &amp; direct</span></div>
+      </div>
+      <p class="flag-label" data-b="type">// PIPELINE</p>
+      <div class="pipe" aria-label="ARIA pipeline: prompt fans out to Claude, Gemini and DeepSeek, then GPT-4o judges and returns a verdict">
+        <div class="node" data-b="box">Prompt</div>
+        <div class="fan">
+          <div class="node" data-b="box">Claude</div>
+          <div class="node" data-b="box">Gemini</div>
+          <div class="node" data-b="box">DeepSeek</div>
+        </div>
+        <div class="node node-red" data-b="box">GPT-4o judge</div>
+        <div class="node" data-b="box">Verdict</div>
+      </div>
+      <div class="flag-foot">
+        <ul class="chips" aria-label="Stack">
+          <li data-b="pop">Node.js</li><li data-b="pop">Express</li><li data-b="pop">OpenAI</li><li data-b="pop">Anthropic</li><li data-b="pop">Gemini</li><li data-b="pop">DeepSeek</li>
+        </ul>
+        <div class="links">
+          <a class="btn-red" href="https://kritesh2006.github.io/Personal-Ai/" target="_blank" rel="noopener" data-b="pop">Open demo ↗</a>
+          <a class="btn-line" href="https://github.com/Kritesh2006/Personal-Ai" target="_blank" rel="noopener" data-b="pop">Source ↗</a>
         </div>
       </div>
-      <figure class="hero-photo">
-        <img src="./assets/img/portrait.webp" width="600" height="900" alt="Kritesh Dhungel" fetchpriority="high">
-        <figcaption>Greensboro, NC</figcaption>
-      </figure>
+    </article>
+
+    <div class="cards3">
+      <article class="card" data-b="box">
+        <span class="tag" data-b="pop"><i aria-hidden="true"></i>In daily use</span>
+        <h3 data-b="type">Price Lookup — Production Search</h3>
+        <p data-b="sweep">Staff across seven locations find parts and prices in seconds. It replaced scrolling a spreadsheet while a customer waited.</p>
+        <ul class="bullets">
+          <li data-b="type">Query-specificity classification</li>
+          <li data-b="type">Whole-token model-number matching</li>
+          <li data-b="type">Rule-based assistant, RON</li>
+        </ul>
+        <div class="card-foot"><span class="mono" data-b="type">JavaScript · HTML · CSS</span><a href="https://github.com/Kritesh2006/Inventory" target="_blank" rel="noopener" data-b="pop">Source ↗</a></div>
+      </article>
+
+      <article class="card" data-b="box">
+        <span class="tag" data-b="pop"><i aria-hidden="true"></i>In build</span>
+        <h3 data-b="type">HIMVEDA — Traceable Marketplace</h3>
+        <p data-b="sweep">Platform for an herbal produce business: every batch weighed, inspected and traceable from producer to buyer.</p>
+        <ul class="bullets">
+          <li data-b="type">Audit log + two-person approvals</li>
+          <li data-b="type">Owner-run studio, no code needed</li>
+          <li data-b="type">Server components &amp; actions</li>
+        </ul>
+        <div class="card-foot"><span class="mono" data-b="type">Next.js · TS · Postgres · Drizzle</span><a href="https://github.com/Kritesh2006/HIMVEDA" target="_blank" rel="noopener" data-b="pop">Source ↗</a></div>
+      </article>
+
+      <article class="card" data-b="box">
+        <span class="tag" data-b="pop"><i aria-hidden="true"></i>Active</span>
+        <h3 data-b="type">NxtLevelOS — Local-First Desktop</h3>
+        <p data-b="sweep">Memories, goals, journal, tasks, habits, money and files in one local database with one search bar across everything.</p>
+        <ul class="bullets">
+          <li data-b="type">contextBridge security boundary</li>
+          <li data-b="type">SQLite in WAL mode, 28 indexes</li>
+          <li data-b="type">Collision-proof file vault</li>
+        </ul>
+        <div class="card-foot"><span class="mono" data-b="type">Electron · React · SQLite</span><a href="https://github.com/Kritesh2006/NxtLevelOS" target="_blank" rel="noopener" data-b="pop">Source ↗</a></div>
+      </article>
     </div>
-    <dl class="hero-facts">
-      <div><dt>Focus</dt><dd>Full-stack &amp; AI systems</dd></div>
-      <div><dt>Shipped</dt><dd>Tools in daily production use</dd></div>
-      <div><dt>Stack</dt><dd>TypeScript · React · Node · Python</dd></div>
-      <div><dt>Based in</dt><dd>North Carolina</dd></div>
-    </dl>
   </section>
 
-  <!-- WORK — charcoal -->
-  <section class="work" id="work" aria-labelledby="workH">
-    <div class="sec-head">
-      <p class="sec-num">01</p>
-      <h2 class="sec-title" id="workH">Selected <em>work</em></h2>
-      <p class="sec-note">Real systems, most of them in use. Private builds are marked and linked once public.</p>
+  <!-- ============ MATRIX ============ -->
+  <section class="sec" id="matrix" aria-labelledby="matrixH">
+    <p class="sec-code" data-b="type">// 03.00 SEC_MATRIX.CAPABILITIES</p>
+    <p class="eyebrow" data-b="pop">Capabilities</p>
+    <h2 class="sec-title" id="matrixH" data-b="type">The Systems Matrix</h2>
+    <p class="sec-sub" data-b="sweep">What I build, grouped by the problem it solves — and where each one is running.</p>
+
+    <div class="tabs" role="group" aria-label="Filter capabilities">
+      <button type="button" class="on" data-f="all" data-b="pop">All</button>
+      <button type="button" data-f="ai" data-b="pop">AI</button>
+      <button type="button" data-f="web" data-b="pop">Web</button>
+      <button type="button" data-f="desktop" data-b="pop">Desktop</button>
+      <button type="button" data-f="data" data-b="pop">Data</button>
     </div>
-    <div class="features" id="featureList"></div>
-    <div class="more">
-      <h3 class="more-h">More work</h3>
-      <ol class="more-list" id="moreList"></ol>
+
+    <div class="matrix">
+      <article class="cell card" data-cat="ai" data-b="box">
+        <span class="tag" data-b="pop">AI · Orchestration</span>
+        <h3 data-b="type">Multi-Model Orchestration</h3>
+        <p data-b="sweep">Parallel fan-out to four providers, a judge model, and direct single-model chat.</p>
+        <p class="seen" data-b="type">Seen in: ARIA</p>
+      </article>
+      <article class="cell card" data-cat="web" data-b="box">
+        <span class="tag" data-b="pop">Web · Search</span>
+        <h3 data-b="type">Deterministic Ranked Search</h3>
+        <p data-b="sweep">Classifies how specific a query is, so the right result comes first every time.</p>
+        <p class="seen" data-b="type">Seen in: Price Lookup</p>
+      </article>
+      <article class="cell card" data-cat="desktop" data-b="box">
+        <span class="tag" data-b="pop">Desktop · Local-first</span>
+        <h3 data-b="type">Local-First Desktop Systems</h3>
+        <p data-b="sweep">Electron apps where the renderer never touches the database directly.</p>
+        <p class="seen" data-b="type">Seen in: NxtLevelOS, NxtLevelPOS</p>
+      </article>
+      <article class="cell card" data-cat="web data" data-b="box">
+        <span class="tag" data-b="pop">Web · Platforms</span>
+        <h3 data-b="type">Full-Stack Platforms</h3>
+        <p data-b="sweep">Typed end to end, with audit trails and approvals where money moves.</p>
+        <p class="seen" data-b="type">Seen in: HIMVEDA</p>
+      </article>
+      <article class="cell card" data-cat="ai desktop" data-b="box">
+        <span class="tag" data-b="pop">AI · Vision</span>
+        <h3 data-b="type">Vision &amp; Gesture Interfaces</h3>
+        <p data-b="sweep">Hand tracking, voice control and camera-based physical-state checking.</p>
+        <p class="seen" data-b="type">Seen in: AIR OS, Witness</p>
+      </article>
+      <article class="cell card" data-cat="desktop ai" data-b="box">
+        <span class="tag" data-b="pop">Desktop · Automation</span>
+        <h3 data-b="type">Computer Control Layers</h3>
+        <p data-b="sweep">WebSocket IPC, a transparent HUD and vision fallback chains driving the desktop.</p>
+        <p class="seen" data-b="type">Seen in: ARIA Computer Operator</p>
+      </article>
+      <article class="cell card" data-cat="data" data-b="box">
+        <span class="tag" data-b="pop">Data · Storage</span>
+        <h3 data-b="type">Data Modeling</h3>
+        <p data-b="sweep">Normalized schemas, indexing strategy and a documented path to full-text search.</p>
+        <p class="seen" data-b="type">PostgreSQL · SQLite · Drizzle · MongoDB</p>
+      </article>
+      <article class="cell card" data-cat="web" data-b="box">
+        <span class="tag" data-b="pop">Web · Offline</span>
+        <h3 data-b="type">Offline-First Tools</h3>
+        <p data-b="sweep">Single-file apps with no backend that keep working when the network doesn't.</p>
+        <p class="seen" data-b="type">Seen in: Timesheet</p>
+      </article>
+      <article class="cell card" data-cat="data web desktop" data-b="box">
+        <span class="tag" data-b="pop">Practice · Reliability</span>
+        <h3 data-b="type">Testing &amp; Debugging</h3>
+        <p data-b="sweep">Playwright and Vitest suites, and tracing real runtime breaks to their source.</p>
+        <p class="seen" data-b="type">Playwright · Vitest · Git</p>
+      </article>
     </div>
+    <p class="langs" data-b="sweep"><span>Languages</span> JavaScript · TypeScript · Python · SQL · HTML &amp; CSS</p>
   </section>
 
-  <!-- ABOUT — forest -->
-  <section class="about" id="about" aria-labelledby="aboutH">
-    <div class="sec-head">
-      <p class="sec-num">02</p>
-      <h2 class="sec-title" id="aboutH">About</h2>
-    </div>
-    <div class="about-grid">
-      <p class="about-big">I build systems that hold up under daily use, then keep improving them based on how people actually use them.</p>
-      <div class="about-cols">
-        <p>My work sits where operations meet software. I start from a real bottleneck, ship the smallest thing that removes it, watch where it breaks, and harden it. That loop turned a spreadsheet people scrolled through into a ranked search engine staff rely on every day.</p>
-        <p>On the AI side, I build orchestration rather than wrappers: multiple models working in parallel, a judge model that weighs their output, and deterministic layers where correctness matters more than fluency.</p>
+  <!-- ============ CONTACT ============ -->
+  <section class="sec contact" id="contact" aria-labelledby="contactH">
+    <div class="contact-card" data-b="box">
+      <p class="eyebrow" data-b="pop">Direct connect</p>
+      <h2 id="contactH" data-b="type">Let's Build Something Extraordinary.</h2>
+      <p class="contact-sub" data-b="sweep">Open to engineering roles, collaborations and product builds — full-stack, AI systems and the internal tools that run real operations.</p>
+      <div class="mail-row">
+        <span class="mono mail" data-b="type">kriteshdhungel07@gmail.com</span>
+        <button type="button" class="btn-red" id="copyMail" data-b="pop">Copy email</button>
       </div>
-      <ul class="about-stats">
-        <li><b>7</b><span>locations running my search tool daily</span></li>
-        <li><b>4</b><span>AI models orchestrated in ARIA</span></li>
-        <li><b>7</b><span>projects shipped or in active build</span></li>
-        <li><b>4</b><span>languages spoken</span></li>
+      <ul class="socials">
+        <li data-b="pop"><a href="https://github.com/Kritesh2006" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0a8 8 0 0 0-2.53 15.59c.4.07.55-.17.55-.38v-1.34c-2.23.48-2.7-1.07-2.7-1.07-.36-.92-.89-1.17-.89-1.17-.73-.5.06-.49.06-.49.8.06 1.23.83 1.23.83.72 1.22 1.88.87 2.34.66.07-.52.28-.87.5-1.07-1.78-.2-3.65-.89-3.65-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.28.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48v2.2c0 .21.15.46.55.38A8 8 0 0 0 8 0Z"/></svg>github.com/Kritesh2006</a></li>
+        <li data-b="pop"><a href="https://www.linkedin.com/in/kritesh-dhungel-0aa2ab31a/" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M0 1.15C0 .52.52 0 1.18 0h13.64C15.48 0 16 .52 16 1.15v13.7c0 .63-.52 1.15-1.18 1.15H1.18C.52 16 0 15.48 0 14.85V1.15Zm4.94 12.24V6.17H2.54v7.22h2.4ZM3.74 5.18c.84 0 1.36-.55 1.36-1.25-.02-.71-.52-1.25-1.34-1.25-.82 0-1.36.54-1.36 1.25 0 .7.52 1.25 1.33 1.25h.01Zm4.91 8.21V9.36c0-.22.02-.43.08-.59.18-.43.57-.88 1.23-.88.87 0 1.22.66 1.22 1.64v3.86h2.4V9.25c0-2.22-1.18-3.25-2.76-3.25-1.3 0-1.86.72-2.18 1.21h.02V6.17h-2.4c.03.68 0 7.22 0 7.22h2.4Z"/></svg>LinkedIn</a></li>
       </ul>
+      <p class="foot" data-b="type">© 2026 Kritesh Dhungel · Designed and built from first principles.</p>
     </div>
-  </section>
-
-  <!-- SKILLS — charcoal -->
-  <section class="skills" id="skills" aria-labelledby="skillsH">
-    <div class="sec-head">
-      <p class="sec-num">03</p>
-      <h2 class="sec-title" id="skillsH">Skills</h2>
-    </div>
-    <div class="skill-grid" id="skillList"></div>
-    <div class="bench">
-      <h3 class="bench-h">Currently building</h3>
-      <ul class="bench-list">
-        <li><b>HIMVEDA</b><span>Producer-to-buyer traceability and an owner-run admin studio.</span></li>
-        <li><b>Witness</b><span>A camera-based physical-state engine, starting with the core truth layer.</span></li>
-        <li><b>ARIA</b><span>Expanding multi-model debate into a desktop computer operator.</span></li>
-        <li><b>NxtLevelOS</b><span>Local-first desktop software with full-text search as the scale path.</span></li>
-      </ul>
-    </div>
-  </section>
-
-  <!-- CONTACT — forest -->
-  <section class="contact" id="contact" aria-labelledby="contactH">
-    <div class="sec-head">
-      <p class="sec-num">04</p>
-      <h2 class="sec-title" id="contactH">Contact</h2>
-    </div>
-    <a class="contact-mail" href="mailto:kriteshdhungel07@gmail.com">kriteshdhungel07<wbr>@gmail.com</a>
-    <ul class="contact-links">
-      <li><a href="https://github.com/Kritesh2006" target="_blank" rel="noopener">GitHub ↗</a></li>
-      <li><a href="https://www.linkedin.com/in/kritesh-dhungel-0aa2ab31a/" target="_blank" rel="noopener">LinkedIn ↗</a></li>
-    </ul>
   </section>
 </main>
 
-<footer class="site-foot">
-  <p class="foot-big">Let's build something that works.</p>
-  <div class="foot-actions">
-    <a class="btn btn-red" href="mailto:kriteshdhungel07@gmail.com">Email me <i aria-hidden="true">→</i></a>
-    <a class="btn btn-line" href="#top">Back to top</a>
-  </div>
-  <p class="foot-small">© <span data-year></span> Kritesh Dhungel</p>
-</footer>
-
-<script type="module" src="./js/app.js?v=5"></script>
+<script src="./js/build.js?v=7" defer></script>
 </body>
 </html>

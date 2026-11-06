@@ -14,16 +14,21 @@ Full-stack and AI systems engineer. Live at **[kritesh2006.github.io/This-is-Me]
 
 ## Site structure
 
+The page builds itself live: a swarm of agent cursors drags in wireframes, types the text and tours each section, then hands control to the visitor with **Start**.
+
 ```
-index.html        markup
-css/site.css      styles (charcoal, forest green, crimson)
-js/data.js        all content: projects and skills
-js/portfolio.js   renders projects and skills from data.js
-js/plates.js      one SVG architecture diagram per project
-js/app.js         boot
+index.html     all content (fully present in HTML — readable without JS)
+css/site.css   styles (charcoal, crimson, forest-green builder chrome)
+js/build.js    live-build engine + interactions (filters, copy email)
 ```
 
-No build step and no dependencies. Edit `js/data.js` to update content.
+Every element tagged `data-b="box|type|sweep|img|pop"` is a build layer. Add the attribute to new content and it joins the build automatically.
+
+- `?skip` or any `#section` link shows the finished site instantly
+- Visitors with reduced motion enabled get the finished site
+- Skip / 1×–4× speed controls live in the bottom HUD
+
+No build step and no dependencies.
 
 ## Contact
 
